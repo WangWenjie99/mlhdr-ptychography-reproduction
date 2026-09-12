@@ -1,0 +1,32 @@
+{
+  "paper_doi": "10.1109/TIM.2024.3363788",
+  "baseline_archive": "outputs/sweep_21x21_steps8_14_i80/best/best_reconstruction.npz",
+  "input": "diff.npy",
+  "scan_crop": 21,
+  "exposure_times_ms": [0.5, 1, 5, 10, 50, 100, 500],
+  "measurement_seeds": [0, 1, 2],
+  "camera": {
+    "photon_flux_per_s": 1000000000.0,
+    "full_well_e": 2500000.0,
+    "bit_depth": 8,
+    "dark_current_e_per_s": 80.0,
+    "dark_frames": 20
+  },
+  "noise_profiles": {
+    "low_noise": {"read_noise_e": 5.0},
+    "read_noise_025adu": {"read_noise_e": 2450.9803921568628},
+    "read_noise_1adu": {"read_noise_e": 9803.921568627451}
+  },
+  "provenance": {
+    "photon_flux_per_s": "Paper section III-A: 1e9 photons/s. Mapping to brightest frame total is an explicit implementation assumption.",
+    "full_well_e": "Paper section III-A: 2.5e6 electrons.",
+    "bit_depth": "Paper uses 8-bit HDR comparisons.",
+    "dark_frames": "Paper section III-A and section IV: 20 dark frames per exposure.",
+    "exposure_times_ms": "Paper Fig.5 / transmission experiment, not a stated numerical simulation schedule.",
+    "noise_distributions": "Paper Eq.1-6: Poisson photon shot noise, Poisson dark current shot noise, Gaussian read noise.",
+    "read_noise_e_and_dark_current": "Not specified numerically in the paper. Low-noise values retain previous project assumptions. Two ADC-relative read-noise levels are explicit sensitivity controls, not the paper Fig.3 dB levels.",
+    "quantum_efficiency": "Assumed 1 electron per detected photon; no spatial detector nonuniformity or electronic offset.",
+    "reconstruction": "All saved baseline settings retained, including 80 iterations, 21x21 positions, 32x32 detector and regular scan grid, per user request. Paper numerical simulation instead used 250 iterations, 20x20 positions and 256x256 detector; transmission experiment used 1000 iterations.",
+    "extension": "Additional saturation-mask control, NOT the published ML-HDR algorithm. No reference image is used in fusion or reconstruction."
+  }
+}

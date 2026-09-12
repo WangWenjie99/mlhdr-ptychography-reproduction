@@ -1,0 +1,125 @@
+{
+  "experiment": {
+    "paper_doi": "10.1109/TIM.2024.3363788",
+    "baseline_archive": "outputs/sweep_21x21_steps8_14_i80/best/best_reconstruction.npz",
+    "input": "diff.npy",
+    "scan_crop": 21,
+    "exposure_times_ms": [
+      0.5,
+      1,
+      5,
+      10,
+      50,
+      100,
+      500
+    ],
+    "measurement_seeds": [
+      0,
+      1,
+      2
+    ],
+    "camera": {
+      "photon_flux_per_s": 1000000000.0,
+      "full_well_e": 2500000.0,
+      "bit_depth": 8,
+      "dark_current_e_per_s": 80.0,
+      "dark_frames": 20
+    },
+    "noise_profiles": {
+      "low_noise": {
+        "read_noise_e": 5.0
+      },
+      "read_noise_025adu": {
+        "read_noise_e": 2450.9803921568628
+      },
+      "read_noise_1adu": {
+        "read_noise_e": 9803.921568627451
+      }
+    },
+    "provenance": {
+      "photon_flux_per_s": "Paper section III-A: 1e9 photons/s. Mapping to brightest frame total is an explicit implementation assumption.",
+      "full_well_e": "Paper section III-A: 2.5e6 electrons.",
+      "bit_depth": "Paper uses 8-bit HDR comparisons.",
+      "dark_frames": "Paper section III-A and section IV: 20 dark frames per exposure.",
+      "exposure_times_ms": "Paper Fig.5 / transmission experiment, not a stated numerical simulation schedule.",
+      "noise_distributions": "Paper Eq.1-6: Poisson photon shot noise, Poisson dark current shot noise, Gaussian read noise.",
+      "read_noise_e_and_dark_current": "Not specified numerically in the paper. Low-noise values retain previous project assumptions. Two ADC-relative read-noise levels are explicit sensitivity controls, not the paper Fig.3 dB levels.",
+      "quantum_efficiency": "Assumed 1 electron per detected photon; no spatial detector nonuniformity or electronic offset.",
+      "reconstruction": "All saved baseline settings retained, including 80 iterations, 21x21 positions, 32x32 detector and regular scan grid, per user request. Paper numerical simulation instead used 250 iterations, 20x20 positions and 256x256 detector; transmission experiment used 1000 iterations.",
+      "extension": "Additional saturation-mask control, NOT the published ML-HDR algorithm. No reference image is used in fusion or reconstruction."
+    }
+  },
+  "selected_profiles": [
+    "low_noise",
+    "read_noise_025adu",
+    "read_noise_1adu"
+  ],
+  "selected_seeds": [
+    0,
+    1,
+    2
+  ],
+  "ptylab_config": {
+    "wavelength_m": 6.328e-07,
+    "detector_pixel_m": 5.5e-06,
+    "object_pixel_m": 1e-06,
+    "scan_step_px": 8.0,
+    "entrance_pupil_diameter_px": 31.0,
+    "iterations": 80,
+    "position_order": "random",
+    "probe_power_correction": true,
+    "propagator_type": "Fraunhofer",
+    "seed": 0,
+    "normalize_input": true,
+    "initial_probe": "circ_smooth",
+    "initial_object": "ones",
+    "position_correction": false,
+    "position_correction_radius": 1,
+    "quiet": true
+  },
+  "input_shape": [
+    21,
+    21,
+    32,
+    32
+  ],
+  "roi": [
+    [
+      16,
+      208
+    ],
+    [
+      16,
+      208
+    ]
+  ],
+  "object_shape": [
+    224,
+    224
+  ],
+  "baseline_sha256": "10a8ed8857dcde32a01fc791a3ad15719e62a26cc5e5256e59c57dee96828d78",
+  "input_sha256": "4350a9dcfe92699595f18c7b7111408eebfad91e3613513b7a8e0eb4df1f7fe8",
+  "python": "3.11.7 (main, Dec 15 2023, 12:09:56) [Clang 14.0.6 ]",
+  "executable": "/opt/anaconda3/bin/python",
+  "versions": {
+    "numpy": "1.26.4",
+    "scipy": "1.11.4",
+    "matplotlib": "3.8.0",
+    "PtyLab": "0.2.1",
+    "h5py": "3.12.1",
+    "scikit-image": "0.21.0"
+  },
+  "source_sha256": {
+    "mlhdr_ptycho/__init__.py": "c18a93acc33851a3d9d45764ec8ef299bae6efb3827479251e041d79d1695bf3",
+    "mlhdr_ptycho/data.py": "0cd54438980d5ce6dadd1312247bd07313ba1843cd33fc29e019c012497a8e1a",
+    "mlhdr_ptycho/ml_hdr.py": "40a6c472e2fba97f569a94f026f08549b7e4293d7873842da926c2c0d0441f48",
+    "mlhdr_ptycho/paper_reproduction.py": "f2fa5d77ec00251e3b7089b9b8fd9ac0ddb85ef2c326a9c9563f4856dfca7872",
+    "mlhdr_ptycho/ptylab_reconstruction.py": "dd79a3ad0c8b8c235c3a05333fbe0ee04d607b2c06f7fb78024451b61bd1173d",
+    "scripts/reproduce_paper.py": "2def42e192f1a88a99170d71dc23a47309dce00dbfee80dc8ab692b328b8f35b",
+    "experiments/paper_baseline_comparison.json": "6c23de2ddf5a6df67c4c925d51e43d3c0fb286a7ac1b6a88c87f6de454d08a08"
+  },
+  "comparison_reference": "Saved baseline reconstruction, not ground truth",
+  "status": "complete",
+  "successful_reconstructions": 81,
+  "total_reconstructions": 81
+}

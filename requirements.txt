@@ -1,0 +1,9 @@
+# Versions used in the recorded Python 3.11 experiment.
+numpy==1.26.4
+scipy==1.11.4
+matplotlib==3.8.0
+h5py==3.12.1
+scikit-image==0.21.0
+tqdm==4.65.0
+# Use the same PtyLab source revision as the recorded experiment.
+PtyLab @ git+https://github.com/PtyLab/PtyLab.py.git@2a7cdefe536f3976b5c6596fcd4e72b1f513f304

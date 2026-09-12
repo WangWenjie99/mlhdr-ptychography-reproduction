@@ -1,0 +1,27 @@
+{
+  "same_seed_full_run_repeats": {
+    "settings": "same saved baseline configuration, same diff.npy crop, two in-memory calls",
+    "first_iteration_errors": [
+      51.56002973264037,
+      51.559977936945984
+    ],
+    "last_iteration_errors": [
+      6.066267234544586,
+      5.8100721313913315
+    ],
+    "relative_complex_object_difference": 0.012842618
+  },
+  "one_iteration_initialization_audit": {
+    "object_initial_sha256_prefix_both": "102290d933f5",
+    "probe_initial_sha256_prefix_both": "a5aa20747941",
+    "numpy_rng_state_prefix_before_both": "a1d8531715e9",
+    "numpy_rng_state_position_before_both": 64,
+    "numpy_rng_state_prefix_after_both": "0d3c2d5407a0",
+    "numpy_rng_state_position_after_both": 322,
+    "first_iteration_errors": [
+      51.56002973,
+      51.55986487
+    ]
+  },
+  "interpretation": "Identical initial object/probe bytes and NumPy RNG sequences do not give bitwise-identical output in the installed numerical implementation. The backend-level cause is not established. Camera draws and stored fusion inputs are tested for exact reproducibility; solver repeat variation is disclosed and historical reference is preserved."
+}

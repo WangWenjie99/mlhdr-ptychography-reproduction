@@ -1,0 +1,30 @@
+# Local data, reconstruction archives and paper PDF are not published.
+/outputs/
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.pdf
+
+# Interpreter, operating system and editor files.
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.idea/
+.vscode/
+*.egg-info/
+build/
+dist/
+
+# Local credentials and environment settings.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
