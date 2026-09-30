@@ -1,0 +1,6 @@
+# Versions used for the saved paper-style simulation (Python 3.12.3).
+# Existing figure regeneration and new simulations do not require PtyLab.
+numpy==1.26.4
+scipy==1.14.1
+matplotlib==3.8.4
+scikit-image==0.25.2

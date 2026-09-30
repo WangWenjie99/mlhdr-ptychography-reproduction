@@ -23,6 +23,10 @@ class PaperCamera:
     read_noise_e: float = 5.0
     dark_current_e_per_s: float = 80.0
     dark_frames: int = 20
+    # Opt-in for the simulated bit-depth sweep (paper Fig. 2 goes to 20 bit).
+    # Default False keeps the recorded-camera limit of 16 bit. The ceiling of
+    # 24 bit keeps every count exactly representable in float32 (ml_hdr_fusion).
+    allow_extended_bit_depth: bool = False
 
     def __post_init__(self):
         for name in ("photon_flux_per_s", "full_well_e"):
@@ -31,8 +35,9 @@ class PaperCamera:
         for name in ("read_noise_e", "dark_current_e_per_s"):
             if not np.isfinite(getattr(self, name)) or getattr(self, name) < 0:
                 raise ValueError(f"{name} must be finite and nonnegative")
-        if not isinstance(self.bit_depth, int) or not 1 <= self.bit_depth <= 16:
-            raise ValueError("bit_depth must be an integer from 1 to 16")
+        max_bits = 24 if self.allow_extended_bit_depth else 16
+        if not isinstance(self.bit_depth, int) or not 1 <= self.bit_depth <= max_bits:
+            raise ValueError(f"bit_depth must be an integer from 1 to {max_bits}")
         if not isinstance(self.dark_frames, int) or self.dark_frames < 2:
             raise ValueError("At least two dark frames are needed for variance")
 
@@ -83,7 +88,13 @@ def quantize_electrons(electrons, camera: PaperCamera):
     """Linear gain, full-well clipping and round-to-nearest integer ADC."""
     value = np.rint(np.clip(electrons, 0, camera.full_well_e)
                     / camera.electrons_per_count)
-    return value.astype(np.uint8 if camera.bit_depth <= 8 else np.uint16)
+    if camera.bit_depth <= 8:
+        dtype = np.uint8
+    elif camera.bit_depth <= 16:
+        dtype = np.uint16
+    else:  # only reachable with allow_extended_bit_depth=True
+        dtype = np.uint32
+    return value.astype(dtype)
 
 
 def simulate_paper_camera(relative_intensity, exposure_times_s,
@@ -137,17 +148,27 @@ def single_rate(measurement: PaperMeasurement, index: int):
     return np.maximum(corrected / measurement.exposure_times_s[index], 0).astype(np.float32)
 
 
-def saturation_mask_extension(measurement: PaperMeasurement):
+def saturation_mask_extension(measurement: PaperMeasurement,
+                              all_saturated: str = "raise"):
     """Additional control: Eq.14/15 structure with saturated observations masked.
 
     The preliminary mean also uses only valid exposures. Zero-valued pixels are
-    retained. An all-saturated pixel has no recoverable value and raises, rather
-    than silently substituting a clipped estimate. Not Liu et al.'s algorithm.
+    retained. By default an all-saturated pixel has no recoverable value and
+    raises, rather than silently substituting a clipped estimate.
+    ``all_saturated="shortest"`` is an explicit opt-in (used by the simulation
+    sweeps, where huge read noise can saturate a pixel in every exposure): such
+    pixels keep only their shortest exposure, as in ``lrfc_hdr_fusion``.
+    Not Liu et al.'s algorithm.
     """
+    if all_saturated not in ("raise", "shortest"):
+        raise ValueError("all_saturated must be 'raise' or 'shortest'")
     z = measurement.z.astype(np.float64)
     valid = z < measurement.camera.max_count
-    if np.any(~valid.any(axis=0)):
-        raise ValueError("All exposures saturated at some pixels; shorten exposure")
+    hopeless = ~valid.any(axis=0)
+    if np.any(hopeless):
+        if all_saturated == "raise":
+            raise ValueError("All exposures saturated at some pixels; shorten exposure")
+        valid[int(np.argmin(measurement.exposure_times_s))] |= hopeless
     t = measurement.exposure_times_s[:, None, None, None]
     corrected = z - measurement.dark_mean[:, None]
     preliminary = np.sum(np.where(valid, corrected / t, 0), axis=0) / valid.sum(axis=0)
@@ -155,6 +176,36 @@ def saturation_mask_extension(measurement: PaperMeasurement):
     w = np.where(valid, t * t / np.maximum(denominator, 1e-8), 0)
     fused = np.sum(w * corrected / t, axis=0) / np.maximum(w.sum(axis=0), 1e-30)
     return np.maximum(fused, 0).astype(np.float32)
+
+
+def lrfc_hdr_fusion(measurement: PaperMeasurement):
+    """Conventional linear-response (LRFC) HDR baseline, paper Eq. 16-17.
+
+    Refs. Leong-Hoi et al. 2016 / Liu et al. 2021 as summarised by Liu et al.
+    2024: the camera response is calibrated as linear, overexposed pixels are
+    rejected and replaced by unsaturated pixels from shorter exposures
+    rescaled by exposure time. Implemented per pixel as
+
+        rate = (Z_i - Bbar_i) / t_i,  i = longest exposure with Z_i < Z_max,
+
+    and, if a pixel is saturated in every exposure, i = the shortest exposure
+    (its clipped value is the best available lower bound). No averaging across
+    exposures is performed. Negative dark-corrected rates are clipped to zero,
+    as for the other fusions in this module. Returns count/s, float32.
+    """
+    z = measurement.z
+    t = np.asarray(measurement.exposure_times_s, dtype=np.float64)
+    order = np.argsort(t, kind="stable")          # shortest ... longest
+    valid = z[order] < measurement.camera.max_count
+    last_valid = valid.shape[0] - 1 - np.argmax(valid[::-1], axis=0)
+    chosen = np.where(valid.any(axis=0), last_valid, 0)  # 0 = shortest
+    index = order[chosen]
+    counts = np.take_along_axis(z, index[None], axis=0)[0].astype(np.float64)
+    dark = measurement.dark_mean                  # (exposures, y, x)
+    dark_chosen = np.take_along_axis(
+        np.broadcast_to(dark[:, None], z.shape), index[None], axis=0)[0]
+    rate = (counts - dark_chosen) / t[index]
+    return np.maximum(rate, 0).astype(np.float32)
 
 
 def amplitude_comparison(field, reference, mask=None):

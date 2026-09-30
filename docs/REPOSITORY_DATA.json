@@ -1,0 +1,400 @@
+{
+  "schema_version": 1,
+  "description": "Complete preserved local scientific data, published figures and provenance for continuation from a Git clone. Paths are relative to the repository root; SHA-256 and sizes describe exact file bytes.",
+  "snapshot_date": "2026-10-01",
+  "file_count": 61,
+  "total_bytes": 32694877,
+  "missing_preexisting": [
+    {
+      "path": "diff.npy",
+      "status": "not_present_in_current_workspace",
+      "purpose": "Historical 81-reconstruction experiment original diffraction input"
+    },
+    {
+      "path": "outputs/sweep_21x21_steps8_14_i80/best/best_reconstruction.npz",
+      "status": "not_present_in_current_workspace",
+      "purpose": "Historical 81-reconstruction experiment baseline archive"
+    }
+  ],
+  "continuation_scope": [
+    "Redraw historical comparison figures from preserved summary metrics.",
+    "Redraw all six paper-style figure groups from the complete full or quick simulation snapshots.",
+    "Continue paper-style simulations using saved configuration, seeds, known truths and generated scenes.",
+    "The original historical diffraction experiment cannot be rerun from the current workspace because its input and baseline archive were already absent."
+  ],
+  "excluded_regenerable_local_files": [
+    "outputs/paper_style/figures_full_preview/",
+    "outputs/paper_style/figures_quick/",
+    "tmp/",
+    "__pycache__/",
+    "virtual environments and dependency caches"
+  ],
+  "files": [
+    {
+      "path": "docs/experiment_manifest.json",
+      "size_bytes": 4440,
+      "sha256": "a8ae25e71df5b990bda0297512c57919108dadba940a38080a05e39b49004668",
+      "role": "recorded_experiment_metrics_and_provenance"
+    },
+    {
+      "path": "docs/figures/baseline_object.png",
+      "size_bytes": 222622,
+      "sha256": "4a8623e49e6732ab8e49925a9f6d9898c5fb17557f054bff57d5b3f868440ea2",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/low_noise_comparison.png",
+      "size_bytes": 611130,
+      "sha256": "6c2f823d41486109502c886b06ebd0ed6107ea1979498f1dea1d4fada958aa95",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/low_noise_diffraction.png",
+      "size_bytes": 62928,
+      "sha256": "21313b2b3e638958ccecdff0eef215bb58dfeb481daa1509771b689ef1e1245c",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/low_noise_extension.png",
+      "size_bytes": 264311,
+      "sha256": "920bbbdeaba6894f17df9931296e47f87e1801598bc041516744fdc2fccfc3c2",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/low_noise_metrics.png",
+      "size_bytes": 133145,
+      "sha256": "2d143f4572037d80db8f39fb65c9bdfae0d734508d465aa1f44ff08b1293c45c",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/paper_comparisons/diffraction_diagnostics.png",
+      "size_bytes": 830767,
+      "sha256": "f01ad3aad30a1bc9117ca64739d73fa7dea89263fd52366c24715ab3b0b4f702",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/paper_comparisons/diffraction_diagnostics.svg",
+      "size_bytes": 193138,
+      "sha256": "5485bce4995e089c10e6bd2e52a6d86c7799863659b1d034f1e09c717c350d0a",
+      "role": "figure_vector"
+    },
+    {
+      "path": "docs/figures/paper_comparisons/exposure_comparison.png",
+      "size_bytes": 767476,
+      "sha256": "19595cb5816da54afcb9a73ea1c325bbdec83d1463079e98cda2f222e4716ade",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/paper_comparisons/exposure_comparison.svg",
+      "size_bytes": 159051,
+      "sha256": "f0449348ccf468aa177a72353ef8b7d50ed600b11da853308a81f676b69a54cf",
+      "role": "figure_vector"
+    },
+    {
+      "path": "docs/figures/paper_comparisons/figures_manifest.json",
+      "size_bytes": 8421,
+      "sha256": "b2684c424d1208610cd6ea8954670bd2341138b8267774383215611ad7ed249e",
+      "role": "figure_provenance"
+    },
+    {
+      "path": "docs/figures/paper_comparisons/method_heatmaps.png",
+      "size_bytes": 826090,
+      "sha256": "b106d45ee7d97424a2bd805f05682cbb71b646c3dc2d39c44b717831ac6d30da",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/paper_comparisons/method_heatmaps.svg",
+      "size_bytes": 74051,
+      "sha256": "e323405bb49e8a1ff981c4edd628da9a7fd9f49e1aebe3307462fd726ed3c18c",
+      "role": "figure_vector"
+    },
+    {
+      "path": "docs/figures/paper_comparisons/noise_comparison.png",
+      "size_bytes": 435592,
+      "sha256": "5498046eed0106ae43a752099d1ef823e32d7d69ce0bdbf0ed58c7f0029de5a2",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/paper_comparisons/noise_comparison.svg",
+      "size_bytes": 51149,
+      "sha256": "077e22091c136a838aefb68bd97d3ad91ce3b74b5f6260eedd23ca04f1ecbb90",
+      "role": "figure_vector"
+    },
+    {
+      "path": "docs/figures/paper_style/fig2_bit_depth.png",
+      "size_bytes": 1197399,
+      "sha256": "907302add67ec77e9d8b9f7d9ddbdcc75cdad97dbde07b421342183a5c714cda",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/paper_style/fig2_bit_depth.svg",
+      "size_bytes": 358323,
+      "sha256": "51aaab7e2314c52b6397ff4a345d8972eaec7db1bfa0a3b0dc85340497301c51",
+      "role": "figure_vector"
+    },
+    {
+      "path": "docs/figures/paper_style/fig3_noise.png",
+      "size_bytes": 672017,
+      "sha256": "bee1fcb17d5d685295999fc1b596f72873255739067b24d4e611a4c38f1aa1c4",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/paper_style/fig3_noise.svg",
+      "size_bytes": 167393,
+      "sha256": "9f9c7678f7d1b1a48b4cc67d37582a4746e32607eacb1ea4bd4bc81567d2b2c3",
+      "role": "figure_vector"
+    },
+    {
+      "path": "docs/figures/paper_style/fig5_diffraction.png",
+      "size_bytes": 389463,
+      "sha256": "1298d7bf9212fc8a3da481a5698b93ac28f54c4b4b29fce4d98cec7bf84ae5e0",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/paper_style/fig5_diffraction.svg",
+      "size_bytes": 453308,
+      "sha256": "a399494d8a2164f472fd6d67ee2173068bc3bfbab8d004cc8ed587242de211e4",
+      "role": "figure_vector"
+    },
+    {
+      "path": "docs/figures/paper_style/fig6_usaf_8bit.png",
+      "size_bytes": 1693523,
+      "sha256": "5600524f34732d7b1c2ed6250ebcd28041576841513eb145ad0ee5976e20d5a4",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/paper_style/fig6_usaf_8bit.svg",
+      "size_bytes": 529451,
+      "sha256": "eba3cd3baa7526a736efc1debe282bbb699fe9ce42912ef11a21eb2ff4588cae",
+      "role": "figure_vector"
+    },
+    {
+      "path": "docs/figures/paper_style/fig7_usaf_16bit.png",
+      "size_bytes": 1190884,
+      "sha256": "5fec7e985ef0367b704b1b0a01886c4de7087cdfb3c10881483f3824201094c2",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/paper_style/fig7_usaf_16bit.svg",
+      "size_bytes": 179967,
+      "sha256": "54fd2e9996392247c1d11da4d12c4e73f66a60545986280e2a61d25b330b4630",
+      "role": "figure_vector"
+    },
+    {
+      "path": "docs/figures/paper_style/figures_manifest.json",
+      "size_bytes": 7613,
+      "sha256": "18e9da6bc2e639815570ddad8b8306da15874c9d8227fa00f0c2c4afbcbe19b0",
+      "role": "figure_provenance"
+    },
+    {
+      "path": "docs/figures/paper_style/paper_vs_reproduction.png",
+      "size_bytes": 1369124,
+      "sha256": "6d3aa341f9450a107ec293a471f2c7d30eb4b9a76f3c186bd4696fe767f13b06",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/paper_style/paper_vs_reproduction.svg",
+      "size_bytes": 327288,
+      "sha256": "6275bd043ff9dd1cb5789425921b27ac7135b103bad73fd87e687f3a9f9846f7",
+      "role": "figure_vector"
+    },
+    {
+      "path": "docs/figures/read_noise_025adu_extension.png",
+      "size_bytes": 326749,
+      "sha256": "5253cc0ad8065026593b9a66a28528216f5436e2fff3c77f509ddd29d9c2e1e9",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/read_noise_025adu_metrics.png",
+      "size_bytes": 130841,
+      "sha256": "03d1480541e38f0f291c385d853d5b3f06833363cc58cfed9778c3346b34854c",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/read_noise_1adu_extension.png",
+      "size_bytes": 349380,
+      "sha256": "3e97bf82bd99f644609dae91a2483d8ba0801f1c0df2219ce961fc5170463649",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/figures/read_noise_1adu_metrics.png",
+      "size_bytes": 131039,
+      "sha256": "59585bd5cee81255282c14f2be99109dc55b4484949656e7851a42b77177bbc1",
+      "role": "figure_image"
+    },
+    {
+      "path": "docs/paper_style/data/bit_sweep.csv",
+      "size_bytes": 45923,
+      "sha256": "952d73aa57e387381e042e4c36c976a01aa10eff258ed9a7bbc7c7689a72304a",
+      "role": "simulation_metrics_documentation_copy"
+    },
+    {
+      "path": "docs/paper_style/data/meta.json",
+      "size_bytes": 7304,
+      "sha256": "19a6cbc6bd3f33112de180f439aa0ec70969dd4ec0cf088f1f0bad4e590f608f",
+      "role": "simulation_metrics_documentation_copy"
+    },
+    {
+      "path": "docs/paper_style/data/noise_sweep.csv",
+      "size_bytes": 43450,
+      "sha256": "111168c7ec2e2072a2f9814a42dc3a16a516705c837d66da249f751e111dc633",
+      "role": "simulation_metrics_documentation_copy"
+    },
+    {
+      "path": "docs/paper_style/data/resolution_summary.json",
+      "size_bytes": 7872,
+      "sha256": "561efe7c963591f327740a92c6bf6cf5285211d3c3a888a99b31e0dae1829bc4",
+      "role": "simulation_metrics_documentation_copy"
+    },
+    {
+      "path": "docs/paper_style/paper_digitized.json",
+      "size_bytes": 14931,
+      "sha256": "f3f34ef3b00798d08725d0430c616360b9b813a185be9176fa3fcb77a1810fbc",
+      "role": "digitized_paper_curves"
+    },
+    {
+      "path": "docs/paper_style/summary.csv",
+      "size_bytes": 7821,
+      "sha256": "313d6db31209007b9adec9138c060fa49794f9a68cd069d64ab9c409583a3a89",
+      "role": "paper_comparison_summary"
+    },
+    {
+      "path": "docs/solver_repeatability.json",
+      "size_bytes": 1172,
+      "sha256": "56dbc932f23ee519906a837af54964f2ad673383ccc2d9dbee228c509d521dfc",
+      "role": "recorded_experiment_metrics_and_provenance"
+    },
+    {
+      "path": "docs/summary_metrics.csv",
+      "size_bytes": 8227,
+      "sha256": "9a10b8ccc4a4f4611ddaa524ceeefccb4026cd6c2e30af6d0702ee509f7c580c",
+      "role": "recorded_experiment_metrics_and_provenance"
+    },
+    {
+      "path": "docs/validation_record.json",
+      "size_bytes": 37702,
+      "sha256": "e53ef233b5000be2824c8b1cadffcf573f0ffb4c0a39907d89279defd1e5cadf",
+      "role": "recorded_experiment_metrics_and_provenance"
+    },
+    {
+      "path": "experiments/paper_baseline_comparison.json",
+      "size_bytes": 2024,
+      "sha256": "6c23de2ddf5a6df67c4c925d51e43d3c0fb286a7ac1b6a88c87f6de454d08a08",
+      "role": "experiment_configuration"
+    },
+    {
+      "path": "Liu et al. - 2024 - Resolution-Enhanced Lensless Ptychographic Microscope Based on Maximum-Likelihood High-Dynamic-Range.pdf",
+      "size_bytes": 1693425,
+      "sha256": "e91eb23bd0d1d835e3f7aa49b7faaddf70610602be7fc6a79c3afd57332964c0",
+      "role": "reference_paper"
+    },
+    {
+      "path": "outputs/paper_style/full/bit_sweep.csv",
+      "size_bytes": 45923,
+      "sha256": "952d73aa57e387381e042e4c36c976a01aa10eff258ed9a7bbc7c7689a72304a",
+      "role": "bit_depth_sweep_metrics"
+    },
+    {
+      "path": "outputs/paper_style/full/cameraman_8bit.npz",
+      "size_bytes": 2768426,
+      "sha256": "9099b7880e6f8de31d0381ae19fc5b16ad6d472bee598bb731908beb86dd5d0a",
+      "role": "cameraman_truth_and_reconstructions"
+    },
+    {
+      "path": "outputs/paper_style/full/DATA_CONTRACT.md",
+      "size_bytes": 10607,
+      "sha256": "3c0b9971bdfaa223cd5e4abb2861bdb7994e5d003d4b57947c1541d7c0b55275",
+      "role": "simulation_data_contract"
+    },
+    {
+      "path": "outputs/paper_style/full/diffraction_example.npz",
+      "size_bytes": 41788,
+      "sha256": "2a888de968363ac16b74fed0ced83218a37fef284b5d86ac33e9d4c169b0c587",
+      "role": "multi_exposure_camera_and_fused_diffraction_example"
+    },
+    {
+      "path": "outputs/paper_style/full/meta.json",
+      "size_bytes": 7304,
+      "sha256": "19a6cbc6bd3f33112de180f439aa0ec70969dd4ec0cf088f1f0bad4e590f608f",
+      "role": "simulation_configuration_and_provenance"
+    },
+    {
+      "path": "outputs/paper_style/full/noise_sweep.csv",
+      "size_bytes": 43450,
+      "sha256": "111168c7ec2e2072a2f9814a42dc3a16a516705c837d66da249f751e111dc633",
+      "role": "noise_sweep_metrics"
+    },
+    {
+      "path": "outputs/paper_style/full/resolution_summary.json",
+      "size_bytes": 7872,
+      "sha256": "561efe7c963591f327740a92c6bf6cf5285211d3c3a888a99b31e0dae1829bc4",
+      "role": "resolution_metrics"
+    },
+    {
+      "path": "outputs/paper_style/full/usaf_16bit.npz",
+      "size_bytes": 2426928,
+      "sha256": "ffbbc282005f6d360eb4826aa05a6f0aa41a7c53d86a95d13d171de3bdfccf22",
+      "role": "usaf_16bit_truth_reconstructions_profiles_and_frc"
+    },
+    {
+      "path": "outputs/paper_style/full/usaf_8bit.npz",
+      "size_bytes": 3093534,
+      "sha256": "b17e77c0a229c6c798eed4493c0e28148db72b42743174bc5d99c7f2f986002b",
+      "role": "usaf_8bit_truth_reconstructions_profiles_and_frc"
+    },
+    {
+      "path": "outputs/paper_style/quick/bit_sweep.csv",
+      "size_bytes": 6546,
+      "sha256": "3bbc4a22a02b640665d5686b13b94d5d55e91203a432016782e1dde95fe9ddbe",
+      "role": "bit_depth_sweep_metrics"
+    },
+    {
+      "path": "outputs/paper_style/quick/cameraman_8bit.npz",
+      "size_bytes": 2717310,
+      "sha256": "cfd07efb9c39f057be775f5a2f97061fd66a08726fd0c72090a03ce98025928d",
+      "role": "cameraman_truth_and_reconstructions"
+    },
+    {
+      "path": "outputs/paper_style/quick/DATA_CONTRACT.md",
+      "size_bytes": 10608,
+      "sha256": "3354f00b9b672e31edf30ac3895f7b1afda05e6fcde56c31038d095b047d135c",
+      "role": "simulation_data_contract"
+    },
+    {
+      "path": "outputs/paper_style/quick/diffraction_example.npz",
+      "size_bytes": 41788,
+      "sha256": "2a888de968363ac16b74fed0ced83218a37fef284b5d86ac33e9d4c169b0c587",
+      "role": "multi_exposure_camera_and_fused_diffraction_example"
+    },
+    {
+      "path": "outputs/paper_style/quick/meta.json",
+      "size_bytes": 6752,
+      "sha256": "168976e67660bdb1dd61d669da978114d91c3d4ab7a59d5d51564abef1532800",
+      "role": "simulation_configuration_and_provenance"
+    },
+    {
+      "path": "outputs/paper_style/quick/noise_sweep.csv",
+      "size_bytes": 5367,
+      "sha256": "9319ac2df4f7d457c93bfbce8bc50297f69f54fe49dd4f41b96edd364a5daa92",
+      "role": "noise_sweep_metrics"
+    },
+    {
+      "path": "outputs/paper_style/quick/resolution_summary.json",
+      "size_bytes": 7881,
+      "sha256": "5877d12bf3946454bc8afdbdcfbd22cc313cbcf0a090858d391bf958339e5c81",
+      "role": "resolution_metrics"
+    },
+    {
+      "path": "outputs/paper_style/quick/usaf_16bit.npz",
+      "size_bytes": 2425968,
+      "sha256": "6f5ec30cce23ddcc32a9165954713fe4ca32e3169ca8fa9caa4536db1a737208",
+      "role": "usaf_16bit_truth_reconstructions_profiles_and_frc"
+    },
+    {
+      "path": "outputs/paper_style/quick/usaf_8bit.npz",
+      "size_bytes": 3038901,
+      "sha256": "c6941c73f9049cf78562679054d1b9ac39966b53d65770f338578c4a0bcb924f",
+      "role": "usaf_8bit_truth_reconstructions_profiles_and_frc"
+    }
+  ]
+}

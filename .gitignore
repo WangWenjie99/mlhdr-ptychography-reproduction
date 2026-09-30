@@ -1,10 +1,42 @@
-# Local data, reconstruction archives and paper PDF are not published.
-/outputs/
+# Ignore unpublished outputs and raw data; retain the exact data snapshots below.
+/outputs/*
 *.npy
 *.npz
 *.h5
 *.hdf5
 *.pdf
+
+# These complete simulation snapshots are needed to continue work after cloning.
+!/outputs/paper_style/
+/outputs/paper_style/*
+!/outputs/paper_style/full/
+!/outputs/paper_style/quick/
+/outputs/paper_style/full/*
+/outputs/paper_style/quick/*
+!/outputs/paper_style/full/DATA_CONTRACT.md
+!/outputs/paper_style/full/bit_sweep.csv
+!/outputs/paper_style/full/noise_sweep.csv
+!/outputs/paper_style/full/meta.json
+!/outputs/paper_style/full/resolution_summary.json
+!/outputs/paper_style/full/cameraman_8bit.npz
+!/outputs/paper_style/full/usaf_8bit.npz
+!/outputs/paper_style/full/usaf_16bit.npz
+!/outputs/paper_style/full/diffraction_example.npz
+!/outputs/paper_style/quick/DATA_CONTRACT.md
+!/outputs/paper_style/quick/bit_sweep.csv
+!/outputs/paper_style/quick/noise_sweep.csv
+!/outputs/paper_style/quick/meta.json
+!/outputs/paper_style/quick/resolution_summary.json
+!/outputs/paper_style/quick/cameraman_8bit.npz
+!/outputs/paper_style/quick/usaf_8bit.npz
+!/outputs/paper_style/quick/usaf_16bit.npz
+!/outputs/paper_style/quick/diffraction_example.npz
+
+# Reference paper used to interpret and extend the experiments.
+!/Liu et al. - 2024 - Resolution-Enhanced Lensless Ptychographic Microscope Based on Maximum-Likelihood High-Dynamic-Range.pdf
+
+# Temporary rendering and audit files are regenerated when needed.
+/tmp/
 
 # Interpreter, operating system and editor files.
 __pycache__/

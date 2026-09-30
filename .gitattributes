@@ -5,3 +5,12 @@
 *.csv text eol=lf
 *.txt text eol=lf
 *.png binary
+
+# Preserve the bytes used by the saved data and figure provenance checksums.
+outputs/paper_style/full/** -text
+outputs/paper_style/quick/** -text
+docs/paper_style/** -text
+docs/figures/paper_style/** -text
+docs/figures/paper_comparisons/** -text
+*.npz binary
+*.pdf binary

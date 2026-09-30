@@ -105,6 +105,14 @@ def ml_hdr_fusion(measurement: MultiExposureMeasurement, eps: float = 1e-8) -> n
 
     This implements Eq. (14)-(15) with gain absorbed into the digital counts.
     The result is a count-rate proportional HDR irradiance stack.
+
+    0/0 guard: Eq. (14) is undefined when the preliminary rate is 0 AND the
+    dark variance is 0 (e.g. low-bit cameras whose dark frames all quantise to
+    0). The denominator is floored at ``eps`` (count^2), so such pixels get
+    weights proportional to t_i^2 and a finite result. For the paper's seven
+    exposures (0.5-500 ms) and 20 dark frames, a nonzero denominator is
+    >= ~5e-6 count^2 >> eps (up to float32 rounding), so the floor does not
+    alter a well-defined weight.
     """
 
     z = measurement.z.astype(np.float32)

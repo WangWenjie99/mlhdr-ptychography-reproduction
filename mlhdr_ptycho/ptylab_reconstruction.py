@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import os
+import tempfile
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-_mpl_dir = Path(os.environ.get("MLHDR_MPLCONFIGDIR", "/private/tmp/mlhdr_mplconfig"))
+_mpl_dir = Path(os.environ.get("MLHDR_MPLCONFIGDIR", str(Path(tempfile.gettempdir()) / "mlhdr_mplconfig")))
 _mpl_dir.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault("MPLCONFIGDIR", str(_mpl_dir))
 

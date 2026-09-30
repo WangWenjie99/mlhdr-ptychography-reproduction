@@ -1,0 +1,261 @@
+{
+  "sources": {
+    "summary_metrics": {
+      "path": "../../summary_metrics.csv",
+      "sha256": "9a10b8ccc4a4f4611ddaa524ceeefccb4026cd6c2e30af6d0702ee509f7c580c"
+    },
+    "experiment_manifest": {
+      "path": "../../experiment_manifest.json",
+      "sha256": "a8ae25e71df5b990bda0297512c57919108dadba940a38080a05e39b49004668"
+    },
+    "matching_experiment_config": {
+      "path": "../../../experiments/paper_baseline_comparison.json",
+      "sha256": "6c23de2ddf5a6df67c4c925d51e43d3c0fb286a7ac1b6a88c87f6de454d08a08"
+    }
+  },
+  "source_experiment": {
+    "paper_doi": "10.1109/TIM.2024.3363788",
+    "baseline_archive": "outputs/sweep_21x21_steps8_14_i80/best/best_reconstruction.npz",
+    "input": "diff.npy",
+    "scan_crop": 21,
+    "exposure_times_ms": [
+      0.5,
+      1,
+      5,
+      10,
+      50,
+      100,
+      500
+    ],
+    "measurement_seeds": [
+      0,
+      1,
+      2
+    ],
+    "camera": {
+      "photon_flux_per_s": 1000000000.0,
+      "full_well_e": 2500000.0,
+      "bit_depth": 8,
+      "dark_current_e_per_s": 80.0,
+      "dark_frames": 20
+    },
+    "noise_profiles": {
+      "low_noise": {
+        "read_noise_e": 5.0
+      },
+      "read_noise_025adu": {
+        "read_noise_e": 2450.9803921568628
+      },
+      "read_noise_1adu": {
+        "read_noise_e": 9803.921568627451
+      }
+    },
+    "provenance": {
+      "photon_flux_per_s": "Paper section III-A: 1e9 photons/s. Mapping to brightest frame total is an explicit implementation assumption.",
+      "full_well_e": "Paper section III-A: 2.5e6 electrons.",
+      "bit_depth": "Paper uses 8-bit HDR comparisons.",
+      "dark_frames": "Paper section III-A and section IV: 20 dark frames per exposure.",
+      "exposure_times_ms": "Paper Fig.5 / transmission experiment, not a stated numerical simulation schedule.",
+      "noise_distributions": "Paper Eq.1-6: Poisson photon shot noise, Poisson dark current shot noise, Gaussian read noise.",
+      "read_noise_e_and_dark_current": "Not specified numerically in the paper. Low-noise values retain previous project assumptions. Two ADC-relative read-noise levels are explicit sensitivity controls, not the paper Fig.3 dB levels.",
+      "quantum_efficiency": "Assumed 1 electron per detected photon; no spatial detector nonuniformity or electronic offset.",
+      "reconstruction": "All saved baseline settings retained, including 80 iterations, 21x21 positions, 32x32 detector and regular scan grid, per user request. Paper numerical simulation instead used 250 iterations, 20x20 positions and 256x256 detector; transmission experiment used 1000 iterations.",
+      "extension": "Additional saturation-mask control, NOT the published ML-HDR algorithm. No reference image is used in fusion or reconstruction."
+    }
+  },
+  "code_sha256": {
+    "mlhdr_ptycho/comparison_figures.py": "9b4c9c76c863bb554c136679f20ba57c9f1a5ae08a55d93d8deddb5bbcc17924",
+    "scripts/plot_paper_comparisons.py": "b683721aeafbfcc5be1c1a14e9f2f81646d06aeda3d8844326bf77cc260b26c4"
+  },
+  "method_order": [
+    "single_0.5ms",
+    "single_1ms",
+    "single_5ms",
+    "single_10ms",
+    "single_50ms",
+    "single_100ms",
+    "single_500ms",
+    "paper_ml_hdr",
+    "saturation_mask_extension"
+  ],
+  "profile_order": [
+    "low_noise",
+    "read_noise_025adu",
+    "read_noise_1adu"
+  ],
+  "noise_standard_deviation_e": {
+    "low_noise": 5.0,
+    "read_noise_025adu": 2450.9803921568628,
+    "read_noise_1adu": 9803.921568627451
+  },
+  "fixed_noise_comparison_methods": [
+    "single_1ms",
+    "single_500ms",
+    "paper_ml_hdr",
+    "saturation_mask_extension"
+  ],
+  "statistics": "CSV means and sample standard deviations; error bars/bands are not confidence intervals",
+  "successful_runs": {
+    "low_noise/single_0.5ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "low_noise/single_1ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "low_noise/single_5ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "low_noise/single_10ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "low_noise/single_50ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "low_noise/single_100ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "low_noise/single_500ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "low_noise/paper_ml_hdr": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "low_noise/saturation_mask_extension": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_025adu/single_0.5ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_025adu/single_1ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_025adu/single_5ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_025adu/single_10ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_025adu/single_50ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_025adu/single_100ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_025adu/single_500ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_025adu/paper_ml_hdr": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_025adu/saturation_mask_extension": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_1adu/single_0.5ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_1adu/single_1ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_1adu/single_5ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_1adu/single_10ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_1adu/single_50ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_1adu/single_100ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_1adu/single_500ms": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_1adu/paper_ml_hdr": {
+      "runs": 3,
+      "successful_runs": 3
+    },
+    "read_noise_1adu/saturation_mask_extension": {
+      "runs": 3,
+      "successful_runs": 3
+    }
+  },
+  "reference": "Saved raw-data reconstruction, not object ground truth; diffraction errors use known pre-camera input",
+  "normalization": "Quality metrics are plotted as recorded; saturation fractions are converted to percent. No recomputation, smoothing, reconstruction, or PNG digitization",
+  "saturation": "Single-exposure measurement property; no fused-method saturation values plotted",
+  "high_q_mask": "radius >= min(detector_frame_shape)/4, as in diffraction_comparison",
+  "total_hdr_exposure_ms": 666.5,
+  "acquisition_budget": "Unequal between HDR and single exposures; excludes dark frames and readout",
+  "formats": [
+    "png",
+    "svg"
+  ],
+  "png_dpi": 300,
+  "figures": {
+    "exposure_comparison": {
+      "png": {
+        "path": "exposure_comparison.png",
+        "sha256": "19595cb5816da54afcb9a73ea1c325bbdec83d1463079e98cda2f222e4716ade"
+      },
+      "svg": {
+        "path": "exposure_comparison.svg",
+        "sha256": "f0449348ccf468aa177a72353ef8b7d50ed600b11da853308a81f676b69a54cf"
+      }
+    },
+    "method_heatmaps": {
+      "png": {
+        "path": "method_heatmaps.png",
+        "sha256": "b106d45ee7d97424a2bd805f05682cbb71b646c3dc2d39c44b717831ac6d30da"
+      },
+      "svg": {
+        "path": "method_heatmaps.svg",
+        "sha256": "e323405bb49e8a1ff981c4edd628da9a7fd9f49e1aebe3307462fd726ed3c18c"
+      }
+    },
+    "noise_comparison": {
+      "png": {
+        "path": "noise_comparison.png",
+        "sha256": "5498046eed0106ae43a752099d1ef823e32d7d69ce0bdbf0ed58c7f0029de5a2"
+      },
+      "svg": {
+        "path": "noise_comparison.svg",
+        "sha256": "077e22091c136a838aefb68bd97d3ad91ce3b74b5f6260eedd23ca04f1ecbb90"
+      }
+    },
+    "diffraction_diagnostics": {
+      "png": {
+        "path": "diffraction_diagnostics.png",
+        "sha256": "f01ad3aad30a1bc9117ca64739d73fa7dea89263fd52366c24715ab3b0b4f702"
+      },
+      "svg": {
+        "path": "diffraction_diagnostics.svg",
+        "sha256": "5485bce4995e089c10e6bd2e52a6d86c7799863659b1d034f1e09c717c350d0a"
+      }
+    }
+  }
+}

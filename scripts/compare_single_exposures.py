@@ -6,10 +6,12 @@ import csv
 import logging
 import os
 import sys
+import tempfile
 from pathlib import Path
 
-Path("/private/tmp/mlhdr_mplconfig").mkdir(parents=True, exist_ok=True)
-os.environ.setdefault("MPLCONFIGDIR", "/private/tmp/mlhdr_mplconfig")
+_mpl_dir = Path(tempfile.gettempdir()) / "mlhdr_mplconfig"
+_mpl_dir.mkdir(parents=True, exist_ok=True)
+os.environ.setdefault("MPLCONFIGDIR", str(_mpl_dir))
 
 import matplotlib
 

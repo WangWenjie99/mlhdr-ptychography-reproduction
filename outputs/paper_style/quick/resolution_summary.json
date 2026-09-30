@@ -1,0 +1,271 @@
+{
+  "note": "All metrics compare reconstructions with the known simulated GROUND TRUTH. FRC is reconstruction-vs-truth on amplitude images.",
+  "dx_um": 0.5711280335771276,
+  "frc": {
+    "threshold": "van Heel half-bit",
+    "window": "2D Hann",
+    "min_frequency_nyquist": 0.05,
+    "resolution_um": "dx_um / cutoff_nyquist (half-period)"
+  },
+  "usaf_contrast_threshold": 0.2,
+  "cameraman_8bit": {
+    "runs": [
+      {
+        "method": "single",
+        "bits": 8,
+        "label": "single@8",
+        "status": "ok",
+        "psnr_db": 20.545581888835187,
+        "ssim": 0.47158153736185104,
+        "nrmse": 0.12307813559656454,
+        "frc_cutoff_nyquist": 0.21526728603606926,
+        "frc_resolution_um": 2.65311113497028,
+        "frc_reached_nyquist": false
+      },
+      {
+        "method": "lrfc",
+        "bits": 8,
+        "label": "lrfc@8",
+        "status": "ok",
+        "psnr_db": 27.263244110840745,
+        "ssim": 0.8167476681998512,
+        "nrmse": 0.056793390688117486,
+        "frc_cutoff_nyquist": 0.6776306934380835,
+        "frc_resolution_um": 0.842830820840486,
+        "frc_reached_nyquist": false
+      },
+      {
+        "method": "ml_eq14_15",
+        "bits": 8,
+        "label": "ml_eq14_15@8",
+        "status": "ok",
+        "psnr_db": 18.754620379794286,
+        "ssim": 0.5035048734428379,
+        "nrmse": 0.15126170253983542,
+        "frc_cutoff_nyquist": 0.33648181244779213,
+        "frc_resolution_um": 1.6973518699936947,
+        "frc_reached_nyquist": false
+      },
+      {
+        "method": "ml_masked",
+        "bits": 8,
+        "label": "ml_masked@8",
+        "status": "ok",
+        "psnr_db": 27.70076754030959,
+        "ssim": 0.8234723251490651,
+        "nrmse": 0.0540034650179861,
+        "frc_cutoff_nyquist": 0.7190672831149836,
+        "frc_resolution_um": 0.794262299214913,
+        "frc_reached_nyquist": false
+      }
+    ]
+  },
+  "usaf_8bit": {
+    "truth": {
+      "limit": {
+        "label": "9-4",
+        "line_width_um": 0.6905339660024877
+      },
+      "finest_any": {
+        "label": "9-6",
+        "line_width_um": 0.5480771720260608
+      }
+    },
+    "runs": [
+      {
+        "method": "single",
+        "bits": 8,
+        "label": "single@8",
+        "status": "ok",
+        "psnr_db": 9.3395128739783,
+        "ssim": 0.24863950580290917,
+        "nrmse": 0.33157746227506135,
+        "frc_cutoff_nyquist": 0.0907830856338246,
+        "frc_resolution_um": 6.291128238147621,
+        "frc_reached_nyquist": false,
+        "usaf_limit": {
+          "label": null,
+          "line_width_um": null
+        },
+        "usaf_finest_any": {
+          "label": null,
+          "line_width_um": null
+        }
+      },
+      {
+        "method": "single",
+        "bits": 16,
+        "label": "single@16",
+        "status": "ok",
+        "psnr_db": 18.48191663246173,
+        "ssim": 0.8607213568701176,
+        "nrmse": 0.11573502650254006,
+        "frc_cutoff_nyquist": 0.5745462052358778,
+        "frc_resolution_um": 0.9940506583672467,
+        "frc_reached_nyquist": false,
+        "usaf_limit": {
+          "label": "8-6",
+          "line_width_um": 1.0961543440521215
+        },
+        "usaf_finest_any": {
+          "label": "8-6",
+          "line_width_um": 1.0961543440521215
+        }
+      },
+      {
+        "method": "lrfc",
+        "bits": 8,
+        "label": "lrfc@8",
+        "status": "ok",
+        "psnr_db": 17.846433905707112,
+        "ssim": 0.8123730573160182,
+        "nrmse": 0.12451995405585689,
+        "frc_cutoff_nyquist": 0.5469054542523462,
+        "frc_resolution_um": 1.044290250054089,
+        "frc_reached_nyquist": false,
+        "usaf_limit": {
+          "label": "8-6",
+          "line_width_um": 1.0961543440521215
+        },
+        "usaf_finest_any": {
+          "label": "8-6",
+          "line_width_um": 1.0961543440521215
+        }
+      },
+      {
+        "method": "ml_eq14_15",
+        "bits": 8,
+        "label": "ml_eq14_15@8",
+        "status": "ok",
+        "psnr_db": 8.469231930458536,
+        "ssim": 0.4111416267175145,
+        "nrmse": 0.3665211584309617,
+        "frc_cutoff_nyquist": 0.30820060925592774,
+        "frc_resolution_um": 1.853104816878758,
+        "frc_reached_nyquist": false,
+        "usaf_limit": {
+          "label": "8-1",
+          "line_width_um": 1.953125
+        },
+        "usaf_finest_any": {
+          "label": "8-1",
+          "line_width_um": 1.953125
+        }
+      },
+      {
+        "method": "ml_masked",
+        "bits": 8,
+        "label": "ml_masked@8",
+        "status": "ok",
+        "psnr_db": 16.95366387848672,
+        "ssim": 0.7953385723794563,
+        "nrmse": 0.13799948101797582,
+        "frc_cutoff_nyquist": 0.5185556980758844,
+        "frc_resolution_um": 1.101382234726789,
+        "frc_reached_nyquist": false,
+        "usaf_limit": {
+          "label": "8-6",
+          "line_width_um": 1.0961543440521215
+        },
+        "usaf_finest_any": {
+          "label": "8-6",
+          "line_width_um": 1.0961543440521215
+        }
+      }
+    ]
+  },
+  "usaf_16bit": {
+    "truth": {
+      "limit": {
+        "label": "9-4",
+        "line_width_um": 0.6905339660024877
+      },
+      "finest_any": {
+        "label": "9-6",
+        "line_width_um": 0.5480771720260608
+      }
+    },
+    "runs": [
+      {
+        "method": "single",
+        "bits": 16,
+        "label": "single@16",
+        "status": "ok",
+        "psnr_db": 18.48191663246173,
+        "ssim": 0.8607213568701176,
+        "nrmse": 0.11573502650254006,
+        "frc_cutoff_nyquist": 0.5745462052358778,
+        "frc_resolution_um": 0.9940506583672467,
+        "frc_reached_nyquist": false,
+        "usaf_limit": {
+          "label": "8-6",
+          "line_width_um": 1.0961543440521215
+        },
+        "usaf_finest_any": {
+          "label": "8-6",
+          "line_width_um": 1.0961543440521215
+        }
+      },
+      {
+        "method": "lrfc",
+        "bits": 16,
+        "label": "lrfc@16",
+        "status": "ok",
+        "psnr_db": 25.69223820044615,
+        "ssim": 0.9578478587287884,
+        "nrmse": 0.050460173219874754,
+        "frc_cutoff_nyquist": 1.0,
+        "frc_resolution_um": 0.5711280335771276,
+        "frc_reached_nyquist": true,
+        "usaf_limit": {
+          "label": "9-4",
+          "line_width_um": 0.6905339660024877
+        },
+        "usaf_finest_any": {
+          "label": "9-4",
+          "line_width_um": 0.6905339660024877
+        }
+      },
+      {
+        "method": "ml_eq14_15",
+        "bits": 16,
+        "label": "ml_eq14_15@16",
+        "status": "ok",
+        "psnr_db": 12.294141461040587,
+        "ssim": 0.553969906496817,
+        "nrmse": 0.23596825124548093,
+        "frc_cutoff_nyquist": 0.409951656783093,
+        "frc_resolution_um": 1.3931594716772024,
+        "frc_reached_nyquist": false,
+        "usaf_limit": {
+          "label": "8-2",
+          "line_width_um": 1.7400365588678508
+        },
+        "usaf_finest_any": {
+          "label": "9-4",
+          "line_width_um": 0.6905339660024877
+        }
+      },
+      {
+        "method": "ml_masked",
+        "bits": 16,
+        "label": "ml_masked@16",
+        "status": "ok",
+        "psnr_db": 25.767026372643254,
+        "ssim": 0.9575078696233361,
+        "nrmse": 0.05002756079682497,
+        "frc_cutoff_nyquist": 1.0,
+        "frc_resolution_um": 0.5711280335771276,
+        "frc_reached_nyquist": true,
+        "usaf_limit": {
+          "label": "9-3",
+          "line_width_um": 0.7750981699063471
+        },
+        "usaf_finest_any": {
+          "label": "9-3",
+          "line_width_um": 0.7750981699063471
+        }
+      }
+    ]
+  }
+}

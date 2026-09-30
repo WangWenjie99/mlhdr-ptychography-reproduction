@@ -14,11 +14,12 @@ import os
 from pathlib import Path
 import shutil
 import sys
+import tempfile
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-os.environ.setdefault("MPLCONFIGDIR", "/private/tmp/mlhdr_mplconfig")
+os.environ.setdefault("MPLCONFIGDIR", str(Path(tempfile.gettempdir()) / "mlhdr_mplconfig"))
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -247,7 +248,7 @@ def report(output, manifest, summary, baseline_check):
               "- `<场景>/seed_<种子>/measurement.npz`：全部数字测量、暗场、曝光时间。",
               "- `<场景>/seed_<种子>/<方法>/`：重建数组、融合/单曝光输入及元数据。第一个种子还包含完整 PNG 和 PtyLab HDF5。",
               "", "从项目目录运行（使用新的输出路径，脚本拒绝覆盖已有目录）：", "", "```bash",
-              "/opt/anaconda3/bin/python scripts/reproduce_paper.py --output outputs/paper_reproduction_repeat",
+              "python scripts/reproduce_paper.py --output outputs/paper_reproduction_repeat",
               "```", ""]
     (output / "REPORT.md").write_text("\n".join(lines), encoding="utf-8")
     # A simple self-contained index uses relative local assets, no external JS.
