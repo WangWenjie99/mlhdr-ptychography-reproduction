@@ -2,8 +2,8 @@
   "schema_version": 1,
   "description": "Complete preserved local scientific data, published figures and provenance for continuation from a Git clone. Paths are relative to the repository root; SHA-256 and sizes describe exact file bytes.",
   "snapshot_date": "2026-10-01",
-  "file_count": 61,
-  "total_bytes": 32694877,
+  "file_count": 60,
+  "total_bytes": 31001452,
   "missing_preexisting": [
     {
       "path": "diff.npy",
@@ -281,12 +281,6 @@
       "size_bytes": 2024,
       "sha256": "6c23de2ddf5a6df67c4c925d51e43d3c0fb286a7ac1b6a88c87f6de454d08a08",
       "role": "experiment_configuration"
-    },
-    {
-      "path": "Liu et al. - 2024 - Resolution-Enhanced Lensless Ptychographic Microscope Based on Maximum-Likelihood High-Dynamic-Range.pdf",
-      "size_bytes": 1693425,
-      "sha256": "e91eb23bd0d1d835e3f7aa49b7faaddf70610602be7fc6a79c3afd57332964c0",
-      "role": "reference_paper"
     },
     {
       "path": "outputs/paper_style/full/bit_sweep.csv",

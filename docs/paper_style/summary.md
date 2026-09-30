@@ -1,74 +1,74 @@
-# 论文风格对比图的关键数值
+# Key values for the paper-style comparisons
 
-本页汇总当前保存的 `outputs/paper_style/full/` 仿真成果。本次续作从既有数据重绘图表并补充说明，没有重新执行仿真。数据与上文[固定基线实验](../results.md#论文式综合对比已有结果重绘)分别统计：本页以已知仿真真值为参考，固定基线实验以保存的原始数据重建为参考。
+This page summarizes the saved simulation results in `outputs/paper_style/full/`. The comparison figures were regenerated and their explanations expanded using existing data, without rerunning the simulations. These data are accounted for separately from the [fixed-baseline experiment](../results.md#paper-style-comparisons-from-saved-results): this page uses known simulation ground truth, whereas the fixed-baseline experiment uses a saved raw-data reconstruction as its reference.
 
-完整数值见 [summary.csv](summary.csv)，逐次扫描记录见 [bit_sweep.csv](data/bit_sweep.csv) 和 [noise_sweep.csv](data/noise_sweep.csv)，USAF 单次结果见 [resolution_summary.json](data/resolution_summary.json)。图表及源文件哈希保存在 [figures_manifest.json](../figures/paper_style/figures_manifest.json)。以下表格按源 CSV 的 `method` 字段映射方法，显示已经保存的指标；不从 PNG 读取数值。
+Complete values are in [summary.csv](summary.csv), per-run sweep records in [bit_sweep.csv](data/bit_sweep.csv) and [noise_sweep.csv](data/noise_sweep.csv), and single-run USAF results in [resolution_summary.json](data/resolution_summary.json). Figure and source hashes are recorded in [figures_manifest.json](../figures/paper_style/figures_manifest.json). The tables map methods using the source CSV's `method` field and display saved metrics; no values are read from PNG files.
 
-## Cameraman：8 bit 与 16 bit 单曝光参考
+## Cameraman: 8-bit results and the 16-bit single-exposure reference
 
-扫描数据使用种子 0、1、2，每一条件均有 3 次成功结果；下表为均值，图中误差条为样本标准差。PSNR、SSIM 和振幅 NRMSE 都在仿真真值 ROI 上评价，先补偿全局复数比例与亚像素平移。单曝光为固定 10 ms，HDR 使用 7 档曝光（总积分 666.5 ms），采集预算不同。
+The sweep uses seeds 0, 1, and 2, with three successful runs per condition. The table gives means; figure error bars show sample standard deviations. PSNR, SSIM, and amplitude NRMSE are evaluated on the simulation ground-truth ROI after compensating for a global complex factor and subpixel translation. Single exposure is fixed at 10 ms, while HDR uses seven exposures with total integration of 666.5 ms. The acquisition budgets differ.
 
-| 方法（CSV 标签） | 位深 | PSNR ↑（dB） | SSIM ↑ | NRMSE ↓ | 统计 / 比较基准 |
+| Method (CSV label) | Bit depth | PSNR ↑ (dB) | SSIM ↑ | NRMSE ↓ | Statistic / reference |
 |---|---:|---:|---:|---:|---|
-| 单曝光 `single` | 8 | 20.56 | 0.4747 | 0.12280 | 3 次均值 / 仿真真值 |
-| LRFC-HDR `lrfc` | 8 | 27.88 | 0.8214 | 0.05293 | 3 次均值 / 仿真真值 |
-| 论文式（14）—（15）`ml_eq14_15` | 8 | 16.65 | 0.5355 | 0.19280 | 3 次均值 / 仿真真值 |
-| 饱和屏蔽扩展 `ml_masked` | 8 | 27.82 | 0.8222 | 0.05330 | 3 次均值 / 仿真真值 |
-| 单曝光参考 `single` | 16 | 32.31 | 0.9152 | 0.03177 | 3 次均值 / 仿真真值 |
+| Single exposure `single` | 8 | 20.56 | 0.4747 | 0.12280 | Three-run mean / simulation ground truth |
+| LRFC-HDR `lrfc` | 8 | 27.88 | 0.8214 | 0.05293 | Three-run mean / simulation ground truth |
+| Paper Eqs. (14)–(15) `ml_eq14_15` | 8 | 16.65 | 0.5355 | 0.19280 | Three-run mean / simulation ground truth |
+| Saturation-masking extension `ml_masked` | 8 | 27.82 | 0.8222 | 0.05330 | Three-run mean / simulation ground truth |
+| Single-exposure reference `single` | 16 | 32.31 | 0.9152 | 0.03177 | Three-run mean / simulation ground truth |
 
-8 bit 论文原式相对 16 bit 单曝光的 PSNR 差为 **−15.66 dB**；LRFC 与扩展分别为 **−4.43、−4.49 dB**。因此本项目没有重现论文“8 bit ML-HDR 达到或优于 16 bit 单曝光”的比较。论文图 2 数字化曲线给出的原式 PSNR 差约为 **+3.5 dB**；数字化数值精度约 ±0.5 dB，不适合逐点误差评估。
+The original 8-bit paper equations have a PSNR difference of **−15.66 dB** relative to the 16-bit single exposure; LRFC and the extension give **−4.43 and −4.49 dB**, respectively. This project therefore does not reproduce the paper's comparison in which 8-bit ML-HDR matches or exceeds 16-bit single exposure. The digitized Fig. 2 curves give a difference of approximately **+3.5 dB** for the original equations. Digitization precision is approximately ±0.5 dB and is unsuitable for point-by-point error evaluation.
 
-论文公式实现包含非负与除零保护，保留饱和观测，8 bit 的平均衍射 NRMSE 为约 0.8201；LRFC 和扩展分别约为 0.00339、0.00375。LRFC 按论文的线性响应关系构建，逐像素取最长未饱和曝光是本项目的实施选择。满阱饱和使亮区观测丢失，单纯提高 ADC 位深不能恢复这些计数。饱和屏蔽扩展是本项目的附加对照，不属于论文原算法。
+The paper-equation implementation includes nonnegativity and division-by-zero safeguards and retains saturated observations. Its mean 8-bit diffraction NRMSE is approximately 0.8201, compared with approximately 0.00339 and 0.00375 for LRFC and the extension. LRFC follows the paper's linear-response relationship; choosing the longest unsaturated exposure per pixel is this project's implementation choice. Full-well saturation loses bright-region observations, and increasing ADC bit depth alone cannot recover those counts. Saturation masking is an additional project control, not part of the paper's original algorithm.
 
-## 噪声扫描：54 dB 端点
+## Noise sweep: the 54 dB endpoint
 
-项目定义 `SNR_dB = 20·log₁₀(full_well / σ_read)`，54 dB 对应读出噪声约 4988 e⁻，数值越大表示噪声越小。论文没有明确这一换算，端点数值不能直接与论文同一横轴数值比较。下表仍是三个种子的均值，评价基准为仿真真值。
+The project defines `SNR_dB = 20·log₁₀(full_well / σ_read)`. At 54 dB, read noise is approximately 4988 e⁻; larger dB values mean less noise. The paper does not specify this conversion, so endpoint values cannot be directly compared at nominally equal paper-axis values. The table again gives three-seed means referenced to simulation ground truth.
 
-| 方法（CSV 标签） | 位深 | PSNR ↑（dB） | SSIM ↑ | NRMSE ↓ | 统计 / 比较基准 |
+| Method (CSV label) | Bit depth | PSNR ↑ (dB) | SSIM ↑ | NRMSE ↓ | Statistic / reference |
 |---|---:|---:|---:|---:|---|
-| 单曝光 `single` | 16 | 10.05 | 0.0284 | 0.41214 | 3 次均值 / 仿真真值 |
-| LRFC-HDR `lrfc` | 8 | 25.74 | 0.5870 | 0.06766 | 3 次均值 / 仿真真值 |
-| 论文式（14）—（15）`ml_eq14_15` | 8 | 15.19 | 0.2055 | 0.22791 | 3 次均值 / 仿真真值 |
-| 饱和屏蔽扩展 `ml_masked` | 8 | 20.37 | 0.3366 | 0.12562 | 3 次均值 / 仿真真值 |
+| Single exposure `single` | 16 | 10.05 | 0.0284 | 0.41214 | Three-run mean / simulation ground truth |
+| LRFC-HDR `lrfc` | 8 | 25.74 | 0.5870 | 0.06766 | Three-run mean / simulation ground truth |
+| Paper Eqs. (14)–(15) `ml_eq14_15` | 8 | 15.19 | 0.2055 | 0.22791 | Three-run mean / simulation ground truth |
+| Saturation-masking extension `ml_masked` | 8 | 20.37 | 0.3366 | 0.12562 | Three-run mean / simulation ground truth |
 
-整体 PSNR 随噪声减小而提高，但论文原式没有表现出论文图 3 中对 LRFC 的优势。扩展在高 dB 区域也低于 LRFC；其 SSIM 在 48–54 dB 之间未继续提高，屏蔽饱和观测并不保证所有条件下都最优。
+Overall PSNR improves as noise decreases, but the original equations do not show the advantage over LRFC reported in Fig. 3. The extension is also below LRFC at high dB values, and its SSIM does not continue improving between 48 and 54 dB. Masking saturated observations does not guarantee the best result under every condition.
 
-## USAF：种子 0 的单次重建
+## USAF: single reconstructions with seed 0
 
-以下质量指标、图像、剖面和 FRC 均来自种子 0，不是三个种子的平均结果。表中“最小元素”要求该元素及全部更粗元素在两个方向均可分辨；FRC 使用重建振幅与真值的比较，两者是不同的判定方式。
+The following quality metrics, images, profiles, and FRC values all come from seed 0, rather than three-seed means. The smallest element must be resolvable in both orientations along with every coarser element. FRC compares reconstructed amplitude with ground truth; these are distinct evaluation criteria.
 
-| 方法（CSV 标签） | 位深 | PSNR ↑（dB） | SSIM ↑ | NRMSE ↓ | 统计 / 比较基准 |
+| Method (CSV label) | Bit depth | PSNR ↑ (dB) | SSIM ↑ | NRMSE ↓ | Statistic / reference |
 |---|---:|---:|---:|---:|---|
-| 单曝光 `single` | 8 | 10.50 | 0.3578 | 0.29000 | 种子 0 / 仿真真值 |
-| LRFC-HDR `lrfc` | 8 | 17.37 | 0.7879 | 0.13160 | 种子 0 / 仿真真值 |
-| 论文式（14）—（15）`ml_eq14_15` | 8 | 5.26 | 0.2871 | 0.53030 | 种子 0 / 仿真真值 |
-| 饱和屏蔽扩展 `ml_masked` | 8 | 16.84 | 0.7854 | 0.13980 | 种子 0 / 仿真真值 |
-| 单曝光 `single` | 16 | 20.66 | 0.8892 | 0.09011 | 种子 0 / 仿真真值 |
-| LRFC-HDR `lrfc` | 16 | 50.78 | 0.9988 | 0.002810 | 种子 0 / 仿真真值 |
-| 论文式（14）—（15）`ml_eq14_15` | 16 | 10.86 | 0.5085 | 0.27830 | 种子 0 / 仿真真值 |
-| 饱和屏蔽扩展 `ml_masked` | 16 | 51.47 | 0.9988 | 0.002593 | 种子 0 / 仿真真值 |
+| Single exposure `single` | 8 | 10.50 | 0.3578 | 0.29000 | Seed 0 / simulation ground truth |
+| LRFC-HDR `lrfc` | 8 | 17.37 | 0.7879 | 0.13160 | Seed 0 / simulation ground truth |
+| Paper Eqs. (14)–(15) `ml_eq14_15` | 8 | 5.26 | 0.2871 | 0.53030 | Seed 0 / simulation ground truth |
+| Saturation-masking extension `ml_masked` | 8 | 16.84 | 0.7854 | 0.13980 | Seed 0 / simulation ground truth |
+| Single exposure `single` | 16 | 20.66 | 0.8892 | 0.09011 | Seed 0 / simulation ground truth |
+| LRFC-HDR `lrfc` | 16 | 50.78 | 0.9988 | 0.002810 | Seed 0 / simulation ground truth |
+| Paper Eqs. (14)–(15) `ml_eq14_15` | 16 | 10.86 | 0.5085 | 0.27830 | Seed 0 / simulation ground truth |
+| Saturation-masking extension `ml_masked` | 16 | 51.47 | 0.9988 | 0.002593 | Seed 0 / simulation ground truth |
 
-| 方法 | 位深 | 最小连续可分辨元素 | 线宽（μm） | 真值参考 FRC 半周期（μm） |
+| Method | Bit depth | Smallest continuously resolvable element | Line width (μm) | Ground-truth FRC half-period (μm) |
 |---|---:|---|---:|---:|
-| 单曝光 | 8 | G7 E1 | 3.906 | 2.025 |
+| Single exposure | 8 | G7 E1 | 3.906 | 2.025 |
 | LRFC-HDR | 8 | G8 E6 | 1.096 | 1.125 |
-| 论文原式 | 8 | G7 E1 | 3.906 | 2.420 |
-| 饱和屏蔽扩展 | 8 | G8 E6 | 1.096 | 1.034 |
-| 单曝光 | 16 | G9 E1 | 0.977 | 0.799 |
-| LRFC-HDR | 16 | G9 E4 | 0.691 | 0.571（奈奎斯特） |
-| 论文原式 | 16 | G8 E2 | 1.740 | 1.388 |
-| 饱和屏蔽扩展 | 16 | G9 E4 | 0.691 | 0.571（奈奎斯特） |
+| Original paper equations | 8 | G7 E1 | 3.906 | 2.420 |
+| Saturation-masking extension | 8 | G8 E6 | 1.096 | 1.034 |
+| Single exposure | 16 | G9 E1 | 0.977 | 0.799 |
+| LRFC-HDR | 16 | G9 E4 | 0.691 | 0.571 (Nyquist) |
+| Original paper equations | 16 | G8 E2 | 1.740 | 1.388 |
+| Saturation-masking extension | 16 | G9 E4 | 0.691 | 0.571 (Nyquist) |
 
-像素采样后的 USAF 真值本身也只连续分辨到 G9 E4；16 bit LRFC 与扩展已达到这个仿真上限。0.571 μm 是当前像素尺寸和真值参考 FRC 的上限，不是实测仪器分辨率。论文图 6、图 7 为真实实验；论文未充分说明 FRC 输入实现，本项目采用真值参考 FRC，与论文实验评价不能直接等同。
+The pixel-sampled USAF ground truth itself is continuously resolvable only through G9 E4. The 16-bit LRFC and extension results reach this simulation limit. The 0.571 μm value is the limit set by the current pixel size and ground-truth-referenced FRC, not a measured instrument resolution. Figs. 6 and 7 of the paper show real experiments. The paper does not fully describe its FRC inputs; this project's ground-truth-referenced FRC is not directly equivalent to that experimental evaluation.
 
-8 bit LRFC 与扩展按项目平台规则首次达标的时间为 0.572 s 和 0.447 s，均在第 5 次迭代；完整 250 次重建耗时约 27.6 s 和 24.1 s。单曝光与论文原式未达到误差下降门槛，未给出平台时间。平台时间既不等于总计算时间，也不能直接比较论文的 225 s / 360 s。
+Under the project's plateau rule, 8-bit LRFC and the extension first meet the convergence criterion at 0.572 s and 0.447 s, both at iteration 5. Their complete 250-iteration runs take approximately 27.6 s and 24.1 s. Single exposure and the original equations do not meet the required error-reduction threshold, so no plateau time is reported. Plateau time is different from total computation time and cannot be directly compared with the paper's 225 s / 360 s.
 
-## 衍射展示与参数范围
+## Diffraction display and parameter scope
 
-图 5 的扫描位置 190（种子 0）在七档曝光下的饱和像素比例为 **0%、0%、0%、0%、0.1221%、0.2197%、0.3418%**，依次对应 0.5、1、5、10、50、100、500 ms。此处百分比是 [meta.json](data/meta.json) 的帧级比例乘以 100。HDR 图显示融合速率乘以 500 ms 的等效计数，可超过原始 8 bit ADC 的 255 上限；十幅图共用 `log₂(1 + counts)` 色标。
+For scan position 190 (seed 0) in Fig. 5, saturated-pixel fractions across the seven exposures are **0%, 0%, 0%, 0%, 0.1221%, 0.2197%, and 0.3418%**, corresponding to 0.5, 1, 5, 10, 50, 100, and 500 ms. These percentages equal the frame-level fractions in [meta.json](data/meta.json) multiplied by 100. HDR panels show fused rates multiplied by 500 ms as equivalent counts, which can exceed the original 8-bit ADC limit of 255. All ten panels share a `log₂(1 + counts)` color scale.
 
-论文给出 1024×1024 物体、256×256 探针与探测器、20×20 个扫描位置、约 40 px 步长及 10% 随机扰动、50 mm 距离和 250 次迭代。本项目采用 226×226 物体、64×64 探针窗口与探测器（探针直径 32 px）、8 px 步长及 10% 扰动，借用论文实验的 632.8 nm 波长与 13.9 mm 距离，保留 20×20 个位置与 250 次迭代。论文未充分说明仿真曝光时序、读出噪声数值及若干实施细节；相机读出噪声、暗电流、噪声 dB 换算及仿真曝光安排由项目明确选择，7 档曝光参考的是论文透射实验。全部项目参数和软件版本见 [meta.json](data/meta.json)。
+The paper specifies a 1024×1024 object, 256×256 probe and detector, 20×20 scan positions, approximately 40 px steps with 10% random perturbation, 50 mm propagation distance, and 250 iterations. This project uses a 226×226 object, 64×64 probe window and detector (32 px probe diameter), and 8 px steps with 10% perturbation. It adopts the paper's experimental wavelength of 632.8 nm and distance of 13.9 mm and retains 20×20 positions and 250 iterations. The paper does not fully specify simulation exposure timing, numerical read noise, and several implementation details. Camera read noise, dark current, noise-dB conversion, and simulation exposure scheduling are explicit project choices; the seven exposures follow the paper's transmission experiment. All project parameters and software versions are in [meta.json](data/meta.json).
 
-本项目振幅误差为 NRMSE；论文 RMS 误差没有明确计算定义，二者不能数值等同。论文与项目采用不同几何、采样和相机假设，叠加曲线用于对照趋势与方法排序。
+The project's amplitude error is NRMSE. The paper does not explicitly define its RMS calculation, so the two cannot be treated as numerically equivalent. Geometry, sampling, and camera assumptions differ between the paper and project; overlaid curves compare trends and method rankings.
 
-保存的位深扫描 120 条记录、噪声扫描 108 条记录全部为 `ok`；full 元数据的失败列表为空。本次核验源文件、复制的 CSV / JSON、绘图源码及图像文件哈希，绘图只读取这些既有成果。论文数字化点和近似标记见 [paper_digitized.json](paper_digitized.json)，各图解释与限制见 [结果说明](../results.md#论文风格仿真对比图)。
+All 120 saved bit-depth rows and 108 noise rows have status `ok`, and the full metadata's failure list is empty. Source files, copied CSV/JSON data, plotting code, and figure hashes are checked through the provenance manifests; plotting reads only the saved results. Digitized paper points and approximate flags are in [paper_digitized.json](paper_digitized.json). See the [results documentation](../results.md#paper-style-simulation-comparisons) for each figure's interpretation and limitations.

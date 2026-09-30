@@ -1,42 +1,42 @@
-# 固定基线的 ML-HDR 对照实验
+# Fixed-baseline ML-HDR comparison experiment
 
-本页整理已经完成的 81 次重建：三个噪声场景 × 三个相机种子 × 九种输入（七档单曝光、论文原式融合、附加饱和屏蔽扩展）。所有重建固定为 80 次 mPIE 迭代。
+This page summarizes 81 completed reconstructions: three noise scenarios × three camera seeds × nine inputs (seven single exposures, original paper fusion, and an additional saturation-masking extension). All reconstructions use 80 mPIE iterations.
 
-历史固定基线图和指标是已有实验的发布快照；该实验的原始数据、测量帧及完整重建数组在本次工作目录中已缺失。下文论文风格仿真的 full / quick 数据则已完整纳入仓库，包含真值、代表重建复数组、收敛、FRC、USAF 和衍射示例，可在新设备直接重绘和继续分析。恢复步骤及数据完整性检查见[换设备恢复说明](REPOSITORY_RESTORE.md)。
+The historical fixed-baseline figures and metrics are published snapshots of an existing experiment. Its raw data, measurement frames, and complete reconstruction arrays were already missing from the working directory. The full/quick paper-style simulation data discussed below are completely tracked in the repository, including ground truth, representative complex reconstructions, convergence, FRC, USAF, and diffraction examples. They support direct figure regeneration and further analysis on a new device. See the [restoration guide](REPOSITORY_RESTORE.md) for setup and data-integrity checks.
 
-另有一组以已知真值为参考的新仿真，按论文图 2、3、5、6、7 的版式绘制，见文末[论文风格仿真对比图](#论文风格仿真对比图)。
+A separate set of simulations with known ground truth follows the layouts of Figs. 2, 3, 5, 6, and 7. See [paper-style simulation comparisons](#paper-style-simulation-comparisons) below.
 
-## 基线
+## Baseline
 
-基线使用原始 `diff.npy` 的中心 `21×21` 扫描、`32×32` 探测器帧、8 px 扫描步长、31 px 初始探针直径、`circ_smooth` / `ones` 初始化。原始存档为 `outputs/sweep_21x21_steps8_14_i80/best/best_reconstruction.npz`。
+The baseline uses the central `21×21` scan of the original `diff.npy`, `32×32` detector frames, an 8 px scan step, a 31 px initial probe diameter, and `circ_smooth` / `ones` initialization. Its original archive is `outputs/sweep_21x21_steps8_14_i80/best/best_reconstruction.npz`.
 
-![原始数据基线的振幅和相位](figures/baseline_object.png)
+![Amplitude and phase of the raw-data baseline](figures/baseline_object.png)
 
-保存的基线用于事后评价，没有作为其他方法的物体或探针初始化。
+The saved baseline is used for post-reconstruction evaluation, not to initialize the other methods' objects or probes.
 
-## 相机设置与论文对应关系
+## Camera settings and correspondence to the paper
 
-| 项目 | 设置 | 来源或说明 |
+| Item | Setting | Source or explanation |
 |---|---|---|
-| 光子散粒噪声 | 泊松分布 | 论文式（1）—（6） |
-| 暗电流散粒噪声 | 泊松分布 | 论文式（1）—（6） |
-| 读出噪声 | 零均值高斯分布 | 论文式（1）—（6） |
-| 满阱容量 | 2.5×10⁶ 电子 | 论文 III-A |
-| 光通量 | 10⁹ photons/s | 论文 III-A；映射到当前数据是补充假设 |
-| ADC 位深 | 8 bit | 论文的 HDR 对照设置 |
-| 暗场数量 | 每档 20 张 | 论文 III-A、IV |
-| 曝光时间 | 0.5、1、5、10、50、100、500 ms | 论文图 5 的透射实验 |
-| 暗电流强度 | 80 e⁻/s | 继承旧项目的假设，论文未给出具体数值 |
-| 低噪声场景的读出噪声 | 标准差 5 e⁻ | 继承旧项目的假设 |
-| 两个敏感性场景 | 标准差 0.25、1 ADC count 对应的电子数 | 明确添加的敏感性分析，并非原文图 3 的 dB 取值 |
+| Photon shot noise | Poisson distribution | Paper Eqs. (1)–(6) |
+| Dark-current shot noise | Poisson distribution | Paper Eqs. (1)–(6) |
+| Read noise | Zero-mean Gaussian distribution | Paper Eqs. (1)–(6) |
+| Full-well capacity | 2.5×10⁶ electrons | Paper Section III-A |
+| Photon flux | 10⁹ photons/s | Paper Section III-A; mapping to the local data is an additional assumption |
+| ADC bit depth | 8 bit | Paper HDR comparison setting |
+| Dark frames | 20 per exposure | Paper Sections III-A and IV |
+| Exposure times | 0.5, 1, 5, 10, 50, 100, 500 ms | Transmission experiment in paper Fig. 5 |
+| Dark-current rate | 80 e⁻/s | Assumption inherited from the earlier project; no numerical value is given in the paper |
+| Read noise in the low-noise scenario | Standard deviation 5 e⁻ | Assumption inherited from the earlier project |
+| Two sensitivity scenarios | Electron standard deviations equivalent to 0.25 and 1 ADC count | Explicit additional sensitivity analysis, not the dB values in paper Fig. 3 |
 
-光通量使用一个全局系数，使最亮扫描帧的总探测光子率为 10⁹/s，同时保持扫描位置之间的相对能量；量子效率假设为 1。论文没有提供足够信息唯一确定这个映射。
+One global flux factor sets the brightest scan frame's total detected photon rate to 10⁹/s while preserving relative energies across scan positions. Quantum efficiency is assumed to be 1. The paper does not provide enough information to determine this mapping uniquely.
 
-与论文原始仿真不同，本项目按固定基线使用 441 个扫描位置、32×32 探测器帧和 80 次迭代；原文仿真使用 400 个位置、256×256 探测器帧和 250 次迭代。参数来源见 [实验配置](../experiments/paper_baseline_comparison.json)，实际运行环境和输入哈希见 [实验清单](experiment_manifest.json)。
+The fixed baseline uses 441 scan positions, 32×32 detector frames, and 80 iterations, whereas the paper's simulation uses 400 positions, 256×256 detector frames, and 250 iterations. Parameter sources are in the [experiment configuration](../experiments/paper_baseline_comparison.json); runtime information and input hashes are in the [experiment manifest](experiment_manifest.json).
 
-## 严格论文公式与附加对照
+## Original paper equations and additional control
 
-`paper_ml_hdr` 采用论文式（14）—（15）的结构：
+`paper_ml_hdr` follows the structure of paper Eqs. (14)–(15):
 
 ```text
 r_bar = mean((Z_i - dark_mean_i) / t_i)
@@ -44,208 +44,208 @@ w_i   = t_i² / (t_i * r_bar + dark_variance_i)
 HDR   = sum(w_i * (Z_i - dark_mean_i) / t_i) / sum(w_i)
 ```
 
-实现包含非负约束和除零保护，没有隐藏的饱和剔除。当暗场方差为零且分母有效时，上式退化为总计数除以总曝光时间。饱和计数仍参与平均，因此可能低估亮区。
+The implementation includes nonnegativity and division-by-zero safeguards, without implicit saturation rejection. When dark-frame variance is zero and the denominators are valid, the expression reduces to total counts divided by total exposure time. Saturated counts still participate in the average and can underestimate bright regions.
 
-`saturation_mask_extension` 单独屏蔽饱和观测，初始率也仅使用未饱和曝光计算。它保留零值观测；如果某像素所有曝光都饱和，则明确报告失败。**这是额外的诊断对照，不是论文原算法。**
+`saturation_mask_extension` separately masks saturated observations and computes its initial rate using only unsaturated exposures. It retains zero-valued observations and explicitly reports failure if every exposure is saturated at any pixel. **This is an additional diagnostic control, not the paper's original algorithm.**
 
-## 论文式综合对比（已有结果重绘）
+## Paper-style comparisons from saved results
 
-以下四组图参考论文图 2、图 3 的多方法比较方式，使用 [summary_metrics.csv](summary_metrics.csv) 中的全部 27 行汇总指标：三个噪声场景 × 九种输入，每组包含三个固定相机种子 0、1、2，共 81 次重建。它们是既有实验的重新绘图，没有运行新重建。重建种子固定为 0；误差条或阴影表示三次结果的**样本标准差**，不是置信区间，也不能用来证明统计显著性。重建振幅指标的波动还包含已知的数值求解波动；相机与融合阶段的衍射误差、饱和比例不受重建器波动影响。
+The four figure sets below follow the multi-method layouts of paper Figs. 2 and 3 and use all 27 summary rows in [summary_metrics.csv](summary_metrics.csv): three noise scenarios × nine inputs, each with fixed camera seeds 0, 1, and 2, totaling 81 reconstructions. They regenerate existing results without running new reconstructions. Reconstruction seed is fixed at 0. Error bars or shading show **sample standard deviations**, not confidence intervals or evidence of statistical significance. Variability in reconstructed-amplitude metrics also includes known numerical-solver variation. Camera/fusion-stage diffraction error and saturation fractions are unaffected by reconstructor variability.
 
-在仓库根目录运行以下命令即可重绘，不需要未归档的原始数组或 PtyLab：
+Regenerate from the repository root without the unavailable raw arrays or PtyLab:
 
 ```bash
 python scripts/plot_paper_comparisons.py --source docs --output docs/figures/paper_comparisons
 ```
 
-输出目录同时保存高清 PNG、矢量 SVG 和 [figures_manifest.json](figures/paper_comparisons/figures_manifest.json) 来源清单。所有曲线和数值均来自 CSV；原始重建图保留为下方的单次快照，不从渲染后的 PNG 反推定量指标。
+The output directory contains high-resolution PNG, vector SVG, and a [figures_manifest.json](figures/paper_comparisons/figures_manifest.json) provenance record. All curves and numerical values come from CSV. Original reconstruction images remain single-run snapshots below; quantitative metrics are not inferred from rendered PNG files.
 
-本次来源核对确认：CSV 含 27 个不重复的“噪声场景 × 输入方法”组合，记录的运行数与成功数合计均为 81；四组图的来源文件和绘图源码哈希与其图表清单一致。[历史实验清单](experiment_manifest.json) 保留生成实验时的源码记录：其中 7 个源码或配置文件有 3 个与当前文件一致；`mlhdr_ptycho/ml_hdr.py` 和 `mlhdr_ptycho/paper_reproduction.py` 已有后续修改，`mlhdr_ptycho/ptylab_reconstruction.py` 与 `scripts/reproduce_paper.py` 本次另修复了跨系统缓存目录和报告命令。这不改变已保存的汇总指标；历史源码记录按原样保留。本次未复算缺失的原始数组，下文的 532 项产物审计属于历史记录。
+The previous provenance audit confirmed 27 unique noise-scenario/input-method combinations in the CSV, with recorded run and success counts both totaling 81. The four figure sets' source-file and plotting-code hashes are recorded in their manifests. The [historical experiment manifest](experiment_manifest.json) preserves source records from experiment generation: three of seven source/configuration files matched the then-current files. `mlhdr_ptycho/ml_hdr.py` and `mlhdr_ptycho/paper_reproduction.py` had subsequent changes; `mlhdr_ptycho/ptylab_reconstruction.py` and `scripts/reproduce_paper.py` also received portability fixes for cache directories and report commands. These changes do not alter the saved summary metrics, and historical source records remain unchanged. Missing raw arrays were not recomputed; the 532 output-audit checks below are historical records.
 
-### 全曝光曲线
+### All exposure curves
 
-![三个噪声场景下全部曝光和融合方法的定量对比](figures/paper_comparisons/exposure_comparison.png)
+![Quantitative comparison of all exposures and fusion methods across three noise scenarios](figures/paper_comparisons/exposure_comparison.png)
 
-[下载矢量 SVG](figures/paper_comparisons/exposure_comparison.svg)。七档单曝光以对数曝光轴展示，两种多曝光融合方法以各自的均值和标准差作为水平对照。横轴只代表单曝光时间；融合使用全部七档，总积分时间为 **666.5 ms/位置**，不是图上任一单曝光的同等采集预算。
+[Download vector SVG](figures/paper_comparisons/exposure_comparison.svg). Seven single exposures use a logarithmic exposure axis; the two multi-exposure fusion methods appear as horizontal mean and standard-deviation references. The axis represents only single-exposure time. Fusion uses all seven exposures with **666.5 ms total integration per position**, rather than an acquisition budget equal to any single exposure on the graph.
 
-PSNR、SSIM 和振幅 NRMSE 都以保存的原始数据重建为参考，衡量与该基线的一致性。这里的 NRMSE 是相对 L2 误差，**不是论文图 2 的 RMS 指标**。低噪声场景中 1 ms 的单曝光表现最好；在 0.25 ADC count 场景中，最高平均 SSIM 来自 500 ms，最高平均 PSNR 却来自 5 ms，不能把某一指标选出的“最佳”推广到所有指标。
+PSNR, SSIM, and amplitude NRMSE measure agreement with the saved raw-data reconstruction. NRMSE here is relative L2 error, **not the RMS metric in paper Fig. 2**. The 1 ms single exposure performs best in the low-noise scenario. At 0.25 ADC count read noise, 500 ms has the highest mean SSIM, but 5 ms has the highest mean PSNR. A best method selected using one metric cannot be assumed best under every metric.
 
-### 全方法热力图
+### All-method heatmaps
 
-![九种输入在三个噪声场景下的指标热力图](figures/paper_comparisons/method_heatmaps.png)
+![Metric heatmaps for nine inputs across three noise scenarios](figures/paper_comparisons/method_heatmaps.png)
 
-[下载矢量 SVG](figures/paper_comparisons/method_heatmaps.svg)。热力图同时保留七档单曝光与两种融合结果，单元格数值为三次均值。各指标独立使用色标，应按其数值和优劣方向阅读，不能横跨不同指标比较颜色。额外饱和屏蔽的振幅一致性在三个场景下均更高，但它不属于论文原算法，也不是 LRFC-HDR。
+[Download vector SVG](figures/paper_comparisons/method_heatmaps.svg). The heatmaps include all seven single exposures and both fusion outputs, with cells showing three-run means. Each metric has its own color scale; interpret numerical values and the direction of improvement rather than comparing colors across different metrics. Additional saturation masking improves amplitude agreement in all three scenarios, but it is neither the original paper algorithm nor LRFC-HDR.
 
-### 固定方法的噪声敏感性
+### Noise sensitivity of fixed methods
 
-![固定1ms与500ms单曝光及两种融合方法的跨噪声比较](figures/paper_comparisons/noise_comparison.png)
+![Cross-noise comparison of fixed 1 ms and 500 ms single exposures and two fusion methods](figures/paper_comparisons/noise_comparison.png)
 
-[下载矢量 SVG](figures/paper_comparisons/noise_comparison.svg)。固定比较 **1 ms、500 ms、论文原式和额外饱和屏蔽**，不随噪声场景重新挑选曝光。三个横轴位置对应实际读出噪声标准差 5、2450.98、9803.92 e⁻，分别约为 0.00051、0.25、1 ADC count；它们不是论文图 3 的噪声 dB 取值。连接线只帮助观察这三个已测条件，不代表更多噪声条件的实验结果。
+[Download vector SVG](figures/paper_comparisons/noise_comparison.svg). The fixed methods are **1 ms, 500 ms, original paper equations, and additional saturation masking**, without reselecting exposure by scenario. The three x-axis positions correspond to read-noise standard deviations of 5, 2450.98, and 9803.92 e⁻, approximately 0.00051, 0.25, and 1 ADC count. These are not the noise-dB values in paper Fig. 3. Connecting lines help visualize the three measured conditions and do not imply experiments at additional noise levels.
 
-论文原式的平均 SSIM 在低、中噪声下均低于 500 ms 单曝光，在最高读出噪声下略高于它；后者差异与重复波动相近。这些结果不支持论文原式具有稳定的普遍优势。
+The original equations' mean SSIM is below the 500 ms single exposure at low and moderate noise and slightly above it at the highest read noise. The latter difference is comparable to repeat variation. These results do not support a consistent general advantage for the original equations.
 
-### 衍射误差与饱和诊断
+### Diffraction error and saturation diagnostics
 
-![全频与高频衍射误差及单曝光饱和比例](figures/paper_comparisons/diffraction_diagnostics.png)
+![Full-frequency and high-frequency diffraction error and single-exposure saturation fractions](figures/paper_comparisons/diffraction_diagnostics.png)
 
-[下载矢量 SVG](figures/paper_comparisons/diffraction_diagnostics.svg)。衍射 NRMSE 以**相机模拟前的衍射输入**为参考，并按已知相机增益恢复共同尺度；这一参考与物体振幅指标的重建基线不同。高频区域按探测器中心径向距离 **r ≥ 8 px** 定义。NRMSE 可以大于 1，较大的数值表示误差超过对应参考区域的信号范数。
+[Download vector SVG](figures/paper_comparisons/diffraction_diagnostics.svg). Diffraction NRMSE uses the **diffraction input before camera simulation** as its reference, restoring a common scale using the known camera gain. This reference differs from the reconstruction baseline used for object-amplitude metrics. The high-frequency region is defined by radial distance from the detector center, **r ≥ 8 px**. NRMSE can exceed 1; larger values indicate error greater than the signal norm in the corresponding reference region.
 
-额外饱和屏蔽大幅降低了已记录的全频衍射误差，但两种融合方法的高频 NRMSE 几乎相同：低、中、高读出噪声下分别约为 0.124、1.421、2.739。这说明当前饱和处理的收益不能直接解释为高频误差也同步改善，更不能作为真实分辨率提升的证明。
+Additional saturation masking substantially reduces the recorded full-frequency diffraction error. However, the two fusion methods have almost identical high-frequency NRMSE: approximately 0.124, 1.421, and 2.739 at low, moderate, and high read noise. The saturation-handling gain therefore does not establish a corresponding high-frequency error improvement or prove improved real resolution.
 
-饱和比例统计的是原始 ADC 测量中等于上限的像素比例。500 ms 单曝光约有 1.165% 的像素饱和；融合输出没有同一定义的饱和测量比例，所以该列只画七档单曝光，不把缺失值当成零。两种融合方法仍显示在前两列误差对照中。
+The saturation fraction is the proportion of raw ADC pixels at the maximum count. Approximately 1.165% of pixels are saturated at 500 ms. Fusion outputs do not have a raw-measurement saturation fraction under this definition, so the third column displays only seven single exposures and does not treat missing values as zero. Both fusion methods remain in the first two error-comparison columns.
 
-本组图未包含论文中的 LRFC-HDR、位深扫描、真值物体、FRC 分辨率或新增相位对比。现有文件不足以复算这些结果，因此这里只重绘可核对的已归档指标。
+These figures do not include LRFC-HDR, bit-depth sweeps, object ground truth, FRC resolution, or additional phase comparisons. Existing files are insufficient to recompute those results, so this section regenerates only verifiable archived metrics.
 
-## 单次图像快照：低噪声全部曝光对比
+## Single-run snapshots: all low-noise exposures
 
-下列图像来自已归档的相机种子 0，帮助对照定量曲线中的伪影和弱衍射信息；它们不是三次重建的平均图。振幅比较采用基线的共同色阶，衍射图采用共同的 log10 强度色阶。
+The images below use archived camera seed 0 to show artifacts and weak diffraction signals alongside the quantitative curves. They are not averages of three reconstructions. Amplitude comparisons use the baseline's shared scale, and diffraction images use a common log10 intensity scale.
 
-![七档单曝光与论文原式](figures/low_noise_comparison.png)
+![Seven single exposures and the original paper equations](figures/low_noise_comparison.png)
 
-![基线、最佳单曝光、原式和饱和屏蔽扩展](figures/low_noise_extension.png)
+![Baseline, best single exposure, original equations, and saturation-masking extension](figures/low_noise_extension.png)
 
-![指标随曝光时间变化](figures/low_noise_metrics.png)
+![Metrics versus exposure time](figures/low_noise_metrics.png)
 
-![中心扫描位置的衍射图对比](figures/low_noise_diffraction.png)
+![Diffraction comparison at the central scan position](figures/low_noise_diffraction.png)
 
-原式融合受到长曝光饱和计数影响。附加饱和处理使亮区计数更接近相机模拟前的输入，同时利用较长曝光记录弱信号。此对照支持饱和处理在本数据上的作用，但不能据此将改善归于论文原式。
+Original-equation fusion is affected by saturated counts from long exposures. Additional saturation handling brings bright-region counts closer to the input before camera simulation while using longer exposures to capture weak signals. This control supports a role for saturation handling in these data, but its improvement cannot be attributed to the original equations.
 
-## 三个噪声场景的汇总
+## Summary across three noise scenarios
 
-以下为三个固定相机种子的平均值。每个场景的“最佳单曝光”按平均 SSIM 选择；所有曝光均保留在 [完整指标表](summary_metrics.csv) 中。
+Values are means across three fixed camera seeds. The best single exposure in each scenario is selected by mean SSIM. All exposures remain in the [complete metric table](summary_metrics.csv).
 
-| 场景 | 最佳单曝光 | 单曝光 SSIM | 论文原式 SSIM | 饱和屏蔽扩展 SSIM |
+| Scenario | Best single exposure | Single-exposure SSIM | Original-equation SSIM | Saturation-extension SSIM |
 |---|---|---:|---:|---:|
 | `low_noise` | 1 ms | 0.4135 | 0.0589 | 0.8164 |
 | `read_noise_025adu` | 500 ms | 0.1732 | 0.0482 | 0.5389 |
 | `read_noise_1adu` | 500 ms | 0.1088 | 0.1187 | 0.3415 |
 
-高读出噪声场景中，原式出现小幅平均提升，但幅度与重复实验波动相近，三个种子不足以证明显著性。低噪声与中等读出噪声场景中，原式未优于最佳单曝光，因此没有证实原式具有普遍优势。
+At high read noise, the original equations show a small mean improvement, comparable to repeat variability. Three seeds do not establish significance. At low and moderate read noise, the original equations do not beat the best single exposure, so a general advantage is not established.
 
-### 0.25 ADC count 读出噪声
+### 0.25 ADC count read noise
 
-![中等读出噪声的图像比较](figures/read_noise_025adu_extension.png)
+![Image comparison at moderate read noise](figures/read_noise_025adu_extension.png)
 
-![中等读出噪声的指标](figures/read_noise_025adu_metrics.png)
+![Metrics at moderate read noise](figures/read_noise_025adu_metrics.png)
 
-### 1 ADC count 读出噪声
+### 1 ADC count read noise
 
-![高读出噪声的图像比较](figures/read_noise_1adu_extension.png)
+![Image comparison at high read noise](figures/read_noise_1adu_extension.png)
 
-![高读出噪声的指标](figures/read_noise_1adu_metrics.png)
+![Metrics at high read noise](figures/read_noise_1adu_metrics.png)
 
-## 如何解释这些比较
+## Interpreting the comparisons
 
-- PSNR 和 SSIM 参考的是保存的原始数据重建，而不是物体真值，不能解释为真实分辨率提升。
-- 统一评价扫描覆盖 ROI；仅补偿一个整体振幅比例。没有平移、滤波、直方图匹配或按方法单独拉伸灰度。
-- 汇总振幅图使用基线的共同灰度范围；原始基线的独立振幅/相位图带有各自色条。
-- 衍射 NRMSE 使用已知相机增益还原共同尺度，再与模拟相机之前的输入比较。
-- 各方法对自身输入的拟合误差仅作为收敛诊断，不能单独用于跨输入评价重建质量。
-- 所有方法共享同一份相机测量。图像固定展示种子 0，统计使用全部预设种子 0、1、2。
-- 多曝光总积分时间为 666.5 ms/位置，不含暗场及读出开销；这是不同采集时间的比较，不代表相同光子预算下的效率优势。
+- PSNR and SSIM are referenced to the saved raw-data reconstruction, not object ground truth, and cannot be interpreted as real resolution improvement.
+- Evaluation uses the same scan-coverage ROI and compensates only for one global amplitude factor. It does not apply translation, filtering, histogram matching, or method-specific grayscale stretching.
+- Summary amplitude images use the baseline's common grayscale range. Separate baseline amplitude/phase images have their own colorbars.
+- Diffraction NRMSE restores a common scale using known camera gain and compares against the input before camera simulation.
+- Each method's fit error against its own input is a convergence diagnostic and cannot independently compare reconstruction quality across different inputs.
+- All methods share the same camera measurements. Images show seed 0; statistics use all preset seeds 0, 1, and 2.
+- Multi-exposure integration totals 666.5 ms per position, excluding dark frames and readout overhead. Acquisition times differ, so the comparison does not establish an efficiency advantage at equal photon budgets.
 
-## 验证与重复性
+## Validation and repeatability
 
-9 项独立科学测试覆盖公式标量例子、量化边界、混合噪声统计、随机重复性、饱和行为、指标尺度和无效输入。已完成实验通过 532 项产物审计，细节见 [验证记录](validation_record.json)。
+Nine independent scientific tests cover scalar equation examples, quantization boundaries, mixed-noise statistics, random repeatability, saturation behavior, metric scaling, and invalid input. The completed experiment passed 532 output-audit checks; see the [validation record](validation_record.json).
 
-审计确认原始输入及基线没有被改动、测量和融合输入能精确重现、每种方法采用相同重建配置、全部 81 个重建结果为有限值且包含 80 次迭代，以及指标与保存数组一致。
+The audit confirmed unchanged original input and baseline, exactly reproducible measurement and fusion inputs, common reconstruction settings across methods, finite outputs for all 81 reconstructions with 80 iterations each, and agreement between metrics and saved arrays.
 
-历史基线与当前环境复算结果的振幅 NRMSE 为 0.011393，SSIM 为 0.950895。进一步重复运行显示：即使初始物体/探针字节和 NumPy 随机序列一致，当前安装的数值重建器输出仍不逐位相同，底层原因尚未定位。因此重建振幅指标的跨种子标准差也包含数值重建的重复波动。记录见 [solver_repeatability.json](solver_repeatability.json)。
+The historical baseline and its repeated reconstruction in the current environment have amplitude NRMSE 0.011393 and SSIM 0.950895. Additional repeated runs showed that the currently installed numerical reconstructor does not produce bit-identical outputs even with identical initial object/probe bytes and NumPy random sequences. The underlying cause remains unresolved. Cross-seed standard deviations for reconstructed-amplitude metrics therefore include numerical reconstruction variability. See [solver_repeatability.json](solver_repeatability.json).
 
-完整本地验证依赖未公开的原始数据与二进制结果；仓库内的验证 JSON 是已完成实验的审计记录。
+Complete local validation depends on unavailable original data and binary outputs. The repository's validation JSON files are audit records of the completed experiment.
 
-## 论文风格仿真对比图
+## Paper-style simulation comparisons
 
-本节与上文的固定基线实验相互独立：数据来自 `scripts/run_paper_style_simulation.py` 已保存的 **full 已知真值仿真**，图像按论文图 2、3、5、6、7 的版式绘制，所有指标（PSNR、SSIM、NRMSE、FRC、USAF 可分辨元素）都以**仿真真值**为参考。本次续作读取既有 CSV / NPZ / JSON 整理与重绘，没有重新执行仿真。论文图 6、图 7 是**真实实验**结果，这里对应的是仿真。
+This section is independent of the fixed-baseline experiment above. It uses saved **full simulations with known ground truth** from `scripts/run_paper_style_simulation.py`. Figures follow paper Figs. 2, 3, 5, 6, and 7, and all metrics—PSNR, SSIM, NRMSE, FRC, and resolvable USAF elements—are referenced to **simulation ground truth**. Existing CSV/NPZ/JSON files were organized and replotted without rerunning simulations. Paper Figs. 6 and 7 show **real experiments**; the corresponding results here are simulations.
 
-这是按论文图式设计的改编仿真。论文报告了 1024×1024 物体、256×256 探针与探测器、20×20 个扫描位置、约 40 px 步长及 10% 随机扰动、50 mm 传播距离和 250 次迭代。本项目保留 20×20 个位置与 250 次迭代，使用 226×226 物体、64×64 探针窗口与虚拟探测器（探针直径 32 px）、8 px 步长及 10% 扰动，并借用论文实验的 632.8 nm 波长与 13.9 mm 距离。论文未充分说明仿真曝光时序、读出噪声数值及若干实施细节；相机读出噪声、暗电流、噪声 dB 定义及仿真曝光安排采用本项目明确记录的假设。几何、相机和评价方式并不完全一致，绝对数值不能解释为原论文实验的逐点复现。
+This is an adapted simulation designed around the paper's figure layouts. The paper reports a 1024×1024 object, 256×256 probe and detector, 20×20 scan positions, approximately 40 px steps with 10% random perturbation, 50 mm propagation distance, and 250 iterations. This project retains 20×20 positions and 250 iterations, using a 226×226 object, 64×64 probe window and virtual detector (32 px probe diameter), and 8 px steps with 10% perturbation. It adopts the paper's experimental wavelength of 632.8 nm and distance of 13.9 mm. The paper does not fully specify simulation exposure timing, numerical read noise, and several implementation details; camera read noise, dark current, noise-dB definitions, and simulation exposure scheduling use explicit project assumptions. Geometry, camera models, and evaluation are not identical, so absolute values cannot be interpreted as a point-for-point reproduction of the paper's experiment.
 
-四种方法在所有图中使用同一编码：
+All figures use the same encoding for four methods:
 
-| 方法 | 含义 | 颜色 / 线型 |
+| Method | Meaning | Color / line style |
 |---|---|---|
-| `single` | 单曝光：7 档中无噪声峰值不饱和的最长曝光，对每个物体固定 | 黑色实线、圆点 |
-| `lrfc` | 按论文式（16）—（17）的线性响应关系构建的 LRFC-HDR 对照；逐像素取最长未饱和曝光是本项目的实施选择 | 蓝色点划线、菱形 |
-| `ml_eq14_15` | 按论文式（14）—（15）实现，含非负与除零保护；饱和像素参与融合 | 红色点线、方块 |
-| `ml_masked` | 式（14）—（15）权重并剔除饱和观测——**本项目扩展，不是论文算法** | 绿色点划线、三角 |
+| `single` | Longest of seven exposures whose noiseless peak is unsaturated, fixed for each object | Black solid line, circles |
+| `lrfc` | LRFC-HDR control following the linear-response relationship in paper Eqs. (16)–(17); choosing the longest unsaturated exposure per pixel is a project implementation choice | Blue dash-dot line, diamonds |
+| `ml_eq14_15` | Paper Eqs. (14)–(15), with nonnegativity and division-by-zero safeguards; saturated pixels participate in fusion | Red dotted line, squares |
+| `ml_masked` | Eqs. (14)–(15) weights with saturated observations excluded; **a project extension, not the paper's algorithm** | Green dash-dot line, triangles |
 
-从已有 full 结果重绘：
+Regenerate from existing full results:
 
 ```bash
 python scripts/plot_paper_style_figures.py --source outputs/paper_style/full --output docs/figures/paper_style --summary-csv docs/paper_style/summary.csv --copy-data-to docs/paper_style/data
 ```
 
-来源与哈希见 [figures_manifest.json](figures/paper_style/figures_manifest.json)，关键数值见 [summary.md](paper_style/summary.md) / [summary.csv](paper_style/summary.csv)，所用 CSV / JSON 数据复制在 [paper_style/data/](paper_style/data/)。论文曲线数值来自人工数字化的 [paper_digitized.json](paper_style/paper_digitized.json)。
+Provenance and hashes are in [figures_manifest.json](figures/paper_style/figures_manifest.json), key values in [summary.md](paper_style/summary.md) / [summary.csv](paper_style/summary.csv), and CSV/JSON input copies in [paper_style/data/](paper_style/data/). Paper curves come from manually digitized [paper_digitized.json](paper_style/paper_digitized.json).
 
-保存的 full 数据含 120 条位深扫描记录和 108 条噪声扫描记录，全部状态为 `ok`，种子为 0、1、2；图中扫描曲线为三次均值 ± 样本标准差。USAF 图像、线剖面、FRC 和收敛图使用种子 0 的单次数组。它们与上文固定基线的 81 次重建分别统计。
+Saved full data contain 120 bit-depth records and 108 noise records, all with status `ok`, using seeds 0, 1, and 2. Sweep curves show three-run means ± sample standard deviations. USAF images, line profiles, FRC, and convergence plots use single-run arrays from seed 0. These runs are counted separately from the 81 fixed-baseline reconstructions above.
 
-### 图 2 对应：ADC 位深扫描
+### Figure 2 counterpart: ADC bit-depth sweep
 
-![PSNR、SSIM、振幅 NRMSE 随位深变化及 8 bit 重建结果](figures/paper_style/fig2_bit_depth.png)
+![PSNR, SSIM, and amplitude NRMSE versus bit depth, with 8-bit reconstructions](figures/paper_style/fig2_bit_depth.png)
 
-[下载矢量 SVG](figures/paper_style/fig2_bit_depth.svg)。cameraman 物体，读出噪声 5 e⁻，位深 2–20 bit。(a)–(c) 为均值 ± 样本标准差；灰色竖线标出 8 bit，字母 A–D 指向 (d) 中展示的 8 bit 结果；灰色虚线为本项目单曝光在 16 bit 的数值。本项目误差定义为振幅 NRMSE；论文没有明确其 RMS 误差定义，两者不能数值等同。
+[Download vector SVG](figures/paper_style/fig2_bit_depth.svg). The cameraman object uses 5 e⁻ read noise and 2–20-bit depths. Panels (a)–(c) show means ± sample standard deviations. A gray vertical line marks 8 bit; A–D indicate the 8-bit results in (d). Gray dashed lines show this project's 16-bit single-exposure values. This project defines amplitude error as NRMSE; the paper does not explicitly define its RMS error, so the two cannot be treated as numerically equivalent.
 
-8 bit 时，单曝光、LRFC-HDR、论文原式与饱和屏蔽扩展的平均 PSNR 分别为 **20.56、27.88、16.65、27.82 dB**，平均 SSIM 为 **0.4747、0.8214、0.5355、0.8222**。16 bit 单曝光参考为 **32.31 dB / 0.9152**；因此本项目未重现“8 bit ML-HDR 达到或优于 16 bit 单曝光”的结果，LRFC 与扩展也低于此参考。
+At 8 bit, mean PSNR for single exposure, LRFC-HDR, original paper equations, and the saturation-masking extension is **20.56, 27.88, 16.65, and 27.82 dB**; mean SSIM is **0.4747, 0.8214, 0.5355, and 0.8222**. The 16-bit single-exposure reference is **32.31 dB / 0.9152**. This project does not reproduce the result that 8-bit ML-HDR matches or exceeds 16-bit single exposure; LRFC and the extension are also below that reference.
 
-论文原式保留饱和观测，其 8 bit 衍射 NRMSE 平均约 **0.8201**，远高于 LRFC 的 **0.00339** 和扩展的 **0.00375**；提高 ADC 位深并不能恢复因满阱饱和丢失的亮区计数。论文原式的物体 NRMSE 在此位深扫描中约为 0.18–0.23。各指标的排序存在差异，不能把较高 SSIM 直接等同于较低 NRMSE。
+The original equations retain saturated observations, giving mean 8-bit diffraction NRMSE of approximately **0.8201**, far above LRFC's **0.00339** and the extension's **0.00375**. Increasing ADC bit depth cannot recover bright-region counts lost to full-well saturation. Original-equation object NRMSE is approximately 0.18–0.23 in this sweep. Rankings differ by metric; higher SSIM does not necessarily imply lower NRMSE.
 
-### 图 3 对应：噪声扫描
+### Figure 3 counterpart: noise sweep
 
-![PSNR、SSIM、振幅 NRMSE 随噪声量级变化](figures/paper_style/fig3_noise.png)
+![PSNR, SSIM, and amplitude NRMSE versus noise setting](figures/paper_style/fig3_noise.png)
 
-[下载矢量 SVG](figures/paper_style/fig3_noise.svg)。论文没有定义"噪声量级（dB）"。本项目定义为 SNR_dB = 20·log₁₀(满阱 / σ_read)，满阱 2.5×10⁶ e⁻，因此 6 dB 与 54 dB 分别对应 σ_read ≈ 1.25×10⁶ e⁻ 与 ≈ 5.0×10³ e⁻；单曝光为 16 bit，三种 HDR 方法为 8 bit，与论文相同。
+[Download vector SVG](figures/paper_style/fig3_noise.svg). The paper does not define its noise level in dB. This project defines SNR_dB = 20·log₁₀(full_well / σ_read), with full well 2.5×10⁶ e⁻. Thus, 6 dB and 54 dB correspond to σ_read ≈ 1.25×10⁶ e⁻ and ≈ 5.0×10³ e⁻, respectively. As in the paper, single exposure uses 16 bit and the three HDR methods use 8 bit.
 
-按本项目定义，横轴 dB 越高，读出噪声越小。整体 PSNR 随噪声减小而提高；54 dB 时，LRFC、扩展、论文原式与 16 bit 单曝光的均值依次为 **25.74、20.37、15.19、10.05 dB**，SSIM 依次为 **0.5870、0.3366、0.2055、0.0284**。论文原式没有重现论文图 3 中对 LRFC 的优势。
+Under this definition, higher x-axis dB means lower read noise. Overall PSNR improves as noise decreases. At 54 dB, the means for LRFC, the extension, original equations, and 16-bit single exposure are **25.74, 20.37, 15.19, and 10.05 dB**, with SSIM **0.5870, 0.3366, 0.2055, and 0.0284**. The original equations do not reproduce the advantage over LRFC in paper Fig. 3.
 
-扩展在高 dB 区域低于 LRFC，且 SSIM 在 48–54 dB 之间未继续提高；屏蔽饱和观测并不保证全部噪声设置下都改善结果。此处 dB 定义与论文没有明确对应关系，不能按同一横轴数值比较绝对性能。
+The extension is below LRFC at high dB, and its SSIM does not continue improving between 48 and 54 dB. Saturation masking does not guarantee improvement for every noise setting. The project's dB definition has no explicit correspondence to the paper's, so absolute performance cannot be compared at nominally equal x-axis values.
 
-### 图 5 对应：多曝光衍射图
+### Figure 5 counterpart: multi-exposure diffraction images
 
-![7 档 8 bit 原始衍射图与三种 HDR 融合结果](figures/paper_style/fig5_diffraction.png)
+![Seven raw 8-bit diffraction exposures and three HDR fusion results](figures/paper_style/fig5_diffraction.png)
 
-[下载矢量 SVG](figures/paper_style/fig5_diffraction.svg)。USAF 物体、靠近 ROI 中心的一个扫描位置、8 bit ADC。(a)–(g) 为量化后的原始计数；(h)–(j) 把融合速率（count/s）乘以最长曝光 500 ms，换算成不饱和探测器在 500 ms 内的等效计数，十幅图共用一个 log₂(1 + counts) 色标。
+[Download vector SVG](figures/paper_style/fig5_diffraction.svg). The USAF object is shown at one scan position near the ROI center, using an 8-bit ADC. Panels (a)–(g) show quantized raw counts. Panels (h)–(j) multiply fused rates (count/s) by the longest exposure, 500 ms, to show equivalent counts for an unsaturated detector integrating for 500 ms. All ten panels share one log₂(1 + counts) color scale.
 
-当前展示帧在 0.5、1、5、10 ms 的饱和比例均为 **0%**，50、100、500 ms 分别为 **0.1221%、0.2197%、0.3418%**，来自 `meta.json` 中的帧级比例乘以 100。该比例描述这一扫描位置，与上文固定基线的全测量统计不同。论文原式在亮中心保留了长曝光的饱和计数，融合率低于已知无噪声参考；LRFC 和扩展的中心信号更强。所有面板共用色标，HDR 等效计数可超过原始 8 bit ADC 的 255 上限。
+For this displayed frame, saturation is **0%** at 0.5, 1, 5, and 10 ms, and **0.1221%, 0.2197%, and 0.3418%** at 50, 100, and 500 ms. These percentages are the frame-level fractions in `meta.json` multiplied by 100. They describe this one scan position, separately from the full-measurement statistics in the fixed-baseline section. The original equations retain long-exposure saturated counts at the bright center, giving a fused rate below the known noiseless reference. LRFC and the extension show a stronger central signal. The shared color scale permits HDR equivalent counts above the original 8-bit ADC limit of 255.
 
-### 图 6 对应：8 bit USAF 分辨率
+### Figure 6 counterpart: 8-bit USAF resolution
 
-![8 bit USAF 重建、局部放大、收敛曲线与 FRC](figures/paper_style/fig6_usaf_8bit.png)
+![8-bit USAF reconstructions, zooms, convergence curves, and FRC](figures/paper_style/fig6_usaf_8bit.png)
 
-[下载矢量 SVG](figures/paper_style/fig6_usaf_8bit.svg)。(b) 为仿真真值（论文此处为光学显微镜图像）。青色虚线框标出与所有更粗元素一起在两个方向上均可分辨的最小元素，判定直接读取 `resolution_summary.json`。(g) 为物体振幅 NRMSE 对数随迭代的变化，"Time"为误差首次进入平台区的 mPIE 墙钟时间；(h) 本项目采用**真值参考 FRC**，与论文实验评价不能直接等同；论文没有说明足以确认其 FRC 输入实现的细节。
+[Download vector SVG](figures/paper_style/fig6_usaf_8bit.svg). Panel (b) is simulation ground truth; the paper uses an optical microscope image at this position. Cyan dashed boxes mark the smallest element resolvable in both orientations along with every coarser element, read directly from `resolution_summary.json`. Panel (g) shows logarithmic object-amplitude NRMSE versus iteration. “Time” is the mPIE wall-clock time when error first enters the plateau region. Panel (h) uses **ground-truth-referenced FRC**, which is not directly equivalent to the paper's experimental evaluation. The paper does not provide enough implementation detail to confirm its FRC inputs.
 
-种子 0 的 8 bit 单曝光、LRFC、论文原式与扩展的真值参考 FRC 半周期分辨率分别为 **2.025、1.125、2.420、1.034 μm**，最小连续可分辨元素分别为 **G7 E1、G8 E6、G7 E1、G8 E6**。图中的 16 bit 单曝光参考为 **0.799 μm / G9 E1**。FRC 截止与条纹可分辨判定衡量不同性质，不能互换。
+For seed 0, the ground-truth FRC half-period resolutions of 8-bit single exposure, LRFC, original equations, and the extension are **2.025, 1.125, 2.420, and 1.034 μm**. Their smallest continuously resolvable elements are **G7 E1, G8 E6, G7 E1, and G8 E6**. The 16-bit single-exposure reference is **0.799 μm / G9 E1**. FRC cutoff and stripe resolvability measure different properties and are not interchangeable.
 
-LRFC 和扩展在平台规则下首次达标的时间为 **0.572 s、0.447 s**（均在第 5 次迭代）；其完整 250 次重建分别耗时约 27.6 s、24.1 s。单曝光和论文原式未满足误差下降门槛，未报告平台时间。论文原式误差曲线存在迭代振荡。平台时间是本项目规则及本机运行数据，不等于算法总耗时，也不能与论文的 225 s / 360 s 比较。
+LRFC and the extension first meet the plateau rule at **0.572 s and 0.447 s**, both at iteration 5. Complete 250-iteration reconstruction takes approximately 27.6 s and 24.1 s, respectively. Single exposure and the original equations do not meet the required error-reduction threshold, so no plateau time is reported. The original-equation error curve oscillates across iterations. Plateau times depend on the project's criterion and local runtime; they are neither total algorithm runtimes nor directly comparable with the paper's 225 s / 360 s.
 
-### 图 7 对应：16 bit USAF 与线剖面
+### Figure 7 counterpart: 16-bit USAF and line profiles
 
-![16 bit USAF 局部、G9 E1–E3 线剖面与 FRC](figures/paper_style/fig7_usaf_16bit.png)
+![16-bit USAF details, G9 E1–E3 line profiles, and FRC](figures/paper_style/fig7_usaf_16bit.png)
 
-[下载矢量 SVG](figures/paper_style/fig7_usaf_16bit.svg)。(e) 为沿竖直线穿过第 9 组 1–3 号横条的**振幅**剖面（论文坐标轴标为强度），细灰线为由几何生成的理想 USAF 方波。
+[Download vector SVG](figures/paper_style/fig7_usaf_16bit.svg). Panel (e) shows **amplitude** profiles along a vertical line through horizontal bars in group 9, elements 1–3; the paper labels its axis as intensity. The thin gray line is an ideal USAF square wave generated from geometry.
 
-种子 0 的 16 bit LRFC 和扩展均达到 **G9 E4（线宽 0.691 μm）**，真值参考 FRC 截止达到奈奎斯特（**0.571 μm**），属于仿真采样上限。论文原式为 **G8 E2 / 1.388 μm**；16 bit 单曝光参考为 **G9 E1 / 0.799 μm**。真值经过像素采样后本身也只连续分辨到 G9 E4，因此不能把 0.571 μm 当作真实仪器已验证的分辨率。
+For seed 0, both 16-bit LRFC and the extension reach **G9 E4 (0.691 μm line width)**. Their ground-truth FRC cutoff reaches Nyquist (**0.571 μm**), the simulation's sampling limit. The original equations give **G8 E2 / 1.388 μm**, and 16-bit single exposure gives **G9 E1 / 0.799 μm**. The pixel-sampled ground truth itself is continuously resolvable only through G9 E4, so 0.571 μm cannot be treated as verified real-instrument resolution.
 
-G9 E1–E3 的振幅剖面中，LRFC 与扩展接近几何真值的高低电平，单曝光谷值更高；论文原式的条纹响应存在不均匀变化。图中展示的是对齐后的振幅，不能将这些纵轴数值直接当作论文的强度对比度。
+In G9 E1–E3 amplitude profiles, LRFC and the extension approach the geometrical ground-truth high/low levels, while single exposure has higher minima. The original equations show uneven stripe responses. These are aligned amplitudes, and their vertical-axis values cannot directly be treated as the paper's intensity contrast.
 
-### 与论文数字化曲线的叠加
+### Overlay with digitized paper curves
 
-![论文数字化曲线与本项目曲线叠加](figures/paper_style/paper_vs_reproduction.png)
+![Digitized paper curves overlaid with this project's curves](figures/paper_style/paper_vs_reproduction.png)
 
-[下载矢量 SVG](figures/paper_style/paper_vs_reproduction.svg)。细线空心点为论文图 2、图 3 的数字化数值（精度约 ±0.5 dB / ±0.01，半透明点为被遮挡或饱和的近似读数），粗线实心点为本项目。饱和屏蔽扩展没有论文对应曲线。
+[Download vector SVG](figures/paper_style/paper_vs_reproduction.svg). Thin lines with open markers are digitized values from paper Figs. 2 and 3, with approximate precision ±0.5 dB / ±0.01. Semi-transparent points indicate approximate readings from obscured or saturated curves. Thick lines with filled markers show this project. The saturation-masking extension has no corresponding paper curve.
 
-位深增加后单曝光和 LRFC 的质量总体提高，与论文趋势相近；论文原式在本项目中长期受饱和影响，没有重现论文图 2、图 3 中的领先排序。论文数字化的 8 bit ML-HDR 与 16 bit 单曝光 PSNR 差约 **+3.5 dB**，本项目为 **−15.66 dB**。这表示当前参数和实现下没有重现该比较结论，不表示已经定位了全部差异来源。
+Single exposure and LRFC generally improve as bit depth increases, resembling the paper's trend. The original equations remain affected by saturation and do not reproduce the leading ranking in paper Figs. 2 and 3. The digitized paper PSNR difference between 8-bit ML-HDR and 16-bit single exposure is approximately **+3.5 dB**, compared with **−15.66 dB** here. The comparison is not reproduced under the current parameters and implementation, and the sources of all differences have not been identified.
 
-叠加图中的论文 RMS 定义未明确，项目 NRMSE 的定义已记录；两条误差曲线只适合观察形状和相对关系。噪声横轴的项目定义、物体采样与相机假设也不同。论文点的数字化误差和近似标记保留在源 JSON 中，绿色扩展没有论文对应方法。
+The paper's RMS definition is unspecified, while the project's NRMSE definition is documented. The error curves support comparison of shape and relative relationships only. Noise-axis definitions, object sampling, and camera assumptions also differ. Digitization uncertainty and approximate flags remain in the source JSON. The green extension has no paper counterpart.
 
-### 假设与限制
+### Assumptions and limitations
 
-- 仿真参数为本项目选择：波长 632.8 nm、距离 13.9 mm、64×64 虚拟探测器（物面像素 0.571 μm，与论文实验一致），光通量 10⁹ photons/s（最亮衍射帧总速率），满阱 2.5×10⁶ e⁻，暗电流 80 e⁻/s，每档 20 张暗场，基础读出噪声 5 e⁻，7 档曝光 0.5–500 ms。全部数值记录在 [meta.json](paper_style/data/meta.json)。
-- 重建器为本项目的纯 NumPy mPIE（未安装 PtyLab），`alpha_probe = 1.0`；Fraunhofer 传播、整数像素扫描位置。
-- 所有指标以已知真值为参考，重建先做一个全局复数比例与亚像素平移对齐；FRC 是重建与真值之间的比较（van Heel 半比特阈值），分辨率 = 像素 / 截止频率（半周期）。截止频率达到奈奎斯特时，结果受像素尺寸限制。
-- USAF 可分辨判定：3 个条纹区域内各有明显极小值且最差 Michelson 对比度 ≥ 0.2；报告的是与所有更粗元素一起在两个方向上均可分辨的最小元素。
-- 噪声量级的 dB 定义、单曝光的自动曝光选择和收敛时间的平台判定均为本项目定义；收敛时间是本机多进程并行下的墙钟时间，不能与论文的 225 s / 360 s 比较。
-- 曲线为多个种子的均值 ± 样本标准差；图像、剖面、收敛和 FRC 曲线是第一个种子的单次结果。
+- Project-selected simulation parameters are wavelength 632.8 nm, distance 13.9 mm, a 64×64 virtual detector (0.571 μm object-plane pixels, matching the paper's experiment), photon flux 10⁹ photons/s as the brightest diffraction frame's total rate, full well 2.5×10⁶ e⁻, dark current 80 e⁻/s, 20 dark frames per exposure, base read noise 5 e⁻, and seven exposures from 0.5 to 500 ms. All values are in [meta.json](paper_style/data/meta.json).
+- Reconstruction uses this project's pure NumPy mPIE, without PtyLab installed, with `alpha_probe = 1.0`, Fraunhofer propagation, and integer-pixel scan positions.
+- All metrics use known ground truth after alignment by one global complex factor and subpixel translation. FRC compares reconstruction with ground truth using the van Heel half-bit threshold. Half-period resolution = pixel size / cutoff frequency. Nyquist cutoffs are limited by pixel size.
+- USAF resolvability requires a clear minimum in each of three stripe regions and a worst-case Michelson contrast ≥ 0.2. The reported smallest element must be resolvable in both orientations along with all coarser elements.
+- Noise-dB definitions, automatic single-exposure selection, and the convergence plateau rule are project definitions. Convergence times are local wall-clock times under multiprocessing and cannot be compared with the paper's 225 s / 360 s.
+- Sweep curves show multiple-seed means ± sample standard deviations. Images, profiles, convergence, and FRC curves show one run with the first seed.
 
-## 参考文献
+## Reference
 
 Liu et al., *Resolution-Enhanced Lensless Ptychographic Microscope Based on Maximum-Likelihood High-Dynamic-Range Image Fusion*, IEEE Transactions on Instrumentation and Measurement, 2024. [DOI: 10.1109/TIM.2024.3363788](https://doi.org/10.1109/TIM.2024.3363788).

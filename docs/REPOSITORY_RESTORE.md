@@ -1,92 +1,92 @@
-# 换设备恢复与继续工作
+# Restore and continue on another device
 
-本次提交把当前保存的论文风格仿真数据随代码一起纳入 Git。正常克隆或拉取仓库后，可以直接查看结果、重绘全部 10 组对比图、读取重建数组继续分析，或在新目录开展仿真；不需要从原设备另外拷贝本次仿真文件。
+The saved paper-style simulation data are tracked in Git together with the code. After cloning or pulling the repository, you can view results, regenerate all ten comparison figure sets, read reconstruction arrays for further analysis, or run simulations in a new directory. No separate transfer of these simulation files from the original device is required.
 
-## 1. 获取仓库与安装环境
+## 1. Get the repository and install the environment
 
-使用远程仓库的克隆地址运行 `git clone <仓库地址>`，或在已有副本中运行 `git pull`。随后进入含 `README.md`、`mlhdr_ptycho/` 和 `scripts/` 的仓库根目录；所有下述命令在此目录执行。
+Run `git clone <repository-url>` using the remote repository's clone URL, or `git pull` in an existing clone. Enter the repository root containing `README.md`, `mlhdr_ptycho/`, and `scripts/`; run all commands below from that directory.
 
-本次仿真实际使用 Python 3.12.3。用 Python 3.12 创建虚拟环境：
+The saved simulation used Python 3.12.3. Create a virtual environment with Python 3.12:
 
 ```bash
 python -m venv .venv
 ```
 
-Windows 安装了 Python Launcher 时也可使用 `py -3.12 -m venv .venv`。按所用终端激活环境：
+On Windows with the Python Launcher installed, you can also use `py -3.12 -m venv .venv`. Activate the environment for your shell:
 
-| 终端 | 激活命令 |
+| Shell | Activation command |
 |---|---|
 | Windows PowerShell | `.\.venv\Scripts\Activate.ps1` |
 | Windows cmd | `.venv\Scripts\activate.bat` |
 | Linux / macOS | `source .venv/bin/activate` |
 
-然后安装本次仿真与绘图依赖：
+Install the simulation and plotting dependencies:
 
 ```bash
 python -m pip install -r requirements-simulation.txt
 ```
 
-该文件锁定 NumPy 1.26.4、SciPy 1.14.1、Matplotlib 3.8.4 和 scikit-image 0.25.2。本次仿真使用本项目的 NumPy mPIE，不需要 PtyLab。保存数据中的 `meta.json` 保留原运行的软件版本、机器信息、种子及科学参数；那些机器信息是来源记录，无需改成新设备路径。
+This file pins NumPy 1.26.4, SciPy 1.14.1, Matplotlib 3.8.4, and scikit-image 0.25.2. The simulations use this project's NumPy mPIE and do not require PtyLab. The saved `meta.json` files retain the original run's software versions, machine information, seeds, and scientific parameters. Machine information is a provenance record and does not need to be replaced with paths on your new device.
 
-## 2. 验证保存数据
+## 2. Verify the saved data
 
 ```bash
 python scripts/verify_repository_data.py
 ```
 
-验证脚本读取 [REPOSITORY_DATA.json](REPOSITORY_DATA.json)，检查纳入清单文件的大小及 SHA-256，并读取 full / quick 仿真数据验证契约。清单覆盖已保存仿真数据、绘图输入、发布图和论文 PDF。无需启动重建或重新计算 250 次迭代。验证通过后再基于这些文件开展后续分析；若有差异，应先检查是否完整拉取以及是否改动了保存数据。
+The verifier reads [REPOSITORY_DATA.json](REPOSITORY_DATA.json) and checks the sizes and SHA-256 hashes of all 60 listed files. The manifest covers saved simulation data, plotting inputs, and published figures; the reference paper PDF is excluded. Verification does not launch reconstruction or repeat the 250-iteration runs. Verify these files before continuing analysis. If a check fails, first check whether the repository was fully pulled and whether any saved files were modified.
 
-两个目录 `outputs/paper_style/full/` 和 `outputs/paper_style/quick/` 各包含以下 9 个文件：
+Both `outputs/paper_style/full/` and `outputs/paper_style/quick/` contain these nine files:
 
-| 文件 | 可用于继续工作的内容 |
+| File | Contents available for further work |
 |---|---|
-| `DATA_CONTRACT.md` | 全部字段、数组形状、单位、方法和评价定义 |
-| `meta.json` | 仿真与重建配置、种子、假设、版本、运行时间和失败记录 |
-| `bit_sweep.csv` | 位深扫描所有已保存运行的指标与状态 |
-| `noise_sweep.csv` | 噪声扫描所有已保存运行的指标与状态 |
-| `cameraman_8bit.npz` | 4 种方法的代表重建、复数物体和探针、真值、对齐 ROI、收敛与 FRC |
-| `usaf_8bit.npz` | 5 个代表重建（含 16 bit 单曝光参考），以及 USAF 几何、可分辨判定与剖面 |
-| `usaf_16bit.npz` | 4 种方法的代表重建及 USAF 分析数组 |
-| `diffraction_example.npz` | 同一位置的 7 档原始曝光、暗场统计、真值和各融合结果 |
-| `resolution_summary.json` | 代表重建的指标、FRC 截止及 USAF 元素汇总 |
+| `DATA_CONTRACT.md` | All fields, array shapes, units, methods, and evaluation definitions |
+| `meta.json` | Simulation and reconstruction settings, seeds, assumptions, versions, timings, and failure records |
+| `bit_sweep.csv` | Metrics and statuses for all saved bit-depth sweep runs |
+| `noise_sweep.csv` | Metrics and statuses for all saved noise sweep runs |
+| `cameraman_8bit.npz` | Representative reconstructions for four methods: complex objects and probes, ground truth, aligned ROI, convergence, and FRC |
+| `usaf_8bit.npz` | Five representative reconstructions, including a 16-bit single-exposure reference, plus USAF geometry, resolvability, and profiles |
+| `usaf_16bit.npz` | Representative reconstructions for four methods and USAF analysis arrays |
+| `diffraction_example.npz` | Seven raw exposures at one position, dark-frame statistics, ground truth, and each fusion result |
+| `resolution_summary.json` | Representative-reconstruction metrics, FRC cutoffs, and USAF element summaries |
 
-full 使用 250 次迭代、相机种子 0 / 1 / 2，位深和噪声 CSV 分别有 120 / 108 行，失败记录为空。图像、剖面和代表重建数组采用第一个种子；位深和噪声扫描的全部运行保存为指标表，并非每个扫描运行都保存了完整物体数组。quick 是 20 次迭代的小型配置，用于检查流程，科学结论使用 full。
+The full profile uses 250 iterations and camera seeds 0/1/2. Its bit-depth and noise CSV files contain 120 and 108 rows, respectively, with an empty failure list. Images, profiles, and representative reconstruction arrays use the first seed. All sweep runs are retained as metric tables, but complete object arrays are not saved for every sweep run. The quick profile is a small 20-iteration configuration for checking the workflow; scientific conclusions use full.
 
-`docs/paper_style/data/` 是 CSV / JSON 的便捷副本；完整重绘还需要上述 NPZ，直接使用 `outputs/paper_style/full/` 即可。`docs/paper_style/paper_digitized.json` 保存论文图 2 / 3 数字化曲线与近似点标记。仓库根目录还包含阅读使用的论文 PDF。
+`docs/paper_style/data/` contains convenient copies of the CSV/JSON files. Complete figure regeneration also requires the NPZ files above; use `outputs/paper_style/full/` directly. `docs/paper_style/paper_digitized.json` contains digitized curves from Figs. 2 and 3 and flags approximate points. The reference paper is linked by [DOI: 10.1109/TIM.2024.3363788](https://doi.org/10.1109/TIM.2024.3363788); the PDF is not distributed with the repository and is not needed to regenerate the saved figures.
 
-## 3. 直接重绘现有结果
+## 3. Regenerate existing figures directly
 
-历史固定基线的 4 组统计图只需 `docs/summary_metrics.csv` 与 `docs/experiment_manifest.json`：
+The four statistical figure sets for the historical fixed-baseline experiment require only `docs/summary_metrics.csv` and `docs/experiment_manifest.json`:
 
 ```bash
 python scripts/plot_paper_comparisons.py --source docs --output outputs/restored_paper_comparisons
 ```
 
-本次仿真的 6 组论文风格图读取完整 full 数据及论文数字化曲线：
+The six paper-style simulation figure sets read the complete full data and digitized paper curves:
 
 ```bash
 python scripts/plot_paper_style_figures.py --source outputs/paper_style/full --output outputs/paper_style/figures_restored --summary-csv outputs/paper_style/figures_restored/summary.csv
 ```
 
-两条命令均输出 PNG、SVG 和图表来源清单。新的输出目录让已发布图与已保存源数据继续保留。若只需查看已有图，可直接阅读 [results.md](results.md) 和 [paper_style/summary.md](paper_style/summary.md)。
+Both commands produce PNG, SVG, and a figure-provenance manifest. New output directories preserve the published figures and saved source data. To view the existing figures, read [results.md](results.md) and [paper_style/summary.md](paper_style/summary.md).
 
-## 4. 在新目录继续仿真
+## 4. Continue simulations in a new directory
 
 ```bash
 python scripts/run_paper_style_simulation.py --profile quick --output outputs/paper_style/quick_new
 python scripts/run_paper_style_simulation.py --profile full --seeds 0 1 2 --output outputs/paper_style/full_new
 ```
 
-第二条命令为完整实验。可通过 `--workers 2` 等设置控制进程数；记录的 8 进程 full 运行耗时约 15 分钟，运行速度随设备变化。将绘图命令的 `--source` 改成新输出目录即可绘制新结果。仿真脚本会写入指定目录，因此每次使用新目录，避免覆盖仓库保存的 full / quick 数据。
+The second command runs the complete experiment. Control the process count with an option such as `--workers 2`. The recorded eight-process full run took approximately 15 minutes; runtime varies by device. Set the plotting command's `--source` to the new output directory to plot new results. The simulation script writes into the selected directory, so use a new directory for each run to avoid overwriting the repository's saved full/quick data.
 
-已有 13 个代表重建提供完整复数物体与探针、真值和分析数组，可直接用于局部放大、相位分析、收敛、FRC 及 USAF 剖面等后续工作。对位深 / 噪声扫描里未保存完整数组的其他运行，需要根据保存配置与种子再运行相应仿真；输入物体和相机模型均由仓库代码生成。
+The 13 saved representative reconstructions include complete complex objects and probes, ground truth, and analysis arrays. They can directly support zoomed views, phase analysis, convergence, FRC, and USAF profiles. For other bit-depth/noise sweep runs whose complete arrays were not saved, rerun the corresponding simulations using the recorded settings and seeds. The input objects and camera model are generated by repository code.
 
-## 5. 历史固定基线的恢复边界
+## 5. Limits of restoring the historical fixed-baseline experiment
 
-历史固定基线实验用的是外部原始衍射数据，与本次已知真值仿真不同。其 `diff.npy`、`outputs/sweep_21x21_steps8_14_i80/best/best_reconstruction.npz` 和 81 次重建的完整二进制输出在本次工作目录中已经缺失。仓库保留了该实验的汇总指标、图像、设置、审计及重复性记录，但没有可恢复这批原始数组的备份；换设备也不能仅凭汇总指标重建它们。
+The historical fixed-baseline experiment used external raw diffraction data, separately from the known-ground-truth simulations. Its `diff.npy`, `outputs/sweep_21x21_steps8_14_i80/best/best_reconstruction.npz`, and complete binary outputs for 81 reconstructions were already missing from the working directory. The repository retains summary metrics, images, settings, audits, and repeatability records, but has no backup from which to restore those raw arrays. Summary metrics alone cannot reconstruct them on another device.
 
-如之后从原设备或备份找回历史输入，应按 `experiments/paper_baseline_comparison.json` 的相对路径放置文件。原始 `diff.npy` 形状为 `(61, 61, 32, 32)`、float64，按 `(scan_y, scan_x, det_y, det_x)` 排列。历史输入与基线的 SHA-256 保存在 `docs/experiment_manifest.json`，可核对是否确为当时的数据。
+If the historical inputs are later recovered from the original device or a backup, place them at the relative paths in `experiments/paper_baseline_comparison.json`. The original `diff.npy` used shape `(61, 61, 32, 32)`, float64 values, and axes `(scan_y, scan_x, det_y, det_x)`. Historical input and baseline SHA-256 hashes are retained in `docs/experiment_manifest.json` for checking their identity.
 
-历史 PtyLab 重建链路需另建 Python 3.11 环境并安装 `requirements.txt`；该文件保留原实验的版本和 PtyLab Git 提交，安装需要 Git 与网络。本次仿真 / 绘图环境和历史环境分别使用，不将 PtyLab 安装作为本次数据恢复的前提。历史 `manifest` 和审计记录中的源码哈希保留生成时的值，不会因后续可移植性修复而改写。
+The historical PtyLab reconstruction pipeline requires a separate Python 3.11 environment with `requirements.txt`. That file retains the original experiment's versions and PtyLab Git revision; installation requires Git and network access. Keep the simulation/plotting and historical environments separate. PtyLab installation is not a prerequisite for restoring the saved simulation data. Historical source hashes in experiment manifests and audit records retain their values at generation time rather than being rewritten after later portability changes.
 
-完整历史实验步骤及评价限制仍见 [README](../README.md#准备数据与基线) 和 [结果报告](results.md)。
+The complete historical workflow and evaluation limitations remain documented in the [README](../README.md#prepare-data-and-baseline) and [results report](results.md).

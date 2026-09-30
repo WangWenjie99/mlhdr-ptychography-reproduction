@@ -32,9 +32,6 @@
 !/outputs/paper_style/quick/usaf_16bit.npz
 !/outputs/paper_style/quick/diffraction_example.npz
 
-# Reference paper used to interpret and extend the experiments.
-!/Liu et al. - 2024 - Resolution-Enhanced Lensless Ptychographic Microscope Based on Maximum-Likelihood High-Dynamic-Range.pdf
-
 # Temporary rendering and audit files are regenerated when needed.
 /tmp/
 

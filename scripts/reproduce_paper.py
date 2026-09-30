@@ -179,75 +179,105 @@ def report(output, manifest, summary, baseline_check):
     def number(value, digits=4):
         return "—" if value is None else f"{value:.{digits}f}"
     lines = [
-        "# ML-HDR 论文方法复现与固定基线对照", "",
-        "所有重建均使用用户给定基线的设置：21×21 扫描、32×32 衍射帧、步长 8 px、"
-        "初始探针直径 31 px、circ_smooth / ones 初始化、80 次 CPU mPIE 迭代、随机种子 0。",
-        "", "## 结论与主结果", "",
-        "下表为主场景 `" + main_profile + "` 的多个相机噪声种子平均值。"
-        "PSNR/SSIM 衡量与已保存基线重建的一致性，不能解释为真实物体精度或分辨率。",
-        "", "| 方法 | PSNR / dB | SSIM | 振幅 NRMSE | 衍射强度 NRMSE | 成功次数 |",
+        "# ML-HDR paper reproduction and fixed-baseline comparison", "",
+        "All reconstructions use the user-selected baseline settings: a 21×21 scan, 32×32 diffraction frames, "
+        "an 8 px scan step, a 31 px initial probe diameter, circ_smooth / ones initialization, "
+        "80 CPU mPIE iterations, and reconstruction seed 0.",
+        "", "## Conclusions and main results", "",
+        "The following table averages multiple camera-noise seeds for the main profile `" + main_profile + "`. "
+        "PSNR/SSIM measure agreement with the saved baseline reconstruction; "
+        "they do not measure accuracy or resolution against the true object.",
+        "", "| Method | PSNR / dB | SSIM | Amplitude NRMSE | Diffraction intensity NRMSE | Successful runs |",
         "|---|---:|---:|---:|---:|---:|",
-        "| 已保存原始数据基线（自身参考） | ∞ | 1 | 0 | 0 | — |",
+        "| Saved raw-data baseline (self-reference) | ∞ | 1 | 0 | 0 | — |",
     ]
     for r in items:
         lines.append(f"| {r['case']} | {number(r['baseline_psnr_db_mean'],2)} | {number(r['baseline_ssim_mean'])} "
                      f"| {number(r['baseline_nrmse_mean'])} | {number(r['diffraction_nrmse_mean'])} "
                      f"| {r['successful_runs']}/{r['runs']} |")
     if best:
-        lines += ["", f"单曝光中按平均 SSIM 最好的是 **{best['case']}**。"
-                  f"严格论文公式的 SSIM 为 **{number(strict['baseline_ssim_mean'])}**，"
-                  f"该单曝光为 **{number(best['baseline_ssim_mean'])}**。",
-                  "严格公式" + ("在该指标上优于最佳单曝光。" if strict['baseline_ssim_mean'] > best['baseline_ssim_mean']
-                               else "在该指标上没有优于最佳单曝光，不能声称已经复现论文报告的全面优势。"),
-                  f"单独的饱和屏蔽扩展 SSIM 为 **{number(extension['baseline_ssim_mean'])}**。"
-                  "它的收益不能归到论文原式名下。"]
-    lines += ["", f"![严格论文公式与全部单曝光]({main_profile}/comparison_amplitude.png)",
-              "", f"![附加饱和处理对照]({main_profile}/extension_comparison.png)",
-              "", f"![指标与随机种子波动]({main_profile}/metrics_vs_exposure.png)",
-              "", "## 论文要求、补充假设与差异", ""]
+        lines += ["", f"The best single exposure by mean SSIM is **{best['case']}**. "
+                  f"The strict paper formula has an SSIM of **{number(strict['baseline_ssim_mean'])}**, "
+                  f"compared with **{number(best['baseline_ssim_mean'])}** for that single exposure.",
+                  "The strict formula " + ("outperforms the best single exposure on this metric."
+                               if strict['baseline_ssim_mean'] > best['baseline_ssim_mean']
+                               else "does not outperform the best single exposure on this metric, "
+                               "so this experiment does not reproduce the paper's reported advantages in full."),
+                  f"The separate saturation-mask extension has an SSIM of **{number(extension['baseline_ssim_mean'])}**. "
+                  "Its gains cannot be attributed to the paper's original formula."]
+    lines += ["", f"![Strict paper formula and all single exposures]({main_profile}/comparison_amplitude.png)",
+              "", f"![Additional saturation-handling control]({main_profile}/extension_comparison.png)",
+              "", f"![Metrics and variation across noise seeds]({main_profile}/metrics_vs_exposure.png)",
+              "", "## Paper specifications, additional assumptions, and differences", ""]
     for key, value in conf["provenance"].items():
-        lines.append(f"- `{key}`：{value}")
-    lines += ["", "论文：[Liu et al., IEEE TIM 2024](https://doi.org/10.1109/TIM.2024.3363788)。"
-              "已核对本地 PDF 第 3 页式（14）—（15）、第 5 页仿真设置、第 7 页曝光时间。",
-              "", "主场景继承旧项目的读出噪声 5 e−、暗电流 80 e−/s。"
-              "另外两个场景将读出噪声设为 0.25 和 1 ADC count 对应的电子数，"
-              "检查暗场方差能够被量化记录时的行为；这些值是公开的敏感性分析假设。",
-              "", "光通量映射：用一个全局系数使最亮一帧的总探测光子率为 10⁹/s，"
-              "保持扫描位置之间的相对能量。假定量子效率为 1。"
-              "本文没有足够信息唯一确定这一映射，因此无法逐点复现原文图 2/3。",
-              "", "## 实现与饱和诊断", "",
-              "每档独立模拟 Poisson(信号率×曝光时间)、Poisson(暗电流×曝光时间)、"
-              "N(0, 读出噪声标准差²)，再进行满阱裁剪和 ADC 四舍五入。"
-              "每档另采 20 张暗场，计算均值与无偏样本方差。所有单曝光和融合方法共享同一份测量。",
-              "", "严格实现：r̄ = mean((Zᵢ−B̄ᵢ)/tᵢ)，wᵢ = tᵢ²/(tᵢr̄+Var(Bᵢ))，"
-              "融合为 sum(wᵢ(Zᵢ−B̄ᵢ)/tᵢ)/sum(wᵢ)。采用非负估计与数值除零保护。"
-              "没有剔除饱和值、加入参考图、调换重建器或增加迭代次数。",
-              "", "暗场方差趋近零且分母有效时，原式退化为 sum(Zᵢ−B̄ᵢ)/sum(tᵢ)。"
-              "饱和读数仍以普通观测参与平均，亮区会被低估。此现象已由独立公式测试和保存的衍射输入诊断验证。",
-              "", "附加扩展只使用未饱和观测估计初始率并计算权重；保留零值观测。"
-              "如果一个像素所有曝光都饱和则报告失败。它用于验证饱和偏差的影响，明确不属于论文原算法。",
-              "", "## 比较方法与公平性", "",
-              "- 使用共同的扫描覆盖 ROI；全幅输出仍含未更新边框，评价不包含该边框。",
-              "- 所有图共享基线的灰度范围。每幅只拟合一个正振幅比例，补偿物体/探针尺度不唯一性；不进行平移、滤波、直方图匹配或单独拉伸对比度。",
-              "- PSNR 使用固定基线振幅极差；SSIM 使用 7×7 窗口。基线是重建结果而非真实物体，没有把它当成真值报告分辨率提升。",
-              "- 衍射 NRMSE 对比已知的相机模拟前输入，使用已知增益还原共同尺度；不单独拟合每种方法的强度比例。",
-              "- 每帧拟合误差只作为各方法自身的收敛诊断，不用于跨输入证明图像质量优势。",
-              "- 所有方法均从相同初始化设置开始，未使用基线物体或基线探针作为初始化。探针功率归一化按基线程序从各自测量估计。",
-              "- 噪声种子预设为 " + str(manifest["selected_seeds"]) + "；图像展示固定使用第一个种子，表格汇总全部种子，没有选取最好的一次。",
-              "- 多曝光总积分时间为 666.5 ms/位置（不含暗场及读出开销）；单曝光为对应的曝光时间。该比较并非等采集时间/等光子预算，优势不能解释为采集效率提升。",
-              "- 保留所有曝光结果和失败状态。没有新增 LRFC-HDR、16-bit 对照或真实物体 FRC，因此不声称复现了论文全部实验。",
-              "", "## 基线复算核验", "",
-              f"当前环境按保存配置复算，与历史基线相比：振幅 NRMSE={number(baseline_check['baseline_nrmse'],6)}，"
-              f"SSIM={number(baseline_check['baseline_ssim'],6)}。历史基线仍是统一参考；差异没有被替换或隐藏。",
-              "", "## 输出与重跑", "",
-              "- `manifest.json`：完整设置、来源与假设、软件版本和代码/数据 SHA-256。",
-              "- `comparison_metrics.csv`：每个场景、种子和方法的完整指标。",
-              "- `summary_metrics.csv`：跨种子平均值和样本标准差。",
-              "- `camera_diagnostics.csv`：每档饱和率、零值率、全零帧、暗场均值/方差等。",
-              "- `baseline_reference/`：用户选定基线的原始输出副本；`baseline_recomputed/`：当前环境复算。",
-              "- `<场景>/seed_<种子>/measurement.npz`：全部数字测量、暗场、曝光时间。",
-              "- `<场景>/seed_<种子>/<方法>/`：重建数组、融合/单曝光输入及元数据。第一个种子还包含完整 PNG 和 PtyLab HDF5。",
-              "", "从项目目录运行（使用新的输出路径，脚本拒绝覆盖已有目录）：", "", "```bash",
+        lines.append(f"- `{key}`: {value}")
+    lines += ["", "Paper: [Liu et al., IEEE TIM 2024](https://doi.org/10.1109/TIM.2024.3363788). "
+              "Equations (14)–(15) on page 3, the simulation settings on page 5, "
+              "and the exposure times on page 7 were checked against the paper.",
+              "", "The main profile inherits the previous project's read noise of 5 e− and dark current of 80 e−/s. "
+              "The other two profiles set read noise to the electron equivalents of 0.25 and 1 ADC count "
+              "to examine behavior when dark-field variance is recorded after quantization. "
+              "These values are disclosed sensitivity-analysis assumptions.",
+              "", "Photon-flux mapping: one global factor sets the total detected photon rate of the brightest "
+              "frame to 10⁹/s while preserving relative energies across scan positions. Quantum efficiency is assumed "
+              "to be 1. The paper does not provide enough information to determine this mapping uniquely, "
+              "so its Figures 2/3 cannot be reproduced point by point.",
+              "", "## Implementation and saturation diagnostics", "",
+              "Each exposure independently simulates Poisson(signal rate × exposure time), "
+              "Poisson(dark current × exposure time), and N(0, read-noise standard deviation²), "
+              "followed by full-well clipping and ADC rounding. Twenty additional dark frames per exposure "
+              "provide the mean and unbiased sample variance. All single-exposure and fusion methods share "
+              "the same measurements.",
+              "", "Strict implementation: r̄ = mean((Zᵢ−B̄ᵢ)/tᵢ), wᵢ = tᵢ²/(tᵢr̄+Var(Bᵢ)), "
+              "and fusion = sum(wᵢ(Zᵢ−B̄ᵢ)/tᵢ)/sum(wᵢ), with nonnegative estimates and numerical "
+              "division-by-zero protection. Saturated values are retained; no reference image is added, "
+              "and the reconstruction engine and iteration count are unchanged.",
+              "", "When dark-field variance approaches zero and the denominator is valid, the original formula "
+              "reduces to sum(Zᵢ−B̄ᵢ)/sum(tᵢ). Saturated readings still enter the average as ordinary observations, "
+              "underestimating bright regions. Independent formula tests and diagnostics of the saved diffraction "
+              "inputs verify this behavior.",
+              "", "The additional extension uses only unsaturated observations to estimate the initial rate "
+              "and calculate weights, while retaining zero-valued observations. It reports failure if all exposures "
+              "of any pixel are saturated. This control examines saturation bias and is separate from the paper's "
+              "original algorithm.",
+              "", "## Comparison methods and fairness", "",
+              "- Use a common scan-coverage ROI. Full-size outputs still contain an unupdated border, "
+              "which is excluded from evaluation.",
+              "- All figures share the baseline's grayscale limits. Each image fits only one positive amplitude "
+              "scale to compensate for object/probe scale ambiguity, without shifting, filtering, histogram matching, "
+              "or independent contrast stretching.",
+              "- PSNR uses the fixed baseline's amplitude range; SSIM uses a 7×7 window. The baseline is a "
+              "reconstruction rather than the true object and is not treated as ground truth for resolution gains.",
+              "- Diffraction NRMSE compares against the known input before camera simulation and undoes the known "
+              "gain to restore a common scale, without fitting a separate intensity scale for each method.",
+              "- Per-frame fitting error is only a convergence diagnostic for each method; it does not establish "
+              "image-quality advantages across different inputs.",
+              "- All methods use the same initialization settings, without initializing from the baseline object "
+              "or probe. Probe power is estimated from each method's own measurements using the baseline procedure.",
+              "- Noise seeds are preset to " + str(manifest["selected_seeds"]) + ". Figures always show the first "
+              "seed, and tables summarize all seeds without selecting the best run.",
+              "- Total multi-exposure integration time is 666.5 ms per position, excluding dark frames and readout "
+              "overhead; each single exposure uses its corresponding time. Acquisition time and photon budgets "
+              "are unequal, so any gains cannot be interpreted as improved acquisition efficiency.",
+              "- All exposure results and failure statuses are retained. LRFC-HDR, a 16-bit control, and FRC "
+              "against the true object are not included, so this work does not reproduce all experiments in the paper.",
+              "", "## Baseline recalculation check", "",
+              f"Recalculation in the current environment using the saved settings gives amplitude "
+              f"NRMSE={number(baseline_check['baseline_nrmse'],6)} and "
+              f"SSIM={number(baseline_check['baseline_ssim'],6)} against the historical baseline. "
+              "The historical baseline remains the common reference, and the discrepancy is retained and reported.",
+              "", "## Outputs and rerunning", "",
+              "- `manifest.json`: complete settings, sources and assumptions, software versions, and code/data SHA-256 hashes.",
+              "- `comparison_metrics.csv`: complete metrics for each profile, seed, and method.",
+              "- `summary_metrics.csv`: means and sample standard deviations across seeds.",
+              "- `camera_diagnostics.csv`: saturation and zero fractions, all-zero frames, dark-field means/variances, and related diagnostics.",
+              "- `baseline_reference/`: copies of the original outputs for the user-selected baseline; "
+              "`baseline_recomputed/`: recalculation in the current environment.",
+              "- `<profile>/seed_<seed>/measurement.npz`: all digital measurements, dark frames, and exposure times.",
+              "- `<profile>/seed_<seed>/<method>/`: reconstruction arrays, fusion/single-exposure inputs, and metadata. "
+              "The first seed also includes complete PNG and PtyLab HDF5 outputs.",
+              "", "Run from the project directory using a new output path; the script refuses to overwrite "
+              "an existing directory:", "", "```bash",
               "python scripts/reproduce_paper.py --output outputs/paper_reproduction_repeat",
               "```", ""]
     (output / "REPORT.md").write_text("\n".join(lines), encoding="utf-8")
@@ -255,12 +285,12 @@ def report(output, manifest, summary, baseline_check):
     table_rows = "".join("<tr>" + "".join(f"<td>{html.escape(str(v))}</td>" for v in
         [r['case'], number(r['baseline_psnr_db_mean'],2), number(r['baseline_ssim_mean']),
          number(r['baseline_nrmse_mean'])]) + "</tr>" for r in items)
-    body = f"""<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>ML-HDR 复现比较</title>
+    body = f"""<!doctype html><html lang="en"><meta charset="utf-8"><title>ML-HDR reproduction comparison</title>
 <style>body{{max-width:1200px;margin:40px auto;padding:0 24px;font:17px/1.7 system-ui;color:#243044}}img{{width:100%;height:auto}}table{{border-collapse:collapse;width:100%}}td,th{{padding:8px;border-bottom:1px solid #ddd;text-align:left}}a{{color:#176e8c}}.note{{background:#eef4f8;padding:18px}}</style>
-<h1>ML-HDR 论文方法复现</h1><p>固定基线：21×21 扫描 · 80 次 mPIE · 8 px 步长 · 31 px 初始探针</p>
-<p class="note">红色曲线与 paper_ml_hdr 为论文式（14）—（15）的实现；绿色虚线与 saturation_mask_extension 为额外饱和处理，不能视为原论文结果。PSNR/SSIM 是与保存基线的一致性，不是真实物体分辨率。</p>
-<p><a href="REPORT.md">完整实验报告与限制</a> · <a href="manifest.json">参数与来源</a> · <a href="summary_metrics.csv">指标表</a></p>
-<table><tr><th>主场景方法</th><th>PSNR / dB</th><th>SSIM</th><th>振幅 NRMSE</th></tr>{table_rows}</table>"""
+<h1>ML-HDR paper reproduction</h1><p>Fixed baseline: 21×21 scan · 80 mPIE iterations · 8 px step · 31 px initial probe diameter</p>
+<p class="note">The red curves and paper_ml_hdr implement the paper's Equations (14)–(15). The green dashed curves and saturation_mask_extension use additional saturation handling, whose results are separate from the original algorithm. PSNR/SSIM measure agreement with the saved baseline rather than true-object resolution.</p>
+<p><a href="REPORT.md">Full experiment report and limitations</a> · <a href="manifest.json">Parameters and sources</a> · <a href="summary_metrics.csv">Metrics table</a></p>
+<table><tr><th>Main-profile method</th><th>PSNR / dB</th><th>SSIM</th><th>Amplitude NRMSE</th></tr>{table_rows}</table>"""
     for profile in manifest["selected_profiles"]:
         body += f'<h2>{html.escape(profile)}</h2>'
         for name in ["comparison_amplitude.png", "extension_comparison.png", "metrics_vs_exposure.png", "diffraction_comparison.png"]:
