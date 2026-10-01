@@ -189,8 +189,10 @@ def _bounds(results, metric, cases=None, factor=1):
 
 
 def _save(fig, output, name, dpi):
-    for suffix in ("png", "svg"):
-        fig.savefig(output / f"{name}.{suffix}", dpi=dpi, metadata={"Creator": "ML-HDR recorded-results comparison"})
+    metadata = {"Creator": "ML-HDR recorded-results comparison"}
+    fig.savefig(output / f"{name}.png", dpi=dpi, metadata=metadata)
+    # Omit the SVG <dc:date> timestamp so unchanged figures are reproducible byte for byte.
+    fig.savefig(output / f"{name}.svg", dpi=dpi, metadata={**metadata, "Date": None})
     plt.close(fig)
 
 
@@ -256,7 +258,8 @@ def plot_exposure_comparison(results, output, dpi=300):
 
 def plot_method_heatmaps(results, output, dpi=300):
     fig, axes = plt.subplots(1, 3, figsize=(16.5, 7.6))
-    fig.subplots_adjust(left=.195, right=.98, bottom=.23, top=.84, wspace=.34)
+    # The colorbar labels end just above the two-line footer, without a blank band.
+    fig.subplots_adjust(left=.195, right=.98, bottom=.15, top=.84, wspace=.34)
     for i, (ax, (metric, label, cmap)) in enumerate(zip(axes, QUALITY)):
         values = np.array([[results.value(p, c, metric) for p in results.profiles] for c in results.cases])
         im = ax.imshow(values, cmap=cmap, aspect="auto", interpolation="nearest", vmin=values.min(), vmax=values.max())
@@ -275,7 +278,7 @@ def plot_method_heatmaps(results, output, dpi=300):
                 sd_text = f"{sd:.1e}" if 0 < sd < .00005 else f"{sd:.4f}"
                 label_text = f"{val:.2f}\n±{sd:.2f}" if metric.endswith("db") else f"{val:.4f}\n±{sd_text}"
                 ax.text(x, y, label_text, ha="center", va="center", color="black" if luminance > .56 else "white", fontsize=9.2)
-        bar = fig.colorbar(im, ax=ax, orientation="horizontal", fraction=.035, pad=.18)
+        bar = fig.colorbar(im, ax=ax, orientation="horizontal", fraction=.031, pad=.16)
         bar.set_label("Brighter = better; color encodes the mean", fontsize=9)
     fig.suptitle("Every recorded method and noise condition", y=.97, fontsize=16)
     fig.text(.5, .915, "Cell = mean ± sample SD; shared color scale across noise settings within each metric", ha="center", fontsize=11)
@@ -287,7 +290,8 @@ def plot_noise_comparison(results, output, dpi=300):
     cases = ("single_1ms", "single_500ms", *FUSIONS)
     colors = _colors(results)
     fig, axes = plt.subplots(1, 3, figsize=(15.8, 5.8))
-    fig.subplots_adjust(left=.07, right=.98, bottom=.27, top=.74, wspace=.30)
+    # The x-axis labels end just above the two-line footer, without a blank band.
+    fig.subplots_adjust(left=.07, right=.98, bottom=.19, top=.76, wspace=.30)
     x = np.arange(len(results.profiles))
     for ax, (metric, label, _) in zip(axes, QUALITY):
         for i, case in enumerate(cases):

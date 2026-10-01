@@ -27,8 +27,9 @@ import numpy as np
 
 from mlhdr_ptycho.data import load_diff_npy, normalize_stack
 from mlhdr_ptycho.paper_reproduction import (
-    PaperCamera, amplitude_comparison, diffraction_comparison, paper_eq14_15,
-    saturation_mask_extension, simulate_paper_camera, single_rate,
+    PaperCamera, amplitude_comparison, diffraction_comparison, display_label,
+    display_profile, paper_eq14_15, saturation_mask_extension, simulate_paper_camera,
+    single_rate,
 )
 from mlhdr_ptycho.ptylab_reconstruction import (
     PtyLabConfig, coverage_roi, reconstruction_metrics, run_mpie,
@@ -121,7 +122,7 @@ def summarize(rows):
     return result
 
 
-def metric_plot(path, summary, profile, exposure_ms):
+def metric_plot(path, summary, profile, exposure_ms, camera):
     data = {r["case"]: r for r in summary if r["profile"] == profile}
     fig, axes = plt.subplots(1, 3, figsize=(15, 4), layout="constrained")
     for ax, metric, label in zip(axes,
@@ -130,21 +131,22 @@ def metric_plot(path, summary, profile, exposure_ms):
         means = [data[f"single_{t:g}ms"].get(metric + "_mean") for t in exposure_ms]
         stds = [data[f"single_{t:g}ms"].get(metric + "_std") for t in exposure_ms]
         ax.errorbar(exposure_ms, means, yerr=stds, marker="o", color="#4464ad", label="Single exposure")
-        for case, name, color, style in [
-            ("paper_ml_hdr", "Published Eq.14-15", "#cc4444", "-"),
-            ("saturation_mask_extension", "Saturation mask extension", "#16846c", "--"),
+        for case, color, style in [
+            ("paper_ml_hdr", "#cc4444", "-"),
+            ("saturation_mask_extension", "#16846c", "--"),
         ]:
             mean = data[case].get(metric + "_mean")
             std = data[case].get(metric + "_std")
             if mean is not None:
-                ax.axhline(mean, color=color, linestyle=style, label=name)
+                ax.axhline(mean, color=color, linestyle=style, label=display_label(case))
                 ax.axhspan(mean - std, mean + std, color=color, alpha=.12)
         ax.set_xscale("log")
         ax.set_xlabel("Single exposure time (ms)")
         ax.set_ylabel(label)
         ax.grid(alpha=.2)
     axes[0].legend(fontsize=8)
-    fig.suptitle(f"{profile}: mean +/- sample standard deviation; all reconstructions 80 iterations")
+    fig.suptitle(f"{display_profile(profile, camera)}: mean +/- sample standard deviation; "
+                 "all reconstructions 80 iterations")
     fig.savefig(path, dpi=160)
     plt.close(fig)
 
@@ -152,8 +154,9 @@ def metric_plot(path, summary, profile, exposure_ms):
 def diffraction_plot(path, clean, rates, measurement):
     # Fixed center scan position, selected before seeing any reconstruction.
     index = len(clean) // 2
-    panels = [("Clean input", clean[index])]
-    panels += [(label, a[index] / measurement.count_rate_scale) for label, a in rates]
+    # Readable panel titles; the method keys stay in files and tables.
+    panels = [(display_label("clean"), clean[index])]
+    panels += [(display_label(case), a[index] / measurement.count_rate_scale) for case, a in rates]
     fig, axes = plt.subplots(2, 5, figsize=(15, 6), layout="constrained")
     for ax, (label, a) in zip(axes.ravel(), panels):
         im = ax.imshow(np.log10(np.maximum(a, 1e-8)), vmin=-8, vmax=0, cmap="viridis")
@@ -424,8 +427,8 @@ def main():
     for profile in profiles:
         prev = previews[profile]
         panels = [("Saved raw baseline", prev["baseline"])]
-        panels += [(f"Single {t:g} ms", prev[f"single_{t:g}ms"]) for t in exposure_ms]
-        panels += [("Published Eq.14-15", prev["paper_ml_hdr"])]
+        panels += [(display_label(f"single_{t:g}ms"), prev[f"single_{t:g}ms"]) for t in exposure_ms]
+        panels += [(display_label("paper_ml_hdr"), prev["paper_ml_hdr"])]
         contact_sheet(output / profile / "comparison_amplitude.png", panels, reference,
                       "Saved baseline / single exposures / published ML-HDR; same grayscale")
         contact_sheet(output / profile / "difference_to_baseline.png", panels, reference,
@@ -433,12 +436,14 @@ def main():
         best = max((r for r in summary if r["profile"] == profile and r["case"].startswith("single_")
                     and r["baseline_ssim_mean"] is not None), key=lambda r: r["baseline_ssim_mean"])
         control = [("Saved raw baseline", prev["baseline"]),
-                   (f"Best single by mean SSIM\n{best['case']}", prev[best["case"]]),
-                   ("Published Eq.14-15", prev["paper_ml_hdr"]),
-                   ("Additional saturation mask\nNOT published algorithm", prev["saturation_mask_extension"])]
+                   (f"Best single by mean SSIM\n{display_label(best['case'])}", prev[best["case"]]),
+                   (display_label("paper_ml_hdr"), prev["paper_ml_hdr"]),
+                   (display_label("saturation_mask_extension") + "\nNOT the published algorithm",
+                    prev["saturation_mask_extension"])]
         contact_sheet(output / profile / "extension_comparison.png", control, reference,
                       "Saturation diagnostic control (first fixed noise seed)")
-        metric_plot(output / profile / "metrics_vs_exposure.png", summary, profile, exposure_ms)
+        metric_plot(output / profile / "metrics_vs_exposure.png", summary, profile, exposure_ms,
+                    PaperCamera(**conf["camera"], **conf["noise_profiles"][profile]))
     manifest["status"] = "complete"
     manifest["successful_reconstructions"] = sum(r["status"] == "ok" for r in rows)
     manifest["total_reconstructions"] = len(rows)

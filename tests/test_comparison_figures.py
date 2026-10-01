@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from mlhdr_ptycho.comparison_figures import (
-    _bounds, _exposure_series, load_recorded_results,
+    STYLE, _bounds, _exposure_series, load_recorded_results,
     plot_method_heatmaps, plot_noise_comparison,
 )
 
@@ -118,6 +118,21 @@ class ComparisonFigureTests(unittest.TestCase):
         for container, case in zip(ax.containers, cases):
             expected = [self.results.value(p, case, "baseline_psnr_db") for p in self.results.profiles]
             np.testing.assert_array_equal(container.lines[0].get_ydata(), expected)
+
+    def test_footer_sits_just_below_the_plots(self):
+        for plot in (plot_method_heatmaps, plot_noise_comparison):
+            captured = []
+            with plt.rc_context(STYLE), patch("mlhdr_ptycho.comparison_figures._save",
+                                              side_effect=lambda fig, *_: captured.append(fig)):
+                plot(self.results, self.source)
+                fig = captured[0]
+                renderer = fig.canvas.get_renderer()
+                content_bottom = min(ax.get_tightbbox(renderer).y0 for ax in fig.axes)
+                footer_top = max(text.get_window_extent(renderer).y1
+                                 for text in fig.texts if text.get_position()[1] < .1)
+            gap_inches = (content_bottom - footer_top) / fig.dpi
+            self.assertGreater(gap_inches, 0, plot.__name__)  # No overlap.
+            self.assertLess(gap_inches, .5, plot.__name__)  # No blank band.
 
 
 if __name__ == "__main__":

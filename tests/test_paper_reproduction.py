@@ -1,4 +1,6 @@
 """Scientific checks for the published formula, camera statistics and metrics."""
+import json
+from pathlib import Path
 import unittest
 from dataclasses import replace
 
@@ -6,8 +8,11 @@ import numpy as np
 
 from mlhdr_ptycho.paper_reproduction import (
     PaperCamera, PaperMeasurement, amplitude_comparison, diffraction_comparison,
-    paper_eq14_15, quantize_electrons, saturation_mask_extension, simulate_paper_camera,
+    display_label, display_profile, paper_eq14_15, quantize_electrons,
+    saturation_mask_extension, simulate_paper_camera,
 )
+
+CONFIG = Path(__file__).resolve().parents[1] / 'experiments/paper_baseline_comparison.json'
 
 
 class PaperReproductionTests(unittest.TestCase):
@@ -95,6 +100,29 @@ class PaperReproductionTests(unittest.TestCase):
         for times in [[0],[-1],[float('nan')]]:
             with self.assertRaises(ValueError):
                 simulate_paper_camera(np.ones((1,2,2)),times,PaperCamera())
+
+
+    def test_figure_labels_replace_raw_method_keys(self):
+        self.assertEqual(display_label('clean'), 'Clean input')
+        self.assertEqual(display_label('single_0.5ms'), 'Single exposure 0.5 ms')
+        self.assertEqual(display_label('single_500ms'), 'Single exposure 500 ms')
+        self.assertEqual(display_label('paper_ml_hdr'), 'ML-HDR Eq. 14–15 (published)')
+        self.assertEqual(display_label('saturation_mask_extension'),
+                         'ML-HDR + saturation mask (extension)')
+        for key in ['single_ms', 'single_-1ms', 'single_nanms', 'single_0ms', 'lrfc', '']:
+            with self.assertRaises(ValueError):
+                display_label(key)
+        # Profile sigmas come from the recorded experiment configuration.
+        conf = json.loads(CONFIG.read_text(encoding='utf-8'))
+        expected = {'low_noise': 'Read noise σ = 5 e⁻',
+                    'read_noise_025adu': 'Read noise σ = 0.25 ADC count',
+                    'read_noise_1adu': 'Read noise σ = 1 ADC count'}
+        self.assertEqual(set(conf['noise_profiles']), set(expected))
+        for profile, settings in conf['noise_profiles'].items():
+            camera = PaperCamera(**conf['camera'], **settings)
+            self.assertEqual(display_profile(profile, camera), expected[profile])
+        self.assertEqual(display_profile('my_profile', PaperCamera(read_noise_e=12.5)),
+                         'my_profile: Read noise σ = 12.5 e⁻')
 
 
 if __name__ == '__main__':

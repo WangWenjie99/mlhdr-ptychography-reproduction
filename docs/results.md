@@ -100,6 +100,15 @@ These figures do not include LRFC-HDR, bit-depth sweeps, object ground truth, FR
 
 The images below use archived camera seed 0 to show artifacts and weak diffraction signals alongside the quantitative curves. They are not averages of three reconstructions. Amplitude comparisons use the baseline's shared scale, and diffraction images use a common log10 intensity scale.
 
+**Labels in the historical snapshots.** These PNGs, and the snapshots for the two other noise scenarios further down, predate the readable figure labels now used by `scripts/reproduce_paper.py`. They cannot be regenerated without the missing raw `diff.npy` and baseline archive, so some panel titles still show raw keys:
+
+| Key in the image | Readable name |
+|---|---|
+| `single_0.5ms` … `single_500ms` (also under "Best single by mean SSIM") | Single exposure 0.5 ms … 500 ms |
+| `paper_ml_hdr`; "Published Eq.14-15" | ML-HDR Eq. 14–15 (published) |
+| `saturation_mask_extension`; "Saturation mask extension" or "Additional saturation mask" | ML-HDR + saturation mask (extension) |
+| `low_noise`, `read_noise_025adu`, `read_noise_1adu` (metric plot titles) | Read noise σ = 5 e⁻, σ = 0.25 ADC count and σ = 1 ADC count |
+
 ![Seven single exposures and the original paper equations](figures/low_noise_comparison.png)
 
 ![Baseline, best single exposure, original equations, and saturation-masking extension](figures/low_noise_extension.png)
@@ -121,6 +130,8 @@ Values are means across three fixed camera seeds. The best single exposure in ea
 | `read_noise_1adu` | 500 ms | 0.1088 | 0.1187 | 0.3415 |
 
 At high read noise, the original equations show a small mean improvement, comparable to repeat variability. Three seeds do not establish significance. At low and moderate read noise, the original equations do not beat the best single exposure, so a general advantage is not established.
+
+The snapshots below are historical too; their raw keys (for example `single_500ms`) are explained in [Labels in the historical snapshots](#single-run-snapshots-all-low-noise-exposures).
 
 ### 0.25 ADC count read noise
 

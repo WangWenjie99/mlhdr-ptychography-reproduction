@@ -3,7 +3,7 @@
   "description": "Complete preserved local scientific data, published figures and provenance for continuation from a Git clone. Paths are relative to the repository root; SHA-256 and sizes describe exact file bytes.",
   "snapshot_date": "2026-10-01",
   "file_count": 57,
-  "total_bytes": 29266199,
+  "total_bytes": 29287420,
   "missing_preexisting": [
     {
       "path": "diff.npy",
@@ -72,8 +72,8 @@
     },
     {
       "path": "docs/figures/paper_comparisons/diffraction_diagnostics.svg",
-      "size_bytes": 193138,
-      "sha256": "5485bce4995e089c10e6bd2e52a6d86c7799863659b1d034f1e09c717c350d0a",
+      "size_bytes": 193087,
+      "sha256": "418aa54dd486f2e03975a871aa80d0d7c5895a989215b09277a243b7b59d2a00",
       "role": "figure_vector"
     },
     {
@@ -84,38 +84,38 @@
     },
     {
       "path": "docs/figures/paper_comparisons/exposure_comparison.svg",
-      "size_bytes": 159051,
-      "sha256": "f0449348ccf468aa177a72353ef8b7d50ed600b11da853308a81f676b69a54cf",
+      "size_bytes": 159000,
+      "sha256": "f4ef3669c6ca7f814cddf0517650bf41e378455be19d4387a0ff6e836692e8cc",
       "role": "figure_vector"
     },
     {
       "path": "docs/figures/paper_comparisons/figures_manifest.json",
       "size_bytes": 8421,
-      "sha256": "b2684c424d1208610cd6ea8954670bd2341138b8267774383215611ad7ed249e",
+      "sha256": "33f07c6cdbc638f3a2be8919d7b84942c460c928189935045a5cdf7b3b9f2857",
       "role": "figure_provenance"
     },
     {
       "path": "docs/figures/paper_comparisons/method_heatmaps.png",
-      "size_bytes": 826090,
-      "sha256": "b106d45ee7d97424a2bd805f05682cbb71b646c3dc2d39c44b717831ac6d30da",
+      "size_bytes": 827318,
+      "sha256": "1704b6d2b675269d6ac221809f4b4fe825b28c5944a99b6fe4165e8b221f85fa",
       "role": "figure_image"
     },
     {
       "path": "docs/figures/paper_comparisons/method_heatmaps.svg",
-      "size_bytes": 74051,
-      "sha256": "e323405bb49e8a1ff981c4edd628da9a7fd9f49e1aebe3307462fd726ed3c18c",
+      "size_bytes": 78651,
+      "sha256": "cc7df6a1e372c0621deaea603d4e5b8d973c1b10199e9f08164771faac38d981",
       "role": "figure_vector"
     },
     {
       "path": "docs/figures/paper_comparisons/noise_comparison.png",
-      "size_bytes": 435592,
-      "sha256": "5498046eed0106ae43a752099d1ef823e32d7d69ce0bdbf0ed58c7f0029de5a2",
+      "size_bytes": 450690,
+      "sha256": "f355cf0d45b931231267b621db60f0d5bf3d4b67a7afaf853c998a3cd1e8eeeb",
       "role": "figure_image"
     },
     {
       "path": "docs/figures/paper_comparisons/noise_comparison.svg",
-      "size_bytes": 51149,
-      "sha256": "077e22091c136a838aefb68bd97d3ad91ce3b74b5f6260eedd23ca04f1ecbb90",
+      "size_bytes": 51079,
+      "sha256": "59faaa9c72ce0068770432accee496441aaabe17a60aa40489fcaf8a5274ebe6",
       "role": "figure_vector"
     },
     {
@@ -181,7 +181,7 @@
     {
       "path": "docs/figures/paper_style/figures_manifest.json",
       "size_bytes": 6974,
-      "sha256": "cbe9e8fc70f94cd21feaa839ff72412d81e90a14d67c41c8531bee9b4375577d",
+      "sha256": "d62febf525a6d7bf495a6150f538c820184bc7a7bef52ec4a9827163d49b744f",
       "role": "figure_provenance"
     },
     {
@@ -216,8 +216,8 @@
     },
     {
       "path": "docs/paper_style/data/meta.json",
-      "size_bytes": 7304,
-      "sha256": "19a6cbc6bd3f33112de180f439aa0ec70969dd4ec0cf088f1f0bad4e590f608f",
+      "size_bytes": 7399,
+      "sha256": "44dce656904a4981a8aa6f3252b29cc43f11ce914ef80b845734b30c451b214d",
       "role": "simulation_metrics_documentation_copy"
     },
     {
@@ -276,8 +276,8 @@
     },
     {
       "path": "outputs/paper_style/full/DATA_CONTRACT.md",
-      "size_bytes": 10607,
-      "sha256": "3c0b9971bdfaa223cd5e4abb2861bdb7994e5d003d4b57947c1541d7c0b55275",
+      "size_bytes": 10698,
+      "sha256": "b4ccff17ec7de2f6f276489c957cc40a7fb7e9c7cc05a8f545877399e0efd45e",
       "role": "simulation_data_contract"
     },
     {
@@ -288,8 +288,8 @@
     },
     {
       "path": "outputs/paper_style/full/meta.json",
-      "size_bytes": 7304,
-      "sha256": "19a6cbc6bd3f33112de180f439aa0ec70969dd4ec0cf088f1f0bad4e590f608f",
+      "size_bytes": 7399,
+      "sha256": "44dce656904a4981a8aa6f3252b29cc43f11ce914ef80b845734b30c451b214d",
       "role": "simulation_configuration_and_provenance"
     },
     {
@@ -330,8 +330,8 @@
     },
     {
       "path": "outputs/paper_style/quick/DATA_CONTRACT.md",
-      "size_bytes": 10608,
-      "sha256": "3354f00b9b672e31edf30ac3895f7b1afda05e6fcde56c31038d095b047d135c",
+      "size_bytes": 10699,
+      "sha256": "445e17b89c0b3f4ac963d2b74db218603b211668ac32b6fed66e7e9811e47d05",
       "role": "simulation_data_contract"
     },
     {
@@ -342,8 +342,8 @@
     },
     {
       "path": "outputs/paper_style/quick/meta.json",
-      "size_bytes": 6752,
-      "sha256": "168976e67660bdb1dd61d669da978114d91c3d4ab7a59d5d51564abef1532800",
+      "size_bytes": 6847,
+      "sha256": "b4e4a1e4542a281694b3d7b1ff13d67a1bc8c5545f399d9c7bc5ce479f02735b",
       "role": "simulation_configuration_and_provenance"
     },
     {

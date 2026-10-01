@@ -15,6 +15,53 @@ from skimage.metrics import structural_similarity
 from .ml_hdr import CameraModel, MultiExposureMeasurement, ml_hdr_fusion
 
 
+# Figure labels for the method keys used in saved files, metrics and tables.
+DISPLAY_LABELS = {
+    "clean": "Clean input",
+    "paper_ml_hdr": "ML-HDR Eq. 14–15 (published)",
+    "saturation_mask_extension": "ML-HDR + saturation mask (extension)",
+}
+
+
+def display_label(key):
+    """Readable figure label for a method key; files and tables keep the key.
+
+    ``single_<t>ms`` becomes ``Single exposure <t> ms``. Unknown keys raise
+    instead of placing an unexplained identifier in a figure.
+    """
+    if key in DISPLAY_LABELS:
+        return DISPLAY_LABELS[key]
+    if isinstance(key, str) and key.startswith("single_") and key.endswith("ms"):
+        exposure = key[len("single_"):-len("ms")]
+        try:
+            valid = np.isfinite(float(exposure)) and float(exposure) > 0
+        except ValueError:
+            valid = False
+        if valid:
+            return f"Single exposure {exposure} ms"
+    raise ValueError(f"No display label for method key {key!r}")
+
+
+# Noise profiles of experiments/paper_baseline_comparison.json and the unit in
+# which each read-noise level was chosen: electrons or ADC counts.
+PROFILE_UNITS = {"low_noise": "e", "read_noise_025adu": "ADC", "read_noise_1adu": "ADC"}
+
+
+def display_profile(key, camera: PaperCamera):
+    """Readable figure label for a noise profile; sigma comes from its camera.
+
+    The recorded profiles read ``Read noise σ = 5 e⁻``, ``... = 0.25 ADC count``
+    and ``... = 1 ADC count``. Other profile names stay as a prefix, because
+    such profiles may also differ in settings other than read noise.
+    """
+    sigma = camera.read_noise_e
+    if PROFILE_UNITS.get(key) == "ADC":
+        label = f"Read noise σ = {sigma / camera.electrons_per_count:g} ADC count"
+    else:
+        label = f"Read noise σ = {sigma:g} e⁻"
+    return label if key in PROFILE_UNITS else f"{key}: {label}"
+
+
 @dataclass(frozen=True)
 class PaperCamera:
     photon_flux_per_s: float = 1e9

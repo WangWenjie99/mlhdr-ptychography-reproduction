@@ -7,10 +7,11 @@ procedurally rendered USAF-1951 target, groups 7-9) and the multi-exposure
 camera data produced by ``paper_reproduction.simulate_paper_camera``.
 
 IMPORTANT - these numbers are OUR choices. Liu et al. do not report the
-simulation's exposure times, read noise, wavelength, detector sampling or
-probe; we reuse the experimental wavelength, distance and the seven
-experimental exposure times, and choose a virtual detector pitch so that the
-object pixel matches the experiment's ~0.571 um transmission sampling.
+simulation's exposure times, read noise, dark current, wavelength or pixel
+sizes, and our geometry, object sampling, probe and scan step differ from the
+paper's simulation. We reuse the experimental wavelength, distance and the
+seven experimental exposure times, and choose a virtual detector pitch so that
+the object pixel matches the experiment's ~0.571 um transmission sampling.
 
 Conventions
 -----------

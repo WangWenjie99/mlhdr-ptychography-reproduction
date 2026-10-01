@@ -185,7 +185,7 @@
     ]
   },
   "assumptions": [
-    "These simulation parameters are OUR choices: Liu et al. do not report the simulation's exposure times, read noise, wavelength, sampling, probe or scan.",
+    "These simulation parameters are OUR choices: Liu et al. do not report the simulation's exposure times, read noise, dark current, wavelength or pixel sizes, and our geometry, object sampling, probe and scan step differ from the paper's simulation.",
     "Exposure times = the paper's 7 experimental exposures (0.5-500 ms).",
     "Geometry: lambda=632.8 nm, z=13.9 mm, 64x64 virtual detector pixels of 240.64 um => object pixel lambda z/(N pitch) = 0.5711 um (experiment ~0.571 um).",
     "Photon flux 1e9 photons/s = TOTAL rate of the brightest diffraction frame (simulate_paper_camera), quantum efficiency 1.",

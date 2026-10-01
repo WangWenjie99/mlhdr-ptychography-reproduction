@@ -12,6 +12,8 @@ Four sets of paper-style comparisons cover all exposure curves, all-method heatm
 
 ![Baseline, best single exposure, original paper equations, and additional saturation handling](docs/figures/low_noise_extension.png)
 
+*Historical snapshot (low-noise scenario, camera seed 0). It predates the readable figure labels and cannot be regenerated without the missing raw data: `single_1ms` means single exposure 1 ms, and "Published Eq.14-15" is ML-HDR Eq. 14–15. See the [label key](docs/results.md#single-run-snapshots-all-low-noise-exposures).*
+
 A separate set of **paper-style simulation comparisons** follows the layouts of Figs. 2, 3, 5, 6, and 7: bit-depth sweeps, noise sweeps, multi-exposure diffraction images, and USAF resolution results. These figures compare this project's four methods with each other and contain no values taken from the paper. The saved simulations have known ground truth and include LRFC-HDR, 8/16-bit comparisons, and ground-truth-referenced FRC. This project's own geometry choices (a 226×226 object, a 64×64 probe window and detector with a 32 px probe diameter, and 8 px scan steps with 10% perturbation) differ from the paper's simulation; it uses 400 scan positions (20×20) and 250 iterations. Camera and exposure assumptions not determined by the paper are recorded explicitly. See [paper-style simulation comparisons](docs/results.md#paper-style-simulation-comparisons) and [key values](docs/paper_style/summary.md).
 
 ## Repository contents
@@ -192,7 +194,7 @@ python -B scripts/validate_paper_results.py outputs/my_comparison
 
 The historical fixed-baseline experiment passed nine scientific tests and 532 result-audit checks. Its audit records are retained, but the raw binary outputs needed to rerun the complete historical audit are currently missing. Saved paper-style simulation data integrity is checked separately with `python scripts/verify_repository_data.py`.
 
-The current suite contains 46 tests: nine scientific tests, eight comparison-figure tests, 13 paper-style simulation tests, and 16 paper-style figure tests. Plotting tests use small synthetic data generated in temporary directories, including multiple seeds and failed runs, and do not depend on `outputs/`.
+The current suite contains 48 tests: nine scientific tests, one figure-label test, nine comparison-figure tests, 13 paper-style simulation tests, and 16 paper-style figure tests. The paper-style figure tests use small synthetic data generated in temporary directories, including multiple seeds and failed runs. The comparison-figure tests read the recorded `docs/` metrics and edit temporary copies of them. No test depends on `outputs/`.
 
 Camera measurements and fusion inputs can be reproduced exactly. With the currently installed reconstructor, numerical outputs may still differ at the bit level even with identical initialization and NumPy random sequences. See the [repeatability record](docs/solver_repeatability.json).
 

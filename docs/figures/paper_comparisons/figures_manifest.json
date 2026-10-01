@@ -64,7 +64,7 @@
     }
   },
   "code_sha256": {
-    "mlhdr_ptycho/comparison_figures.py": "9b4c9c76c863bb554c136679f20ba57c9f1a5ae08a55d93d8deddb5bbcc17924",
+    "mlhdr_ptycho/comparison_figures.py": "dbda3a5a7492a1263356d59333dd78d85c85c8ddd4cf79e239b2a17773d29c53",
     "scripts/plot_paper_comparisons.py": "b683721aeafbfcc5be1c1a14e9f2f81646d06aeda3d8844326bf77cc260b26c4"
   },
   "method_order": [
@@ -224,27 +224,27 @@
       },
       "svg": {
         "path": "exposure_comparison.svg",
-        "sha256": "f0449348ccf468aa177a72353ef8b7d50ed600b11da853308a81f676b69a54cf"
+        "sha256": "f4ef3669c6ca7f814cddf0517650bf41e378455be19d4387a0ff6e836692e8cc"
       }
     },
     "method_heatmaps": {
       "png": {
         "path": "method_heatmaps.png",
-        "sha256": "b106d45ee7d97424a2bd805f05682cbb71b646c3dc2d39c44b717831ac6d30da"
+        "sha256": "1704b6d2b675269d6ac221809f4b4fe825b28c5944a99b6fe4165e8b221f85fa"
       },
       "svg": {
         "path": "method_heatmaps.svg",
-        "sha256": "e323405bb49e8a1ff981c4edd628da9a7fd9f49e1aebe3307462fd726ed3c18c"
+        "sha256": "cc7df6a1e372c0621deaea603d4e5b8d973c1b10199e9f08164771faac38d981"
       }
     },
     "noise_comparison": {
       "png": {
         "path": "noise_comparison.png",
-        "sha256": "5498046eed0106ae43a752099d1ef823e32d7d69ce0bdbf0ed58c7f0029de5a2"
+        "sha256": "f355cf0d45b931231267b621db60f0d5bf3d4b67a7afaf853c998a3cd1e8eeeb"
       },
       "svg": {
         "path": "noise_comparison.svg",
-        "sha256": "077e22091c136a838aefb68bd97d3ad91ce3b74b5f6260eedd23ca04f1ecbb90"
+        "sha256": "59faaa9c72ce0068770432accee496441aaabe17a60aa40489fcaf8a5274ebe6"
       }
     },
     "diffraction_diagnostics": {
@@ -254,7 +254,7 @@
       },
       "svg": {
         "path": "diffraction_diagnostics.svg",
-        "sha256": "5485bce4995e089c10e6bd2e52a6d86c7799863659b1d034f1e09c717c350d0a"
+        "sha256": "418aa54dd486f2e03975a871aa80d0d7c5895a989215b09277a243b7b59d2a00"
       }
     }
   }

@@ -9,8 +9,9 @@ Produced by ``scripts/run_paper_style_simulation.py`` into
 consumes ONLY these files.
 
 **All simulation parameters are OUR choices.** Liu et al. do not report the
-simulation's exposure times, read noise, wavelength, sampling, probe or
-scan size; we reuse the experimental wavelength (632.8 nm), distance
+simulation's exposure times, read noise, dark current, wavelength or pixel
+sizes, and our geometry, object sampling, probe and scan step differ from the
+paper's simulation. We reuse the experimental wavelength (632.8 nm), distance
 (13.9 mm) and the seven experimental exposure times (0.5-500 ms), and pick a
 virtual detector pitch so the object pixel equals the experiment's
 ~0.571 um. Every value is recorded in ``meta.json``.
@@ -748,7 +749,9 @@ def main(argv=None):
         "diffraction_example": _clean_json(diff_info) if diff_info else None,
         "assumptions": [
             "These simulation parameters are OUR choices: Liu et al. do not report the "
-            "simulation's exposure times, read noise, wavelength, sampling, probe or scan.",
+            "simulation's exposure times, read noise, dark current, wavelength or pixel sizes, "
+            "and our geometry, object sampling, probe and scan step differ from the paper's "
+            "simulation.",
             "Exposure times = the paper's 7 experimental exposures (0.5-500 ms).",
             "Geometry: lambda=632.8 nm, z=13.9 mm, 64x64 virtual detector pixels of 240.64 um "
             "=> object pixel lambda z/(N pitch) = 0.5711 um (experiment ~0.571 um).",

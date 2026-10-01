@@ -4,7 +4,7 @@
   "source_files": {
     "DATA_CONTRACT.md": {
       "path": "outputs/paper_style/full/DATA_CONTRACT.md",
-      "sha256": "3c0b9971bdfaa223cd5e4abb2861bdb7994e5d003d4b57947c1541d7c0b55275"
+      "sha256": "b4ccff17ec7de2f6f276489c957cc40a7fb7e9c7cc05a8f545877399e0efd45e"
     },
     "bit_sweep.csv": {
       "path": "outputs/paper_style/full/bit_sweep.csv",
@@ -20,7 +20,7 @@
     },
     "meta.json": {
       "path": "outputs/paper_style/full/meta.json",
-      "sha256": "19a6cbc6bd3f33112de180f439aa0ec70969dd4ec0cf088f1f0bad4e590f608f"
+      "sha256": "44dce656904a4981a8aa6f3252b29cc43f11ce914ef80b845734b30c451b214d"
     },
     "noise_sweep.csv": {
       "path": "outputs/paper_style/full/noise_sweep.csv",
