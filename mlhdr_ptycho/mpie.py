@@ -18,8 +18,9 @@ per update; we use the deterministic equivalent interval of 20 updates.
 Defaults follow PtyLab's mPIE engine (alpha_O 0.1, beta_O = beta_P = 0.25,
 friction 0.7, feedback 0.3) EXCEPT ``alpha_probe = 1.0`` (ePIE-type probe
 normalisation by max|O_j|^2). With PtyLab's alpha_P = 0.1 the joint
-object/probe iteration stagnated in our tests: noiseless USAF data reached
-object NRMSE 0.047 after 250 iterations (0.0013 with alpha_P = 1.0), and the
+object/probe iteration stagnated in our tests: noiseless data of a USAF-1951
+test target (since removed from the simulation) reached object NRMSE 0.047
+after 250 iterations (0.0013 with alpha_P = 1.0), and the
 8-bit ML-masked cameraman reconstruction failed (NRMSE 0.29 vs 0.053).
 
 Positions are visited in a random order drawn each iteration from

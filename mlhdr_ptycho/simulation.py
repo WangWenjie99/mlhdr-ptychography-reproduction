@@ -2,9 +2,8 @@
 
 This module builds the *scene* for the paper-style comparison figures: a
 Fraunhofer (FFT) ptychography geometry, a pinhole-like focused probe, a
-jittered raster scan, two amplitude-dominated test objects (cameraman and a
-procedurally rendered USAF-1951 target, groups 7-9) and the multi-exposure
-camera data produced by ``paper_reproduction.simulate_paper_camera``.
+jittered raster scan, an amplitude-dominated test object (cameraman) and the
+multi-exposure camera data produced by ``paper_reproduction.simulate_paper_camera``.
 
 IMPORTANT - these numbers are OUR choices. Liu et al. do not report the
 simulation's exposure times, read noise, dark current, wavelength or pixel
@@ -21,15 +20,12 @@ Conventions
   rescales (brightest frame's TOTAL photon rate = ``photon_flux_per_s``).
 * Positions are integer top-left ``(row, col)`` offsets of the N x N probe
   window in the object array, in raster order (row-major over the scan grid).
-* Continuous pixel coordinates put the centre of pixel ``(i, j)`` at
-  ``(i, j)``; pixel ``i`` spans ``[i - 0.5, i + 0.5)``. USAF geometry uses them.
 * Fused rates from ``fuse`` are in count/s (ADU/s). Divide by
   ``PaperMeasurement.count_rate_scale`` to return to relative intensity.
 """
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field, replace
-import json
+from dataclasses import asdict, dataclass, replace
 import math
 
 import numpy as np
@@ -43,11 +39,6 @@ from .paper_reproduction import (
 METHODS = ("single", "lrfc", "ml_eq14_15", "ml_masked")
 # Seven experimental exposure times of Liu et al. (s), used for every sweep.
 EXPERIMENT_EXPOSURES_S = (0.5e-3, 1e-3, 5e-3, 10e-3, 50e-3, 100e-3, 500e-3)
-
-
-def usaf_line_width_um(group: int, element: int) -> float:
-    """USAF-1951 line width, 1 / (2 * 2**(G + (E-1)/6)) mm, returned in um."""
-    return 1000.0 / (2.0 * 2.0 ** (group + (element - 1) / 6.0))
 
 
 @dataclass(frozen=True)
@@ -76,9 +67,6 @@ class SimulationConfig:
     dark_current_e_per_s: float = 80.0
     dark_frames: int = 20
     cameraman_min_amplitude: float = 0.2
-    usaf_bar_amplitude: float = 0.15
-    usaf_supersample: int = 16
-    usaf_groups: tuple = (7, 8, 9)
 
     @property
     def dx_m(self) -> float:
@@ -107,7 +95,6 @@ class SimulationConfig:
     def to_dict(self) -> dict:
         d = asdict(self)
         d["exposure_times_s"] = list(self.exposure_times_s)
-        d["usaf_groups"] = list(self.usaf_groups)
         d["dx_m"] = self.dx_m
         d["dx_um"] = self.dx_um
         d["nominal_overlap"] = self.nominal_overlap
@@ -211,117 +198,6 @@ def cameraman_object(size: int, min_amplitude: float = 0.2) -> np.ndarray:
     return (min_amplitude + (1.0 - min_amplitude) * img).astype(np.complex128)
 
 
-def _axis_coverage(a: float, b: float, size: int, supersample: int) -> np.ndarray:
-    """Fraction of the ``supersample`` sub-samples of each pixel inside [a, b)."""
-    fine = (np.arange(size * supersample) + 0.5) / supersample - 0.5
-    inside = (fine >= a) & (fine < b)
-    return inside.reshape(size, supersample).mean(axis=1)
-
-
-def _usaf_layout(dx_um: float, groups=(7, 8, 9)):
-    """Element triplets in continuous px coordinates relative to (0, 0).
-
-    Each element block = horizontal-bar triplet (5w x 5w, left) + gap 1.5w +
-    vertical-bar triplet (5w x 5w, right); blocks in a column are separated by
-    1.5 w of the lower element. Layout (like the real target, groups nest
-    toward the centre): largest group - element 1 top right, elements 2-6 in a
-    left column; second group - one column (E1-E6) under the first group's
-    element 1; third group - one column (E1-E6) nested beside it.
-    """
-    if len(groups) != 3:
-        raise ValueError("Layout expects exactly three consecutive groups")
-    w = {(g, e): usaf_line_width_um(g, e) / dx_um for g in groups for e in range(1, 7)}
-    blocks = {}
-
-    def column(g, elements, x, y):
-        for e in elements:
-            blocks[(g, e)] = (y, x)
-            y += 5 * w[(g, e)] + (1.5 * w[(g, e + 1)] if e < elements[-1] else 0)
-        return y
-
-    g0, g1, g2 = groups
-    column(g0, range(2, 7), 0.0, 0.0)
-    col_width0 = 11.5 * w[(g0, 2)]
-    x_e1 = col_width0 + w[(g0, 1)]
-    blocks[(g0, 1)] = (0.0, x_e1)
-    y_inner = 5 * w[(g0, 1)] + w[(g0, 1)]
-    bottom1 = column(g1, range(1, 7), x_e1, y_inner)
-    height1 = bottom1 - y_inner
-    height2 = sum(5 * w[(g2, e)] for e in range(1, 7)) + sum(1.5 * w[(g2, e)] for e in range(2, 7))
-    x2 = x_e1 + 11.5 * w[(g1, 1)] + 2 * w[(g1, 1)]
-    column(g2, range(1, 7), x2, y_inner + (height1 - height2) / 2)
-
-    entries = []
-    for (g, e), (y, x) in sorted(blocks.items()):
-        ww = w[(g, e)]
-        for orientation, bx in (("horizontal", x), ("vertical", x + 6.5 * ww)):
-            if orientation == "horizontal":   # bars along x, stacked in y
-                bars = [(y + 2 * k * ww, y + (2 * k + 1) * ww, bx, bx + 5 * ww) for k in range(3)]
-            else:                             # bars along y, side by side in x
-                bars = [(y, y + 5 * ww, bx + 2 * k * ww, bx + (2 * k + 1) * ww) for k in range(3)]
-            entries.append(dict(group=g, element=e, orientation=orientation,
-                                line_width_um=usaf_line_width_um(g, e),
-                                line_width_px=ww, bars=bars,
-                                bbox_px=[y, y + 5 * ww, bx, bx + 5 * ww]))
-    return entries
-
-
-def usaf1951_object(size: int, dx_um: float, groups=(7, 8, 9), bar_amplitude: float = 0.15,
-                    supersample: int = 16, center_px=None):
-    """Procedural USAF-1951 transmission target (amplitude only, phase 0).
-
-    Background amplitude 1.0, bars ``bar_amplitude``. Bars have length 5w and
-    width w, three per triplet separated by w. Rendering is exact
-    ``supersample`` x supersampling followed by area (block-mean)
-    downsampling, done separably because all bars are axis-aligned.
-
-    Returns ``(object complex128 (size, size), geometry list)``. Each geometry
-    entry: group, element, orientation ('horizontal' = bars along x, profile
-    along y; 'vertical' = bars along y, profile along x), line_width_um,
-    line_width_px, bbox_px [y0, y1, x0, x1], profile_axis, bar_edges_px
-    (3 [start, end] along the profile axis), bar_centers_px, bar_extent_px
-    ([start, end] along the bar length) -- all in continuous pixel coordinates
-    of the object array.
-    """
-    if supersample < 8:
-        raise ValueError("Use at least 8x supersampling")
-    entries = _usaf_layout(dx_um, groups)
-    ys = [v for en in entries for v in en["bbox_px"][:2]]
-    xs = [v for en in entries for v in en["bbox_px"][2:]]
-    cy, cx = ((size - 1) / 2.0,) * 2 if center_px is None else center_px
-    oy = cy - (min(ys) + max(ys)) / 2.0
-    ox = cx - (min(xs) + max(xs)) / 2.0
-    coverage = np.zeros((size, size))
-    geometry = []
-    for en in entries:
-        bars = [(a + oy, b + oy, c + ox, d + ox) for a, b, c, d in en["bars"]]
-        for a, b, c, d in bars:
-            if a < 0 or c < 0 or b > size - 1 or d > size - 1:
-                raise ValueError("USAF target does not fit in the object array")
-            coverage += np.outer(_axis_coverage(a, b, size, supersample),
-                                 _axis_coverage(c, d, size, supersample))
-        horizontal = en["orientation"] == "horizontal"
-        edges = [[a, b] for a, b, _, _ in bars] if horizontal else [[c, d] for _, _, c, d in bars]
-        extent = [bars[0][2], bars[0][3]] if horizontal else [bars[0][0], bars[0][1]]
-        y0, y1, x0, x1 = en["bbox_px"]
-        geometry.append(dict(
-            group=en["group"], element=en["element"], orientation=en["orientation"],
-            line_width_um=en["line_width_um"], line_width_px=en["line_width_px"],
-            bbox_px=[y0 + oy, y1 + oy, x0 + ox, x1 + ox],
-            profile_axis="y" if horizontal else "x",
-            bar_edges_px=edges, bar_centers_px=[(a + b) / 2 for a, b in edges],
-            bar_extent_px=extent,
-        ))
-    if coverage.max() > 1 + 1e-9:
-        raise AssertionError("USAF bars overlap")
-    amplitude = 1.0 - (1.0 - bar_amplitude) * coverage
-    return amplitude.astype(np.complex128), geometry
-
-
-def geometry_to_json(geometry) -> str:
-    return json.dumps(geometry, separators=(",", ":"))
-
-
 # --------------------------------------------------------------------------
 # Scene, camera and fusion
 # --------------------------------------------------------------------------
@@ -335,7 +211,6 @@ class Scene:
     roi: tuple                   # (y0, y1, x0, x1) half-open, square
     dx_um: float
     config: SimulationConfig
-    usaf_geometry: list | None = field(default=None)
 
     @property
     def rate_scale(self) -> float:
@@ -368,7 +243,9 @@ class Scene:
 
 
 def build_scene(kind: str, config: SimulationConfig = SimulationConfig()) -> Scene:
-    """``kind`` is 'cameraman' or 'usaf'."""
+    """``kind`` is 'cameraman' (the only object of the paper-style sweeps)."""
+    if kind != "cameraman":
+        raise ValueError(f"Unknown object kind {kind!r}")
     n = config.detector_pixels
     probe = make_probe(n, config.probe_diameter_px, config.probe_edge_sigma_px,
                        config.probe_curvature_rad)
@@ -376,22 +253,9 @@ def build_scene(kind: str, config: SimulationConfig = SimulationConfig()) -> Sce
                                      config.scan_jitter_fraction, config.scan_seed,
                                      config.object_pad_px, n)
     roi = illumination_roi(probe, positions, size, config.roi_margin_px)
-    geometry = None
-    if kind == "cameraman":
-        truth = cameraman_object(size, config.cameraman_min_amplitude)
-    elif kind == "usaf":
-        y0, y1, x0, x1 = roi
-        truth, geometry = usaf1951_object(size, config.dx_um, config.usaf_groups,
-                                          config.usaf_bar_amplitude, config.usaf_supersample,
-                                          center_px=((y0 + y1 - 1) / 2, (x0 + x1 - 1) / 2))
-        for g in geometry:
-            a, b, c, d = g["bbox_px"]
-            if a < y0 or c < x0 or b > y1 - 1 or d > x1 - 1:
-                raise ValueError("USAF target exceeds the well-scanned ROI; enlarge the scan")
-    else:
-        raise ValueError(f"Unknown object kind {kind!r}")
+    truth = cameraman_object(size, config.cameraman_min_amplitude)
     clean = forward_intensity(truth, probe, positions)
-    return Scene(kind, truth, probe, positions, clean, roi, config.dx_um, config, geometry)
+    return Scene(kind, truth, probe, positions, clean, roi, config.dx_um, config)
 
 
 def fuse(measurement: PaperMeasurement, method: str, single_index: int, chunk: int = 50):
@@ -433,7 +297,6 @@ def saturation_fractions(measurement: PaperMeasurement) -> np.ndarray:
 
 __all__ = [
     "METHODS", "EXPERIMENT_EXPOSURES_S", "SimulationConfig", "Scene", "build_scene",
-    "cameraman_object", "usaf1951_object", "usaf_line_width_um", "make_probe",
-    "scan_positions", "forward_intensity", "illumination_roi", "fuse",
-    "saturation_fractions", "geometry_to_json", "extract_patches",
+    "cameraman_object", "make_probe", "scan_positions", "forward_intensity",
+    "illumination_roi", "fuse", "saturation_fractions", "extract_patches",
 ]

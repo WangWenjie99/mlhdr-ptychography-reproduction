@@ -1,4 +1,4 @@
-"""Checks for the paper-style simulation, fusions, mPIE and resolution analysis."""
+"""Checks for the paper-style simulation, fusions, mPIE and ground-truth metrics."""
 import unittest
 from dataclasses import replace
 
@@ -13,13 +13,10 @@ from mlhdr_ptycho.paper_reproduction import (
     PaperCamera, PaperMeasurement, lrfc_hdr_fusion, paper_eq14_15, quantize_electrons,
     saturation_mask_extension, simulate_paper_camera,
 )
-from mlhdr_ptycho.resolution import (
-    align_to_truth, amplitude_metrics, fourier_ring_correlation, usaf_line_profile,
-    usaf_resolved_elements,
-)
+from mlhdr_ptycho.resolution import align_to_truth, amplitude_metrics, fourier_ring_correlation
 from mlhdr_ptycho.simulation import (
     SimulationConfig, build_scene, cameraman_object, forward_intensity, fuse, make_probe,
-    scan_positions, usaf1951_object, usaf_line_width_um,
+    scan_positions,
 )
 
 
@@ -114,69 +111,28 @@ class CameraBitsTests(unittest.TestCase):
         np.testing.assert_allclose(np.rint(a.z * ka / kb), b.z, atol=1)
 
 
-class GeometryTests(unittest.TestCase):
-    def test_usaf_line_width_formula(self):
-        self.assertAlmostEqual(usaf_line_width_um(7, 1), 1000 / 256)
-        self.assertAlmostEqual(usaf_line_width_um(9, 1), 1000 / 1024)
-        self.assertAlmostEqual(usaf_line_width_um(9, 6), 1000 / (2 * 2 ** (9 + 5 / 6)))
-        self.assertAlmostEqual(usaf_line_width_um(8, 4) / usaf_line_width_um(8, 5), 2 ** (1 / 6))
-
-    def test_usaf_rendering_geometry(self):
-        dx = SimulationConfig().dx_um
-        obj, geom = usaf1951_object(226, dx)
-        self.assertEqual(len(geom), 3 * 6 * 2)
-        self.assertTrue(np.allclose(obj.imag, 0))
-        amp = obj.real
-        self.assertAlmostEqual(float(amp.max()), 1.0)
-        self.assertGreaterEqual(float(amp.min()), 0.15 - 1e-12)
-        # Area-downsampled rendering preserves total bar area (15 w^2 per triplet).
-        bar_area = sum(15 * g["line_width_px"] ** 2 for g in geom)
-        self.assertAlmostEqual(float(np.sum(1 - amp) / 0.85), bar_area, delta=bar_area * 0.01)
-        for g in geom:
-            w = g["line_width_px"]
-            self.assertAlmostEqual(w, g["line_width_um"] / dx)
-            edges = np.array(g["bar_edges_px"])
-            np.testing.assert_allclose(edges[:, 1] - edges[:, 0], w)
-            np.testing.assert_allclose(np.diff(edges[:, 0]), 2 * w)
-            np.testing.assert_allclose(np.diff(g["bar_extent_px"]), 5 * w)
-        coarse = next(g for g in geom if (g["group"], g["element"], g["orientation"]) == (7, 1, "vertical"))
-        a, b = coarse["bar_edges_px"][1]
-        y0, y1 = coarse["bar_extent_px"]
-        # pixels (centre j, extent j +- 0.5) lying entirely inside the bar
-        inner = amp[int(np.ceil(y0 + 0.5)):int(np.floor(y1 - 0.5)) + 1,
-                    int(np.ceil(a + 0.5)):int(np.floor(b - 0.5)) + 1]
-        self.assertGreater(inner.size, 20)
-        np.testing.assert_allclose(inner, 0.15, atol=1e-12)
-        finest = [g["line_width_um"] for g in geom if g["group"] == 9]
-        self.assertLess(min(finest), dx)            # straddles the pixel (Nyquist) limit
-        self.assertGreater(max(finest), 1.5 * dx)
-
-    def test_scene_truth_analysis(self):
-        scene = build_scene("usaf")
+class SceneTests(unittest.TestCase):
+    def test_cameraman_scene_roi_and_auto_exposure(self):
+        scene = build_scene("cameraman")
+        cfg = scene.config
         y0, y1, x0, x1 = scene.roi
         self.assertEqual(y1 - y0, x1 - x0)
         self.assertAlmostEqual(scene.dx_um, 0.5711, places=3)
-        amp = np.abs(scene.truth[y0:y1, x0:x1])
-        res = usaf_resolved_elements(amp, scene.usaf_geometry, (y0, x0))
-        self.assertIsNotNone(res["limit"]["label"])
-        self.assertTrue(res["limit"]["label"].startswith("9-"))
-        blurred = ndimage.gaussian_filter(amp, 2.0)
-        res_blur = usaf_resolved_elements(blurred, scene.usaf_geometry, (y0, x0))
-        order = lambda lab: tuple(map(int, lab.split("-"))) if lab else (0, 0)
-        self.assertLess(order(res_blur["limit"]["label"]), order(res["limit"]["label"]))
-        prof = usaf_line_profile(amp, scene.usaf_geometry, scene.dx_um, (y0, x0))
-        self.assertEqual(prof["elements"], ["9-1", "9-2", "9-3"])
-        self.assertEqual(len(prof["bar_edges_um"]), 9)
-        self.assertLess(prof["profile"].min(), 0.4)
-        self.assertAlmostEqual(prof["profile"].max(), 1.0, places=6)
+        self.assertEqual(len(scene.positions), cfg.scan_side ** 2)
+        self.assertEqual(scene.clean.shape, (len(scene.positions), cfg.detector_pixels, cfg.detector_pixels))
+        self.assertTrue(np.allclose(scene.truth.imag, 0))
+        amp = np.abs(scene.truth)
+        self.assertAlmostEqual(float(amp.min()), cfg.cameraman_min_amplitude)
+        self.assertAlmostEqual(float(amp.max()), 1.0)
         # Auto-exposure is the longest exposure below full well and fixed per object.
         t = scene.auto_exposure_index()
-        cfg = scene.config
         peak = scene.clean.max() * scene.rate_scale
         self.assertLess((peak + cfg.dark_current_e_per_s) * cfg.exposure_times_s[t], cfg.full_well_e)
         if t + 1 < len(cfg.exposure_times_s):
             self.assertGreaterEqual((peak + cfg.dark_current_e_per_s) * cfg.exposure_times_s[t + 1],
                                     cfg.full_well_e)
+        with self.assertRaisesRegex(ValueError, "Unknown object kind"):
+            build_scene("unknown")
 
 
 class AnalysisTests(unittest.TestCase):

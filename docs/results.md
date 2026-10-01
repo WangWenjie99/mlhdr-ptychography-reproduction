@@ -2,9 +2,9 @@
 
 This page summarizes 81 completed reconstructions: three noise scenarios × three camera seeds × nine inputs (seven single exposures, original paper fusion, and an additional saturation-masking extension). All reconstructions use 80 mPIE iterations.
 
-The historical fixed-baseline figures and metrics are published snapshots of an existing experiment. Its raw data, measurement frames, and complete reconstruction arrays were already missing from the working directory. The full/quick paper-style simulation data discussed below are completely tracked in the repository, including ground truth, representative complex reconstructions, convergence, FRC, USAF, and diffraction examples. They support direct figure regeneration and further analysis on a new device. See the [restoration guide](REPOSITORY_RESTORE.md) for setup and data-integrity checks.
+The historical fixed-baseline figures and metrics are published snapshots of an existing experiment. Its raw data, measurement frames, and complete reconstruction arrays were already missing from the working directory. The full/quick paper-style simulation data discussed below are completely tracked in the repository, including ground truth, representative complex reconstructions, convergence, and FRC. They support direct figure regeneration and further analysis on a new device. See the [restoration guide](REPOSITORY_RESTORE.md) for setup and data-integrity checks.
 
-A separate set of simulations with known ground truth follows the layouts of Figs. 2, 3, 5, 6, and 7. See [paper-style simulation comparisons](#paper-style-simulation-comparisons) below.
+A separate set of simulations with known ground truth follows the layouts of Figs. 2 and 3. See [paper-style simulation comparisons](#paper-style-simulation-comparisons) below.
 
 ## Baseline
 
@@ -167,7 +167,7 @@ Complete local validation depends on unavailable original data and binary output
 
 ## Paper-style simulation comparisons
 
-This section is independent of the fixed-baseline experiment above. It uses saved **full simulations with known ground truth** from `scripts/run_paper_style_simulation.py`. Figures follow paper Figs. 2, 3, 5, 6, and 7, and all metrics—PSNR, SSIM, NRMSE, FRC, and resolvable USAF elements—are referenced to **simulation ground truth**. Existing CSV/NPZ/JSON files were organized and replotted without rerunning simulations. Paper Figs. 6 and 7 show **real experiments**; the corresponding results here are simulations.
+This section is independent of the fixed-baseline experiment above. It uses saved **full simulations with known ground truth** from `scripts/run_paper_style_simulation.py`. Figures follow paper Figs. 2 and 3, and all metrics—PSNR, SSIM, and NRMSE—are referenced to **simulation ground truth**. Existing CSV/NPZ/JSON files were organized and replotted without rerunning simulations.
 
 This is an adapted simulation designed around the paper's figure layouts. This project's own geometry choices (a 226×226 object, a 64×64 probe window and virtual detector with a 32 px probe diameter, and 8 px steps with 10% random perturbation) differ from the paper's simulation; it uses 20×20 scan positions and 250 iterations. It adopts the paper's experimental wavelength of 632.8 nm and distance of 13.9 mm. The paper does not fully specify simulation exposure timing, numerical read noise, and several implementation details; camera read noise, dark current, noise-dB definitions, and simulation exposure scheduling use explicit project assumptions. Geometry, camera models, and evaluation are not identical, so absolute values cannot be interpreted as a point-for-point reproduction of the paper's experiment.
 
@@ -188,7 +188,7 @@ python scripts/plot_paper_style_figures.py --source outputs/paper_style/full --o
 
 Provenance and hashes are in [figures_manifest.json](figures/paper_style/figures_manifest.json), key values in [summary.md](paper_style/summary.md) / [summary.csv](paper_style/summary.csv), and CSV/JSON input copies in [paper_style/data/](paper_style/data/). The figures and tables compare this project's four methods with each other; they contain no values taken from the paper.
 
-Saved full data contain 120 bit-depth records and 108 noise records, all with status `ok`, using seeds 0, 1, and 2. Sweep curves show three-run means ± sample standard deviations. USAF images, line profiles, FRC, and convergence plots use single-run arrays from seed 0. These runs are counted separately from the 81 fixed-baseline reconstructions above.
+Saved full data contain 120 bit-depth records and 108 noise records, all with status `ok`, using seeds 0, 1, and 2. Sweep curves show three-run means ± sample standard deviations. The 8-bit reconstruction images in Fig. 2 (d) use single-run arrays from seed 0. These runs are counted separately from the 81 fixed-baseline reconstructions above.
 
 ### Figure 2 counterpart: ADC bit-depth sweep
 
@@ -210,42 +210,14 @@ Under this definition, higher x-axis dB means lower read noise. Overall PSNR imp
 
 The extension is below LRFC at high dB, and its SSIM does not continue improving between 48 and 54 dB. Saturation masking does not guarantee improvement for every noise setting.
 
-### Figure 5 counterpart: multi-exposure diffraction images
-
-![Seven raw 8-bit diffraction exposures and three HDR fusion results](figures/paper_style/fig5_diffraction.png)
-
-[Download vector SVG](figures/paper_style/fig5_diffraction.svg). The USAF object is shown at one scan position near the ROI center, using an 8-bit ADC. Panels (a)–(g) show quantized raw counts. Panels (h)–(j) multiply fused rates (count/s) by the longest exposure, 500 ms, to show equivalent counts for an unsaturated detector integrating for 500 ms. All ten panels share one log₂(1 + counts) color scale.
-
-For this displayed frame, saturation is **0%** at 0.5, 1, 5, and 10 ms, and **0.1221%, 0.2197%, and 0.3418%** at 50, 100, and 500 ms. These percentages are the frame-level fractions in `meta.json` multiplied by 100. They describe this one scan position, separately from the full-measurement statistics in the fixed-baseline section. The original equations retain long-exposure saturated counts at the bright center, giving a fused rate below the known noiseless reference. LRFC and the extension show a stronger central signal. The shared color scale permits HDR equivalent counts above the original 8-bit ADC limit of 255.
-
-### Figure 6 counterpart: 8-bit USAF resolution
-
-![8-bit USAF reconstructions, zooms, convergence curves, and FRC](figures/paper_style/fig6_usaf_8bit.png)
-
-[Download vector SVG](figures/paper_style/fig6_usaf_8bit.svg). Panel (b) is simulation ground truth; the paper uses an optical microscope image at this position. Cyan dashed boxes mark the smallest element resolvable in both orientations along with every coarser element, read directly from `resolution_summary.json`. Panel (g) shows logarithmic object-amplitude NRMSE versus iteration. “Time” is the mPIE wall-clock time when error first enters the plateau region. Panel (h) uses **ground-truth-referenced FRC** (reconstruction against the known simulation ground truth).
-
-For seed 0, the ground-truth FRC half-period resolutions of 8-bit single exposure, LRFC, original equations, and the extension are **2.025, 1.125, 2.420, and 1.034 μm**. Their smallest continuously resolvable elements are **G7 E1, G8 E6, G7 E1, and G8 E6**. The 16-bit single-exposure reference is **0.799 μm / G9 E1**. FRC cutoff and stripe resolvability measure different properties and are not interchangeable.
-
-LRFC and the extension first meet the plateau rule at **0.572 s and 0.447 s**, both at iteration 5. Complete 250-iteration reconstruction takes approximately 27.6 s and 24.1 s, respectively. Single exposure and the original equations do not meet the required error-reduction threshold, so no plateau time is reported. The original-equation error curve oscillates across iterations. Plateau times depend on the project's criterion and local runtime; they are not total algorithm runtimes.
-
-### Figure 7 counterpart: 16-bit USAF and line profiles
-
-![16-bit USAF details, G9 E1–E3 line profiles, and FRC](figures/paper_style/fig7_usaf_16bit.png)
-
-[Download vector SVG](figures/paper_style/fig7_usaf_16bit.svg). Panel (e) shows **amplitude** profiles along a vertical line through horizontal bars in group 9, elements 1–3; the paper labels its axis as intensity. The thin gray line is an ideal USAF square wave generated from geometry.
-
-For seed 0, both 16-bit LRFC and the extension reach **G9 E4 (0.691 μm line width)**. Their ground-truth FRC cutoff reaches Nyquist (**0.571 μm**), the simulation's sampling limit. The original equations give **G8 E2 / 1.388 μm**, and 16-bit single exposure gives **G9 E1 / 0.799 μm**. The pixel-sampled ground truth itself is continuously resolvable only through G9 E4, so 0.571 μm cannot be treated as verified real-instrument resolution.
-
-In G9 E1–E3 amplitude profiles, LRFC and the extension approach the geometrical ground-truth high/low levels, while single exposure has higher minima. The original equations show uneven stripe responses. These are aligned amplitudes, not intensities.
-
 ### Assumptions and limitations
 
 - Project-selected simulation parameters are wavelength 632.8 nm, distance 13.9 mm, a 64×64 virtual detector (0.571 μm object-plane pixels, matching the paper's experiment), photon flux 10⁹ photons/s as the brightest diffraction frame's total rate, full well 2.5×10⁶ e⁻, dark current 80 e⁻/s, 20 dark frames per exposure, base read noise 5 e⁻, and seven exposures from 0.5 to 500 ms. All values are in [meta.json](paper_style/data/meta.json).
 - Reconstruction uses this project's pure NumPy mPIE, without PtyLab installed, with `alpha_probe = 1.0`, Fraunhofer propagation, and integer-pixel scan positions.
-- All metrics use known ground truth after alignment by one global complex factor and subpixel translation. FRC compares reconstruction with ground truth using the van Heel half-bit threshold. Half-period resolution = pixel size / cutoff frequency. Nyquist cutoffs are limited by pixel size.
-- USAF resolvability requires a clear minimum in each of three stripe regions and a worst-case Michelson contrast ≥ 0.2. The reported smallest element must be resolvable in both orientations along with all coarser elements.
-- Noise-dB definitions, automatic single-exposure selection, and the convergence plateau rule are project definitions. Convergence times are local wall-clock times under multiprocessing.
-- Sweep curves show multiple-seed means ± sample standard deviations. Images, profiles, convergence, and FRC curves show one run with the first seed.
+- All metrics use known ground truth after alignment by one global complex factor and subpixel translation. The sweep CSVs also record FRC against ground truth with the van Heel half-bit threshold; half-period resolution = pixel size / cutoff frequency, and Nyquist cutoffs are limited by pixel size.
+- Noise-dB definitions and automatic single-exposure selection are project definitions.
+- Sweep curves show multiple-seed means ± sample standard deviations. The Fig. 2 (d) reconstruction images show one run with the first seed.
+- The recorded full and quick runs also contained simulation experiments that have since been removed from this project (a diffraction example and 8/16-bit USAF reconstructions), so their `meta.json` files still list those experiments' parameters, objects, and timings.
 
 ## Reference
 

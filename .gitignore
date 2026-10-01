@@ -17,20 +17,12 @@
 !/outputs/paper_style/full/bit_sweep.csv
 !/outputs/paper_style/full/noise_sweep.csv
 !/outputs/paper_style/full/meta.json
-!/outputs/paper_style/full/resolution_summary.json
 !/outputs/paper_style/full/cameraman_8bit.npz
-!/outputs/paper_style/full/usaf_8bit.npz
-!/outputs/paper_style/full/usaf_16bit.npz
-!/outputs/paper_style/full/diffraction_example.npz
 !/outputs/paper_style/quick/DATA_CONTRACT.md
 !/outputs/paper_style/quick/bit_sweep.csv
 !/outputs/paper_style/quick/noise_sweep.csv
 !/outputs/paper_style/quick/meta.json
-!/outputs/paper_style/quick/resolution_summary.json
 !/outputs/paper_style/quick/cameraman_8bit.npz
-!/outputs/paper_style/quick/usaf_8bit.npz
-!/outputs/paper_style/quick/usaf_16bit.npz
-!/outputs/paper_style/quick/diffraction_example.npz
 
 # Temporary rendering and audit files are regenerated when needed.
 /tmp/

@@ -4,7 +4,7 @@
   "source_files": {
     "DATA_CONTRACT.md": {
       "path": "outputs/paper_style/full/DATA_CONTRACT.md",
-      "sha256": "b4ccff17ec7de2f6f276489c957cc40a7fb7e9c7cc05a8f545877399e0efd45e"
+      "sha256": "2ee378acd8e9b008573cace52d0af95f3100c6f650c76a1ec12110ca91d14806"
     },
     "bit_sweep.csv": {
       "path": "outputs/paper_style/full/bit_sweep.csv",
@@ -14,10 +14,6 @@
       "path": "outputs/paper_style/full/cameraman_8bit.npz",
       "sha256": "9099b7880e6f8de31d0381ae19fc5b16ad6d472bee598bb731908beb86dd5d0a"
     },
-    "diffraction_example.npz": {
-      "path": "outputs/paper_style/full/diffraction_example.npz",
-      "sha256": "2a888de968363ac16b74fed0ced83218a37fef284b5d86ac33e9d4c169b0c587"
-    },
     "meta.json": {
       "path": "outputs/paper_style/full/meta.json",
       "sha256": "44dce656904a4981a8aa6f3252b29cc43f11ce914ef80b845734b30c451b214d"
@@ -25,18 +21,6 @@
     "noise_sweep.csv": {
       "path": "outputs/paper_style/full/noise_sweep.csv",
       "sha256": "111168c7ec2e2072a2f9814a42dc3a16a516705c837d66da249f751e111dc633"
-    },
-    "resolution_summary.json": {
-      "path": "outputs/paper_style/full/resolution_summary.json",
-      "sha256": "561efe7c963591f327740a92c6bf6cf5285211d3c3a888a99b31e0dae1829bc4"
-    },
-    "usaf_16bit.npz": {
-      "path": "outputs/paper_style/full/usaf_16bit.npz",
-      "sha256": "ffbbc282005f6d360eb4826aa05a6f0aa41a7c53d86a95d13d171de3bdfccf22"
-    },
-    "usaf_8bit.npz": {
-      "path": "outputs/paper_style/full/usaf_8bit.npz",
-      "sha256": "b17e77c0a229c6c798eed4493c0e28148db72b42743174bc5d99c7f2f986002b"
     }
   },
   "source_meta": {
@@ -108,8 +92,8 @@
     "mpie_iterations": 250
   },
   "code_sha256": {
-    "mlhdr_ptycho/paper_style_figures.py": "e49e57c37bacbb2c3d70936c4a2e5687876e9faf964e7beb9eaa642c8907e6af",
-    "scripts/plot_paper_style_figures.py": "71d5c0e354b1717bbe82e679b4d221790e09182ce0caaab7bf31f5b583342a6f"
+    "mlhdr_ptycho/paper_style_figures.py": "9701fbc0109f9adccf3b7daa130ad1b3daaa387813d6e7f497ca2a3d1f94702a",
+    "scripts/plot_paper_style_figures.py": "63d47b7da56e4232fc587603e08e8ca2318bd89ca20dbc2dfe1521eda343baae"
   },
   "conventions": {
     "methods": {
@@ -135,11 +119,7 @@
       }
     },
     "statistics": "Sweep points = mean over successful seeds; error bars = sample SD (only when n > 1)",
-    "numbers": "All plotted values are read from the source CSV/NPZ/JSON files; nothing is estimated from rendered images",
-    "frc": "reconstruction vs ground truth, van Heel half-bit threshold (engine definition)",
-    "usaf_limit": "smallest resolved element from resolution_summary.json (usaf_limit)",
-    "fig5_display": "log2(1 + counts); fused = max(rate, 0) * t_max",
-    "convergence_time": "first history sample whose log10 NRMSE is within max(0.02, 2 SD) of the median of the last 25 % of samples; no time when the error does not drop by >= 0.1 (log10)"
+    "numbers": "All plotted values are read from the source CSV/NPZ/JSON files; nothing is estimated from rendered images"
   },
   "formats": [
     "png",
@@ -151,11 +131,11 @@
       "description": "Paper Fig. 2 analogue: PSNR/SSIM/object-amplitude NRMSE vs ADC bit depth + 8-bit reconstruction mosaic",
       "png": {
         "file": "fig2_bit_depth.png",
-        "sha256": "4266f9e05b885d5a1e436ae722ec2afafd60622f35a2e0619bfce2420186a8a9"
+        "sha256": "63df29df1f06f8f469cc6814243e9517593507b799ed89c220f083a1c6c0220e"
       },
       "svg": {
         "file": "fig2_bit_depth.svg",
-        "sha256": "5cb38484cdb7e11319a91a0e9f7dbe8a4d298f44f5dd29e1fbac9003809456de"
+        "sha256": "d622cf23963c05a36393621f59c06a9a382d134e159fd952a39164272402dd94"
       }
     },
     "fig3_noise": {
@@ -167,39 +147,6 @@
       "svg": {
         "file": "fig3_noise.svg",
         "sha256": "99164482bd57560234544c11d242b214892b8fb067ee837d51b15ef5c58a5bcc"
-      }
-    },
-    "fig5_diffraction": {
-      "description": "Paper Fig. 5 analogue: seven raw 8-bit frames and three fused HDR patterns, shared log2 scale",
-      "png": {
-        "file": "fig5_diffraction.png",
-        "sha256": "1298d7bf9212fc8a3da481a5698b93ac28f54c4b4b29fce4d98cec7bf84ae5e0"
-      },
-      "svg": {
-        "file": "fig5_diffraction.svg",
-        "sha256": "a399494d8a2164f472fd6d67ee2173068bc3bfbab8d004cc8ed587242de211e4"
-      }
-    },
-    "fig6_usaf_8bit": {
-      "description": "Paper Fig. 6 analogue: USAF reconstructions (8 bit), magnified groups 8-9, convergence, FRC",
-      "png": {
-        "file": "fig6_usaf_8bit.png",
-        "sha256": "50f1495380c1916494f118cae0e4181290a92d1f762219c2b3c30d58203abb71"
-      },
-      "svg": {
-        "file": "fig6_usaf_8bit.svg",
-        "sha256": "59bbae917583c6463fe964b1a6b2fe71e010a1627845cdbca43def6df8b5a57d"
-      }
-    },
-    "fig7_usaf_16bit": {
-      "description": "Paper Fig. 7 analogue: USAF groups 8-9 at 16 bit, line profile across G9 E1-E3, FRC",
-      "png": {
-        "file": "fig7_usaf_16bit.png",
-        "sha256": "5fec7e985ef0367b704b1b0a01886c4de7087cdfb3c10881483f3824201094c2"
-      },
-      "svg": {
-        "file": "fig7_usaf_16bit.svg",
-        "sha256": "54fd2e9996392247c1d11da4d12c4e73f66a60545986280e2a61d25b330b4630"
       }
     }
   }

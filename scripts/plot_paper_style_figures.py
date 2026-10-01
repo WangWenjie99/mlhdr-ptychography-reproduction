@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render figures imitating Liu et al. 2024 (Figs. 2, 3, 5, 6, 7) from paper-style simulation data.
+"""Render figures imitating Liu et al. 2024 (Figs. 2 and 3) from paper-style simulation data.
 
 Reads only the files of ``scripts/run_paper_style_simulation.py`` (DATA_CONTRACT.md);
 nothing is estimated from images.
@@ -28,7 +28,8 @@ def main(argv=None):
     parser.add_argument("--summary-csv", type=Path, default=None,
                         help="Also write the key-number table of this reproduction to this CSV")
     parser.add_argument("--copy-data-to", type=Path, default=None,
-                        help="Also copy the source CSV and JSON files (no NPZ) into this directory")
+                        help="Also copy the source CSV and JSON files (bit_sweep.csv, noise_sweep.csv, meta.json; "
+                             "no NPZ) into this directory")
     args = parser.parse_args(argv)
     try:
         manifest = generate_figures(args.source, args.output, args.dpi)

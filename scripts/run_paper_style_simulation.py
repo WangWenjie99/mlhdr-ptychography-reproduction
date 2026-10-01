@@ -38,9 +38,7 @@ Conventions
   ``abs(truth_roi)`` (same scale, directly comparable, same display range).
 * ``roi`` = int64 [y0, y1, x0, x1], half-open, square, object-pixel indices
   (well-scanned region = union of probe footprints minus a margin).
-  ``dx_um`` = object pixel size in um. Continuous pixel coordinates put the
-  centre of pixel (i, j) at (i, j) (USAF geometry uses them, in object
-  coordinates, i.e. NOT relative to the ROI).
+  ``dx_um`` = object pixel size in um.
 * Metrics (vs ground truth, on the ROI): ``psnr_db`` (data_range =
   ptp(|truth|)), ``ssim`` (skimage, same data_range), ``nrmse`` =
   ||a - a_true|| / ||a_true||.
@@ -54,9 +52,6 @@ Conventions
   place it between rings 4 and 5) gives cutoff <= 0.058, i.e.
   resolution_um >= 9.88: treat such values as "no resolution" (a floor, not
   a measurement).
-* Diffraction arrays are fftshifted (zero frequency at [32, 32]), 64 x 64.
-  Rates are in count/s (ADU/s); multiply by ``electrons_per_count`` for e-/s,
-  divide by ``count_rate_scale`` for the simulation's relative intensity.
 * Diffraction error (mPIE): sum_j sum_q (|Psi_j| - sqrt(I_j))^2 / sum I,
   evaluated with the pre-update exit waves of each iteration.
 * NaN (CSV: empty or ``nan``; JSON: null) = not available (iteration 0 of a
@@ -86,8 +81,8 @@ Columns of both CSVs:
   wall-clock, metric evaluation excluded), task_seconds (incl. simulation,
   fusion, metrics), diverged (0/1), status (ok|failed|diverged), error.
 
-cameraman_8bit.npz  (Exp. A mosaic; runs single@8, lrfc@8, ml_eq14_15@8, ml_masked@8)
-Keys (all also present in the USAF files):
+cameraman_8bit.npz  (Exp. A mosaic, first seed; runs single@8, lrfc@8, ml_eq14_15@8, ml_masked@8)
+Keys:
   truth            complex64 (H, W)     ground-truth object
   truth_roi        complex64 (h, h)     truth[roi]
   roi              int64 (4,)
@@ -112,57 +107,6 @@ Keys (all also present in the USAF files):
   frc_threshold              float64 (F,)  half-bit curve (same ROI for all runs)
   frc_cutoff_nyquist, frc_resolution_um  float64 (R,)
 
-usaf_8bit.npz  (Exp. D, paper Fig. 6; runs single@8, single@16, lrfc@8, ml_eq14_15@8, ml_masked@8)
-usaf_16bit.npz (Exp. E, paper Fig. 7; runs single@16, lrfc@16, ml_eq14_15@16, ml_masked@16)
-  all keys of cameraman_8bit.npz, plus
-  usaf_geometry_json   str ()  JSON list, one entry per (group, element,
-                       orientation): group, element, orientation
-                       ('horizontal' = bars along x, profile along y;
-                       'vertical' = bars along y, profile along x),
-                       line_width_um, line_width_px, bbox_px [y0,y1,x0,x1],
-                       profile_axis, bar_edges_px (3 x [start,end] along the
-                       profile axis), bar_centers_px, bar_extent_px ([start,
-                       end] along the bar length). Object coordinates.
-  resolved_json        str ()  JSON {"truth": {...}, "<label>": {...}} each with
-                       "elements" (group, element, orientation, line_width_um,
-                       resolved, contrast, reason), "limit" and "finest_any"
-                       ({label "G-E", line_width_um}).
-  usaf_limit_label     str (R,)   finest element with it and all coarser resolved in both orientations ('' if none)
-  usaf_limit_width_um  float64 (R,) (NaN if none)
-  profile_position_um        float64 (L,)  vertical line across G9 E1-E3 horizontal bars, um from its start
-  profile_truth              float64 (L,)  |truth| along the line (pixel-sampled)
-  profile                    float64 (R, L) |aligned_roi| along the line
-  profile_ideal_position_um  float64 (M,)
-  profile_ideal              float64 (M,)  ideal square wave (1.0 / bar amplitude) from the geometry
-  profile_bar_edges_um       float64 (9, 2) bar [start, end] (um along the line), G9E1..E3
-  profile_line_x_px          float64 ()    object-coordinate x of the line
-  profile_columns_px         int64 (C,)    columns averaged (object coordinates)
-
-diffraction_example.npz  (Exp. C, paper Fig. 5: USAF, 8 bit, position nearest the ROI centre)
-  position_index int64 (), position_px int64 (2,), bits int64 (), max_count int64 ()
-  exposure_times_s        float64 (7,)
-  raw_counts              uint8 (7, 64, 64)   quantised frames Z_i (counts)
-  dark_mean_counts        float64 (7, 64, 64) mean of the 20 dark frames
-  dark_var_counts         float64 (7, 64, 64) unbiased variance of the dark frames
-  saturation_fraction_frame  float64 (7,)  fraction of this position's pixels at max_count
-  saturation_fraction_stack  float64 (7,)  same over all positions
-  rate_clean              float64 (64, 64) noiseless expected signal rate, count/s (no dark)
-  rate_single, rate_lrfc, rate_ml_eq14_15, rate_ml_masked  float32 (64, 64) count/s
-  single_exposure_s       float64 ()
-  count_rate_scale        float64 ()  count/s per relative-intensity unit
-  electrons_per_count     float64 ()
-  q_inv_um                float64 (64,) spatial frequency of detector columns/rows, 1/um
-                          ((k - 32) / (64 dx)); Nyquist = 1/(2 dx)
-
-resolution_summary.json
-  {"note", "dx_um", "frc": {...definition...}, "usaf_contrast_threshold",
-   "cameraman_8bit": {"runs": [...]},
-   "usaf_8bit": {"truth": {"limit", "finest_any"}, "runs": [...]},
-   "usaf_16bit": {...same...}}
-  Each run: method, bits, label, psnr_db, ssim, nrmse, frc_cutoff_nyquist,
-  frc_resolution_um, frc_reached_nyquist, usaf_limit {label, line_width_um},
-  usaf_finest_any {label, line_width_um} (USAF only).
-
 meta.json
   profile and its settings, seeds, data/reconstruction seed rules, the full
   SimulationConfig and MPIEConfig, per-object facts (object shape, ROI,
@@ -176,7 +120,6 @@ from __future__ import annotations
 import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import csv
-from dataclasses import replace
 import datetime as _dt
 import importlib.metadata
 import json
@@ -194,13 +137,8 @@ import numpy as np
 
 from mlhdr_ptycho.mpie import MPIEConfig, initial_probe, reconstruct
 from mlhdr_ptycho.paper_reproduction import diffraction_comparison
-from mlhdr_ptycho.resolution import (
-    USAF_CONTRAST_THRESHOLD, align_to_truth, amplitude_metrics, fourier_ring_correlation,
-    usaf_line_profile, usaf_resolved_elements,
-)
-from mlhdr_ptycho.simulation import (
-    METHODS, SimulationConfig, build_scene, fuse, geometry_to_json, saturation_fractions,
-)
+from mlhdr_ptycho.resolution import align_to_truth, amplitude_metrics, fourier_ring_correlation
+from mlhdr_ptycho.simulation import METHODS, SimulationConfig, build_scene, fuse, saturation_fractions
 
 PROFILES = {
     "quick": {"iterations": 20, "history_every": 5, "bits": [2, 8, 16, 20],
@@ -210,9 +148,7 @@ PROFILES = {
 }
 NOISE_SWEEP_BITS = {"single": 16, "lrfc": 8, "ml_eq14_15": 8, "ml_masked": 8}
 RECON_SEED_OFFSET = 10_000
-EXPERIMENTS = ("A", "B", "C", "D", "E")
-USAF_8BIT_RUNS = [("single", 8), ("single", 16), ("lrfc", 8), ("ml_eq14_15", 8), ("ml_masked", 8)]
-USAF_16BIT_RUNS = [("single", 16), ("lrfc", 16), ("ml_eq14_15", 16), ("ml_masked", 16)]
+EXPERIMENTS = ("A", "B")
 CSV_FIELDS = [
     "experiment", "object", "method", "bits", "seed", "snr_db", "read_noise_e", "exposure_s",
     "psnr_db", "ssim", "nrmse", "frc_cutoff_nyquist", "frc_resolution_um",
@@ -350,10 +286,6 @@ def _run_task(task):
             "frc": frc,
             "metrics": metrics,
         }
-        if scene.usaf_geometry is not None:
-            arrays["resolved"] = usaf_resolved_elements(al.amplitude, scene.usaf_geometry, (y0, x0))
-            arrays["profile"] = usaf_line_profile(al.amplitude, scene.usaf_geometry, scene.dx_um,
-                                                  (y0, x0), bar_amplitude=cfg.usaf_bar_amplitude)
     return {"row": row, "arrays": arrays}
 
 
@@ -418,12 +350,6 @@ def build_tasks(profile, seeds, experiments, base_read_noise):
                 for method in METHODS:
                     add("B", "cameraman", method, NOISE_SWEEP_BITS[method], sigma, seed, False,
                         {"experiment": "noise_sweep", "snr_db": float(snr)})
-    if "D" in experiments:
-        for method, bits in USAF_8BIT_RUNS:
-            add("D", "usaf", method, bits, base_read_noise, first, True, {})
-    if "E" in experiments:
-        for method, bits in USAF_16BIT_RUNS:
-            add("E", "usaf", method, bits, base_read_noise, first, True, {})
     return tasks, plan
 
 
@@ -438,7 +364,7 @@ def full_row(task, result_row, extra, full_well):
 
 
 def stack_runs(scene, runs, results):
-    """Arrays shared by cameraman_8bit / usaf_8bit / usaf_16bit NPZ files."""
+    """Arrays of cameraman_8bit.npz, per-run arrays stacked in the order of ``runs``."""
     y0, y1, x0, x1 = scene.roi
     ok = [results[k]["arrays"] for k in runs]
     shape_obj = scene.truth.shape
@@ -494,94 +420,7 @@ def stack_runs(scene, runs, results):
             out[f"history_{name}"][i, :min(k_len, len(values))] = values[:k_len]
         de = a["diffraction_error"]
         out["diffraction_error"][i, :len(de)] = de
-    return out, labels
-
-
-def run_summary(results, runs, labels, usaf):
-    items = []
-    for key, label in zip(runs, labels):
-        a = results[key]["arrays"]
-        row = results[key]["row"]
-        item = {"method": key[1], "bits": key[2], "label": label, "status": row.get("status"),
-                "psnr_db": row.get("psnr_db"), "ssim": row.get("ssim"), "nrmse": row.get("nrmse"),
-                "frc_cutoff_nyquist": row.get("frc_cutoff_nyquist"),
-                "frc_resolution_um": row.get("frc_resolution_um"),
-                "frc_reached_nyquist": bool(row.get("frc_reached_nyquist", 0))}
-        if usaf and a is not None:
-            item["usaf_limit"] = a["resolved"]["limit"]
-            item["usaf_finest_any"] = a["resolved"]["finest_any"]
-        items.append(item)
-    return items
-
-
-def save_usaf_npz(path, scene, runs, results):
-    arrays, labels = stack_runs(scene, runs, results)
-    y0, y1, x0, x1 = scene.roi
-    truth_amp = np.abs(scene.truth[y0:y1, x0:x1])
-    truth_res = usaf_resolved_elements(truth_amp, scene.usaf_geometry, (y0, x0))
-    resolved = {"truth": truth_res}
-    limit_label, limit_width = [], []
-    truth_prof = usaf_line_profile(truth_amp, scene.usaf_geometry, scene.dx_um, (y0, x0),
-                                   bar_amplitude=scene.config.usaf_bar_amplitude)
-    profiles = np.full((len(runs), len(truth_prof["profile"])), np.nan)
-    for i, (key, label) in enumerate(zip(runs, labels)):
-        a = results[key]["arrays"]
-        if a is None:
-            limit_label.append("")
-            limit_width.append(np.nan)
-            continue
-        resolved[label] = a["resolved"]
-        limit_label.append(a["resolved"]["limit"]["label"] or "")
-        limit_width.append(a["resolved"]["limit"]["line_width_um"] or np.nan)
-        profiles[i] = a["profile"]["profile"]
-    arrays.update(
-        usaf_geometry_json=np.array(geometry_to_json(scene.usaf_geometry)),
-        resolved_json=np.array(json.dumps(_clean_json(resolved))),
-        usaf_limit_label=np.array(limit_label),
-        usaf_limit_width_um=np.asarray(limit_width, float),
-        profile_position_um=truth_prof["position_um"],
-        profile_truth=truth_prof["profile"],
-        profile=profiles,
-        profile_ideal_position_um=truth_prof["ideal_position_um"],
-        profile_ideal=truth_prof["ideal"],
-        profile_bar_edges_um=np.asarray(truth_prof["bar_edges_um"], float),
-        profile_line_x_px=np.float64(truth_prof["line_x_px"]),
-        profile_columns_px=np.asarray(truth_prof["columns_px"], np.int64),
-    )
-    np.savez_compressed(path, **arrays)
-    return truth_res, labels
-
-
-def diffraction_example(path, seed):
-    scene = get_scene("usaf")
-    cfg = scene.config
-    m = scene.simulate(8, None, seed=seed)
-    y0, y1, x0, x1 = scene.roi
-    centre = np.array([(y0 + y1 - 1) / 2, (x0 + x1 - 1) / 2])
-    n = cfg.detector_pixels
-    window_centres = scene.positions + n // 2
-    j = int(np.argmin(np.sum((window_centres - centre) ** 2, axis=1)))
-    single = replace(m, z=m.z[:, j:j + 1])
-    auto = scene.auto_exposure_index()
-    rates = {f"rate_{meth}": fuse(single, meth, auto)[0][0] for meth in METHODS}
-    raw = m.z[:, j]
-    np.savez_compressed(
-        path,
-        position_index=np.int64(j), position_px=scene.positions[j].astype(np.int64),
-        bits=np.int64(8), max_count=np.int64(m.camera.max_count),
-        exposure_times_s=np.asarray(cfg.exposure_times_s, float),
-        raw_counts=raw.astype(np.uint8),
-        dark_mean_counts=m.dark_mean, dark_var_counts=m.dark_var,
-        saturation_fraction_frame=(raw >= m.camera.max_count).mean(axis=(1, 2)),
-        saturation_fraction_stack=saturation_fractions(m),
-        rate_clean=scene.clean[j] * m.count_rate_scale,
-        single_exposure_s=np.float64(cfg.exposure_times_s[auto]),
-        count_rate_scale=np.float64(m.count_rate_scale),
-        electrons_per_count=np.float64(m.camera.electrons_per_count),
-        q_inv_um=(np.arange(n) - n // 2) / (n * scene.dx_um),
-        **rates,
-    )
-    return {"position_index": j, "saturation_fraction_frame": (raw >= m.camera.max_count).mean(axis=(1, 2))}
+    return out
 
 
 def package_versions():
@@ -611,7 +450,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--profile", choices=sorted(PROFILES), default="quick")
     parser.add_argument("--seeds", type=int, nargs="+", default=[0],
-                        help="seeds for sweeps A/B (first seed is used for C/D/E)")
+                        help="seeds for sweeps A/B (the first seed's 8-bit runs are saved to cameraman_8bit.npz)")
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--workers", type=int, default=None,
                         help="worker processes (default min(8, cpu_count)); ~0.3 GB each")
@@ -661,13 +500,6 @@ def main(argv=None):
     fields = CSV_FIELDS + sat_cols + [
         "all_saturated_pixels", "amplitude_scale", "align_shift_y_px", "align_shift_x_px",
         "iterations", "recon_seconds", "task_seconds", "diverged", "status", "error"]
-    summary = {"note": ("All metrics compare reconstructions with the known simulated GROUND "
-                        "TRUTH. FRC is reconstruction-vs-truth on amplitude images."),
-               "dx_um": cfg.dx_um,
-               "frc": {"threshold": "van Heel half-bit", "window": "2D Hann",
-                       "min_frequency_nyquist": 0.05,
-                       "resolution_um": "dx_um / cutoff_nyquist (half-period)"},
-               "usaf_contrast_threshold": USAF_CONTRAST_THRESHOLD}
     exp_seconds = {}
     failures = []
     for res in results.values():
@@ -685,24 +517,8 @@ def main(argv=None):
     if "A" in plan:
         runs = [("cameraman", m, 8, float(cfg.read_noise_e), seeds[0]) for m in METHODS]
         if all(k in results for k in runs):
-            arrays, labels = stack_runs(get_scene("cameraman"), runs, results)
+            arrays = stack_runs(get_scene("cameraman"), runs, results)
             np.savez_compressed(output / "cameraman_8bit.npz", **arrays)
-            summary["cameraman_8bit"] = {"runs": run_summary(results, runs, labels, False)}
-    for exp, runs_spec, fname, skey in (("D", USAF_8BIT_RUNS, "usaf_8bit.npz", "usaf_8bit"),
-                                        ("E", USAF_16BIT_RUNS, "usaf_16bit.npz", "usaf_16bit")):
-        if exp not in plan:
-            continue
-        runs = [("usaf", m, b, float(cfg.read_noise_e), seeds[0]) for m, b in runs_spec]
-        truth_res, labels = save_usaf_npz(output / fname, get_scene("usaf"), runs, results)
-        summary[skey] = {"truth": {"limit": truth_res["limit"], "finest_any": truth_res["finest_any"]},
-                         "runs": run_summary(results, runs, labels, True)}
-        exp_seconds[exp] = sum(results[k]["row"].get("task_seconds", 0) for k in runs)
-    diff_info = None
-    if "C" in experiments:
-        t0 = time.perf_counter()
-        diff_info = diffraction_example(output / "diffraction_example.npz", seeds[0])
-        exp_seconds["C"] = time.perf_counter() - t0
-    write_json(output / "resolution_summary.json", summary)
 
     total = time.perf_counter() - t_start
     mcfg = MPIEConfig(iterations=profile["iterations"], history_every=profile["history_every"])
@@ -718,11 +534,11 @@ def main(argv=None):
                     "standard-normal draws",
             "reconstruction": f"mPIE position order rng seed = {RECON_SEED_OFFSET} + s, shared by all methods",
             "scan": f"SimulationConfig.scan_seed = {cfg.scan_seed}",
-            "experiments_C_D_E": "use seeds[0]",
+            "saved_arrays": "cameraman_8bit.npz uses seeds[0]",
         },
         "simulation_config": cfg.to_dict(),
         "mpie_config": {**mcfg.to_dict(), "seed": f"{RECON_SEED_OFFSET} + s"},
-        "objects": {k: object_facts(k) for k in ("cameraman", "usaf")},
+        "objects": {"cameraman": object_facts("cameraman")},
         "methods": {
             "single": "single exposure at the auto-exposure time (longest of the 7 exposures whose "
                       "noiseless peak pixel, signal + dark, is below full well); rate=(Z-Bbar)/t, clipped >= 0",
@@ -740,13 +556,6 @@ def main(argv=None):
             "read_noise_e": {str(s): read_noise_for_snr(s, fw) for s in profile["snr_db"]},
         },
         "bit_sweep": {"bits": profile["bits"], "read_noise_e": cfg.read_noise_e},
-        "usaf": {"groups": list(cfg.usaf_groups), "bar_amplitude": cfg.usaf_bar_amplitude,
-                 "background_amplitude": 1.0, "supersample": cfg.usaf_supersample,
-                 "line_width_formula_mm": "1/(2*2**(G+(E-1)/6))",
-                 "resolved_criterion": "3 distinct profile minima inside the 3 bar regions "
-                                       "(+-0.25 px) and worst-case Michelson contrast >= 0.2; "
-                                       "profile averaged over the central 60% of the bar length"},
-        "diffraction_example": _clean_json(diff_info) if diff_info else None,
         "assumptions": [
             "These simulation parameters are OUR choices: Liu et al. do not report the "
             "simulation's exposure times, read noise, dark current, wavelength or pixel sizes, "

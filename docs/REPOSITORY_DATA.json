@@ -2,8 +2,8 @@
   "schema_version": 1,
   "description": "Complete preserved local scientific data, published figures and provenance for continuation from a Git clone. Paths are relative to the repository root; SHA-256 and sizes describe exact file bytes.",
   "snapshot_date": "2026-10-01",
-  "file_count": 57,
-  "total_bytes": 29287420,
+  "file_count": 42,
+  "total_bytes": 13752289,
   "missing_preexisting": [
     {
       "path": "diff.npy",
@@ -18,7 +18,7 @@
   ],
   "continuation_scope": [
     "Redraw historical comparison figures from preserved summary metrics.",
-    "Redraw all five paper-style figure groups from the complete full or quick simulation snapshots.",
+    "Redraw both paper-style figure groups from the complete full or quick simulation snapshots.",
     "Continue paper-style simulations using saved configuration, seeds, known truths and generated scenes.",
     "The original historical diffraction experiment cannot be rerun from the current workspace because its input and baseline archive were already absent."
   ],
@@ -120,14 +120,14 @@
     },
     {
       "path": "docs/figures/paper_style/fig2_bit_depth.png",
-      "size_bytes": 1191696,
-      "sha256": "4266f9e05b885d5a1e436ae722ec2afafd60622f35a2e0619bfce2420186a8a9",
+      "size_bytes": 1191845,
+      "sha256": "63df29df1f06f8f469cc6814243e9517593507b799ed89c220f083a1c6c0220e",
       "role": "figure_image"
     },
     {
       "path": "docs/figures/paper_style/fig2_bit_depth.svg",
-      "size_bytes": 358294,
-      "sha256": "5cb38484cdb7e11319a91a0e9f7dbe8a4d298f44f5dd29e1fbac9003809456de",
+      "size_bytes": 358291,
+      "sha256": "d622cf23963c05a36393621f59c06a9a382d134e159fd952a39164272402dd94",
       "role": "figure_vector"
     },
     {
@@ -143,45 +143,9 @@
       "role": "figure_vector"
     },
     {
-      "path": "docs/figures/paper_style/fig5_diffraction.png",
-      "size_bytes": 389463,
-      "sha256": "1298d7bf9212fc8a3da481a5698b93ac28f54c4b4b29fce4d98cec7bf84ae5e0",
-      "role": "figure_image"
-    },
-    {
-      "path": "docs/figures/paper_style/fig5_diffraction.svg",
-      "size_bytes": 453308,
-      "sha256": "a399494d8a2164f472fd6d67ee2173068bc3bfbab8d004cc8ed587242de211e4",
-      "role": "figure_vector"
-    },
-    {
-      "path": "docs/figures/paper_style/fig6_usaf_8bit.png",
-      "size_bytes": 1685551,
-      "sha256": "50f1495380c1916494f118cae0e4181290a92d1f762219c2b3c30d58203abb71",
-      "role": "figure_image"
-    },
-    {
-      "path": "docs/figures/paper_style/fig6_usaf_8bit.svg",
-      "size_bytes": 529286,
-      "sha256": "59bbae917583c6463fe964b1a6b2fe71e010a1627845cdbca43def6df8b5a57d",
-      "role": "figure_vector"
-    },
-    {
-      "path": "docs/figures/paper_style/fig7_usaf_16bit.png",
-      "size_bytes": 1190884,
-      "sha256": "5fec7e985ef0367b704b1b0a01886c4de7087cdfb3c10881483f3824201094c2",
-      "role": "figure_image"
-    },
-    {
-      "path": "docs/figures/paper_style/fig7_usaf_16bit.svg",
-      "size_bytes": 179967,
-      "sha256": "54fd2e9996392247c1d11da4d12c4e73f66a60545986280e2a61d25b330b4630",
-      "role": "figure_vector"
-    },
-    {
       "path": "docs/figures/paper_style/figures_manifest.json",
-      "size_bytes": 6974,
-      "sha256": "d62febf525a6d7bf495a6150f538c820184bc7a7bef52ec4a9827163d49b744f",
+      "size_bytes": 4437,
+      "sha256": "2d8e421f4ea1f7ec0f5ccc765aaa87fc8399275066862834cef838e615c2e8c5",
       "role": "figure_provenance"
     },
     {
@@ -227,15 +191,9 @@
       "role": "simulation_metrics_documentation_copy"
     },
     {
-      "path": "docs/paper_style/data/resolution_summary.json",
-      "size_bytes": 7872,
-      "sha256": "561efe7c963591f327740a92c6bf6cf5285211d3c3a888a99b31e0dae1829bc4",
-      "role": "simulation_metrics_documentation_copy"
-    },
-    {
       "path": "docs/paper_style/summary.csv",
-      "size_bytes": 6935,
-      "sha256": "eeab0adf053b502bdcf64abad33867d41b83f6e82567363c5bc6035495d22e3c",
+      "size_bytes": 2328,
+      "sha256": "fe0250db063bd41f9999c355214083a21c764b71d7453a614343832089c558f2",
       "role": "reproduction_key_values_summary"
     },
     {
@@ -276,15 +234,9 @@
     },
     {
       "path": "outputs/paper_style/full/DATA_CONTRACT.md",
-      "size_bytes": 10698,
-      "sha256": "b4ccff17ec7de2f6f276489c957cc40a7fb7e9c7cc05a8f545877399e0efd45e",
+      "size_bytes": 7127,
+      "sha256": "2ee378acd8e9b008573cace52d0af95f3100c6f650c76a1ec12110ca91d14806",
       "role": "simulation_data_contract"
-    },
-    {
-      "path": "outputs/paper_style/full/diffraction_example.npz",
-      "size_bytes": 41788,
-      "sha256": "2a888de968363ac16b74fed0ced83218a37fef284b5d86ac33e9d4c169b0c587",
-      "role": "multi_exposure_camera_and_fused_diffraction_example"
     },
     {
       "path": "outputs/paper_style/full/meta.json",
@@ -297,24 +249,6 @@
       "size_bytes": 43450,
       "sha256": "111168c7ec2e2072a2f9814a42dc3a16a516705c837d66da249f751e111dc633",
       "role": "noise_sweep_metrics"
-    },
-    {
-      "path": "outputs/paper_style/full/resolution_summary.json",
-      "size_bytes": 7872,
-      "sha256": "561efe7c963591f327740a92c6bf6cf5285211d3c3a888a99b31e0dae1829bc4",
-      "role": "resolution_metrics"
-    },
-    {
-      "path": "outputs/paper_style/full/usaf_16bit.npz",
-      "size_bytes": 2426928,
-      "sha256": "ffbbc282005f6d360eb4826aa05a6f0aa41a7c53d86a95d13d171de3bdfccf22",
-      "role": "usaf_16bit_truth_reconstructions_profiles_and_frc"
-    },
-    {
-      "path": "outputs/paper_style/full/usaf_8bit.npz",
-      "size_bytes": 3093534,
-      "sha256": "b17e77c0a229c6c798eed4493c0e28148db72b42743174bc5d99c7f2f986002b",
-      "role": "usaf_8bit_truth_reconstructions_profiles_and_frc"
     },
     {
       "path": "outputs/paper_style/quick/bit_sweep.csv",
@@ -330,15 +264,9 @@
     },
     {
       "path": "outputs/paper_style/quick/DATA_CONTRACT.md",
-      "size_bytes": 10699,
-      "sha256": "445e17b89c0b3f4ac963d2b74db218603b211668ac32b6fed66e7e9811e47d05",
+      "size_bytes": 7128,
+      "sha256": "ea5e26f9f5360eaffe7d645ca4dc308359dfca30c28f22ca8610841b30851a35",
       "role": "simulation_data_contract"
-    },
-    {
-      "path": "outputs/paper_style/quick/diffraction_example.npz",
-      "size_bytes": 41788,
-      "sha256": "2a888de968363ac16b74fed0ced83218a37fef284b5d86ac33e9d4c169b0c587",
-      "role": "multi_exposure_camera_and_fused_diffraction_example"
     },
     {
       "path": "outputs/paper_style/quick/meta.json",
@@ -351,24 +279,6 @@
       "size_bytes": 5367,
       "sha256": "9319ac2df4f7d457c93bfbce8bc50297f69f54fe49dd4f41b96edd364a5daa92",
       "role": "noise_sweep_metrics"
-    },
-    {
-      "path": "outputs/paper_style/quick/resolution_summary.json",
-      "size_bytes": 7881,
-      "sha256": "5877d12bf3946454bc8afdbdcfbd22cc313cbcf0a090858d391bf958339e5c81",
-      "role": "resolution_metrics"
-    },
-    {
-      "path": "outputs/paper_style/quick/usaf_16bit.npz",
-      "size_bytes": 2425968,
-      "sha256": "6f5ec30cce23ddcc32a9165954713fe4ca32e3169ca8fa9caa4536db1a737208",
-      "role": "usaf_16bit_truth_reconstructions_profiles_and_frc"
-    },
-    {
-      "path": "outputs/paper_style/quick/usaf_8bit.npz",
-      "size_bytes": 3038901,
-      "sha256": "c6941c73f9049cf78562679054d1b9ac39966b53d65770f338578c4a0bcb924f",
-      "role": "usaf_8bit_truth_reconstructions_profiles_and_frc"
     }
   ]
 }
