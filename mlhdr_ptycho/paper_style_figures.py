@@ -1,9 +1,9 @@
 """Figures imitating Liu et al. (IEEE TIM 73:4502711, 2024), Figs. 2, 3, 5, 6 and 7.
 
 The only inputs are the files written by ``scripts/run_paper_style_simulation.py``
-(see ``DATA_CONTRACT.md`` in its output directory) and the manually digitised
-paper curves in ``docs/paper_style/paper_digitized.json``. No number is ever
-estimated from a rendered PNG; every plotted value is read from those files.
+(see ``DATA_CONTRACT.md`` in its output directory). The figures compare this
+project's methods with each other; no number is ever estimated from a rendered
+PNG, and every plotted value is read from those files.
 
 Method encoding (identical in every figure):
     single      black solid line, circles
@@ -36,7 +36,6 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_PAPER_JSON = ROOT / "docs" / "paper_style" / "paper_digitized.json"
 
 METHODS = ("single", "lrfc", "ml_eq14_15", "ml_masked")
 BLUE, RED, GREEN, CYAN = "#1F4FD1", "#C13C3C", "#12816D", "#18C8F0"
@@ -62,15 +61,13 @@ FRAME = {"truth": "black", "single": "#5A5A5A", "lrfc": BLUE, "ml_eq14_15": RED,
 COMMON_FOOTER = ("Adapted simulation: our detector, object sampling and propagation distance differ from the paper; "
                  "parameters are recorded in meta.json. Our LRFC-style linear-response baseline selects the longest "
                  "unsaturated exposure per pixel; this selection rule is our implementation choice.")
-FIGURES = ("fig2_bit_depth", "fig3_noise", "fig5_diffraction", "fig6_usaf_8bit",
-           "fig7_usaf_16bit", "paper_vs_reproduction")
+FIGURES = ("fig2_bit_depth", "fig3_noise", "fig5_diffraction", "fig6_usaf_8bit", "fig7_usaf_16bit")
 FIGURE_DESCRIPTIONS = {
     "fig2_bit_depth": "Paper Fig. 2 analogue: PSNR/SSIM/object-amplitude NRMSE vs ADC bit depth + 8-bit reconstruction mosaic",
     "fig3_noise": "Paper Fig. 3 analogue: PSNR/SSIM/object-amplitude NRMSE vs noise magnitude (dB)",
     "fig5_diffraction": "Paper Fig. 5 analogue: seven raw 8-bit frames and three fused HDR patterns, shared log2 scale",
     "fig6_usaf_8bit": "Paper Fig. 6 analogue: USAF reconstructions (8 bit), magnified groups 8-9, convergence, FRC",
     "fig7_usaf_16bit": "Paper Fig. 7 analogue: USAF groups 8-9 at 16 bit, line profile across G9 E1-E3, FRC",
-    "paper_vs_reproduction": "Digitised paper curves (Figs. 2-3) overlaid on this reproduction",
 }
 
 STYLE = {
@@ -393,29 +390,6 @@ def load_paper_style_data(source):
                 element_bbox(rs.geometry, *parse_element(json_label))
     return PaperStyleData(source, files, meta, bit_rows, noise_rows, cameraman, usaf8, usaf16,
                           diffraction, resolution)
-
-
-def load_paper_digitized(path=None):
-    path = Path(path or DEFAULT_PAPER_JSON)
-    try:
-        paper = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError) as exc:
-        raise DataContractError(f"Cannot read digitised paper values {path}: {exc}") from exc
-    for s in paper.get("series", []):
-        n = len(s["x"])
-        if len(s["values"]) != n or len(s["approximate"]) != n:
-            raise DataContractError(f"{path.name}: series {s['figure']}/{s['method']}/{s['metric']} lengths differ")
-        if s["method"] not in METHODS:
-            raise DataContractError(f"{path.name}: unknown method {s['method']!r}")
-    paper["_path"] = path
-    return paper
-
-
-def paper_series(paper, figure, method, metric):
-    for s in paper["series"]:
-        if s["figure"] == figure and s["method"] == method and s["metric"] == metric:
-            return s
-    return None
 
 
 # --------------------------------------------------------------------------
@@ -818,27 +792,26 @@ def _best_text(ax, text, candidates, obstacles, avoid=(), **text_kw):
     return ax.text(x, y, text, transform=ax.transAxes, ha=ha, va=va, **text_kw)
 
 
-def _style_kw(method, *, lw=1.9, ms=None, hollow=False, alpha=1.0):
+def _style_kw(method, *, lw=1.9, ms=None):
     st = METHOD_STYLE[method]
     return {"color": st["color"], "linestyle": st["linestyle"], "marker": st["marker"],
-            "markersize": ms or st["markersize"], "linewidth": lw, "alpha": alpha,
-            "markerfacecolor": "white" if hollow else st["color"],
-            "markeredgecolor": st["color"] if hollow else _darker(st["color"]),
-            "markeredgewidth": 1.2 if hollow else 0.9, "zorder": st["zorder"]}
+            "markersize": ms or st["markersize"], "linewidth": lw,
+            "markerfacecolor": st["color"], "markeredgecolor": _darker(st["color"]),
+            "markeredgewidth": 0.9, "zorder": st["zorder"]}
 
 
-def _plot_sweep(ax, data, experiment, metric, method, label, *, lw=1.9, ms=None, gid_prefix="ours"):
+def _plot_sweep(ax, data, experiment, metric, method, label):
     s = data.sweep(experiment, method, metric)
     if s.x.size == 0:
         return s, None
-    kw = _style_kw(method, lw=lw, ms=ms)
+    kw = _style_kw(method)
     if np.any(s.n > 1):
         container = ax.errorbar(s.x, s.mean, yerr=s.sd, capsize=3.2, elinewidth=1.0,
                                 capthick=1.0, label=label, **kw)
         line = container.lines[0]
     else:
         line, = ax.plot(s.x, s.mean, label=label, **kw)
-    line.set_gid(f"{gid_prefix}:{experiment}:{metric}:{method}")
+    line.set_gid(f"ours:{experiment}:{metric}:{method}")
     return s, line
 
 
@@ -898,7 +871,6 @@ def findings(data):
     top = float(snr.max()) if snr.size else math.nan
     out["snr_top"] = top
     out["psnr_top"] = {m: data.value("noise_sweep", m, "psnr_db", top) for m in METHODS}
-    out["single_noise_psnr_max"] = float(np.max(data.sweep("noise_sweep", "single", "psnr_db").mean))
     noise = data.meta.get("noise_sweep", {}).get("read_noise_e") or {}
     sigma_e = noise.get(f"{top:g}") if noise and np.isfinite(top) else None
     n_dark = data.meta["simulation_config"].get("dark_frames")
@@ -1033,9 +1005,9 @@ def _fig2_findings(data):
             f"{f['ml_centre_ratio']:.2f}× the noiseless rate{diffraction_note} and its "
             f"object NRMSE stays {f['ml_nrmse_range'][0]:.2f}–{f['ml_nrmse_range'][1]:.2f} at every bit depth. At 8 bit, "
             f"LRFC-style HDR and ML + mask reach NRMSE {n8['lrfc']:.3f} / {n8['ml_masked']:.3f} vs {n16['single']:.3f} for the "
-            "single exposure at 16 bit: the paper's '8-bit ML-HDR ≈ 16-bit single exposure' is ")
-    return text + ("reproduced only by these two methods." if f["hdr8_matches_single16"]
-                   else "NOT reproduced with our parameters.")
+            "single exposure at 16 bit, so ")
+    return text + ("at least one 8-bit HDR result matches the 16-bit single exposure." if f["hdr8_matches_single16"]
+                   else "neither 8-bit HDR result reaches the 16-bit single exposure.")
 
 
 def plot_fig2_bit_depth(data, output, dpi=300):
@@ -1109,17 +1081,16 @@ def _snr_definition(data):
 
 
 def _fig3_findings(data):
+    """Footer note on ML + mask vs LRFC-style HDR at the highest SNR ('' when it does not apply)."""
     f = findings(data)
     top, p = f["snr_top"], f["psnr_top"]
-    text = (f"Our single exposure stays at or below {f['single_noise_psnr_max']:.0f} dB PSNR over the whole axis, so this dB "
-            "definition probably differs from the paper's; compare trends only.")
-    if p["ml_masked"] < p["lrfc"] and "p_zero_dark_var" in f:
-        text += (f" ML + mask falls below LRFC-style HDR at high SNR ({p['ml_masked']:.1f} vs {p['lrfc']:.1f} dB PSNR at "
-                 f"{top:g} dB): Eq. 14 weights use the per-pixel dark variance σ$_B^2$ from the dark frames; at σ$_{{read}}$ ≈ "
-                 f"{f['sigma_lsb_top']:.2f} LSB about {100 * f['p_zero_dark_var']:.0f} % of pixels get σ$_B^2$ = 0 exactly "
-                 "(all dark reads 0, since the ADC clips at 0), giving their noisy short exposures near-infinite weight — a "
-                 "property of the estimator as written, not a change we made.")
-    return text
+    if not (p["ml_masked"] < p["lrfc"] and "p_zero_dark_var" in f):
+        return ""
+    return (f"ML + mask falls below LRFC-style HDR at high SNR ({p['ml_masked']:.1f} vs {p['lrfc']:.1f} dB PSNR at "
+            f"{top:g} dB): Eq. 14 weights use the per-pixel dark variance σ$_B^2$ from the dark frames; at σ$_{{read}}$ ≈ "
+            f"{f['sigma_lsb_top']:.2f} LSB about {100 * f['p_zero_dark_var']:.0f} % of pixels get σ$_B^2$ = 0 exactly "
+            "(all dark reads 0, since the ADC clips at 0), giving their noisy short exposures near-infinite weight — a "
+            "property of the estimator as written, not a change we made.")
 
 
 def plot_fig3_noise(data, output, dpi=300):
@@ -1127,8 +1098,10 @@ def plot_fig3_noise(data, output, dpi=300):
         _snr_definition(data),
         "Cameraman object; single exposure at 16 bit, HDR methods at 8 bit, as in the paper. Metrics vs ground truth "
         "(error is object-amplitude NRMSE; the paper's RMS definition is unspecified). " + _seed_note(data, "noise_sweep"),
-        _fig3_findings(data),
     ]
+    note = _fig3_findings(data)
+    if note:
+        notes.append(note)
     W = 16.5
     fig, footer = _new_figure(W, 5.5, notes)
     H = fig.get_figheight()
@@ -1505,7 +1478,7 @@ def plot_fig6_usaf_8bit(data, output, dpi=300):
         + ", read from resolution_summary.json.",
         "(g) Object-amplitude NRMSE vs ground truth; 'Time' = mPIE wall-clock until log$_{10}$ error first "
         "enters its plateau (within max(0.02, 2 SD) of the median of the last 25 % of samples); no time is shown when "
-        "the error never drops (our CPU with parallel workers; not comparable with the paper's 225 s / 360 s). (h) FRC against the GROUND TRUTH (not two independent reconstructions), "
+        "the error never drops (our CPU with parallel workers). (h) FRC against the GROUND TRUTH (not two independent reconstructions), "
         "van Heel half-bit threshold; cutoff labels give dx / cutoff (half-period). " + _frc_floor_note(runs)
         + " " + _snapshot_note(data),
         _mpie_note(data) + " " + _fig6_findings(data),
@@ -1648,162 +1621,77 @@ def _profile_panel(ax, runs):
 
 
 # --------------------------------------------------------------------------
-# Paper vs reproduction
+# Summary table (key numbers of this reproduction)
 # --------------------------------------------------------------------------
-def plot_paper_vs_reproduction(data, output, dpi=300, paper=None):
-    paper = paper or load_paper_digitized()
-    notes = [
-        "Paper values digitised from figure images (±0.5 dB / ±0.01); absolute values are not directly comparable "
-        "because simulation parameters differ — compare trends.",
-        "Paper 'RMS error' is not defined in the paper; ours is NRMSE vs ground truth. Faded hollow markers = "
-        "approximate paper points (hidden or saturated); paper LRFC RMS error at ≥ 14 bit is an upper bound (≤ 0.015). "
-        "ML-HDR + mask (our extension) has no paper counterpart. Paper ML-HDR = Eq. 14–15 as published. "
-        + _snr_definition(data) + " " + _seed_note(data, "bit_sweep"),
-    ]
-    W = 15.8
-    fig, footer = _new_figure(W, 9.4, notes)
-    H = fig.get_figheight()
-    gs = fig.add_gridspec(2, 3, left=0.055, right=0.99, bottom=(footer + 0.58) / H, top=1 - 0.95 / H,
-                          hspace=0.36, wspace=0.22)
-    rows = (("bit_sweep", "Fig. 2", "Dynamic range (bits)", list(range(2, 21, 2)), (0.8, 21.2), "Bit-depth sweep"),
-            ("noise_sweep", "Fig. 3", "Noise magnitude (dB)", list(range(6, 55, 6)), (3, 57), "Noise sweep"))
-    paper_metric = {"psnr_db": "psnr_db", "ssim": "ssim", "nrmse": "rms_error"}
-    ylabels = {"psnr_db": "PSNR (dB)", "ssim": "SSIM", "nrmse": "Paper RMS / reproduction NRMSE\n(definitions differ)"}
-    titles = {"psnr_db": "PSNR", "ssim": "SSIM", "nrmse": "RMS / NRMSE"}
-    for r, (experiment, figure, xlabel, xticks, xlim, row_title) in enumerate(rows):
-        for c, (metric, _) in enumerate(METRICS):
-            ax = fig.add_subplot(gs[r, c])
-            for method in METHODS:
-                _plot_sweep(ax, data, experiment, metric, method, LABEL[method], lw=2.4, ms=7.5)
-                ps = paper_series(paper, figure, method, paper_metric[metric])
-                if ps is None:
-                    continue
-                x = np.asarray(ps["x"], float)
-                y = np.asarray(ps["values"], float)
-                approx = np.asarray(ps["approximate"], bool)
-                kw = _style_kw(method, lw=1.0, ms=6.5, hollow=True)
-                kw["marker"] = None
-                ln, = ax.plot(x, y, **kw)
-                ln.set_gid(f"paper:{experiment}:{metric}:{method}")
-                mk = _style_kw(method, lw=0, ms=6.5, hollow=True)
-                mk.pop("linestyle")
-                ax.plot(x[~approx], y[~approx], linestyle="none", **mk)
-                mk["alpha"] = 0.4
-                ax.plot(x[approx], y[approx], linestyle="none", **mk)
-            _paper_axes(ax)
-            ax.set_xlim(*xlim)
-            ax.set_xticks(xticks)
-            ax.xaxis.set_minor_locator(MultipleLocator((xticks[1] - xticks[0]) / 2))
-            ax.set_xlabel(xlabel)
-            ax.set_ylabel(ylabels[metric])
-            ax.set_title(f"({'abcdef'[3 * r + c]}) {row_title} — {titles[metric]} "
-                         f"(paper {figure})", loc="left", fontsize=12, fontweight="bold")
-            _bold_ticks(ax)
-    handles = [Line2D([], [], **_style_kw(m, lw=2.2, ms=7.5), label=LABEL[m] + (" — no paper counterpart" if m == "ml_masked" else ""))
-               for m in METHODS]
-    handles += [Line2D([], [], color="#555555", linewidth=1.0, marker="o", markersize=6.5, markerfacecolor="white",
-                       markeredgecolor="#555555", label="paper (digitised): thin line, hollow markers"),
-                Line2D([], [], color="#222222", linewidth=2.4, marker="o", markersize=7.5, markerfacecolor="#222222",
-                       label="this reproduction: thick line, filled markers")]
-    fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1 - 0.05 / H), ncol=3, fontsize=10.5,
-               frameon=False, handlelength=3.4, columnspacing=1.6)
-    return _save(fig, output, "paper_vs_reproduction", dpi)
+SUMMARY_FIELDS = ("section", "quantity", "method", "bits", "value", "unit", "note")
 
 
-# --------------------------------------------------------------------------
-# Summary table (paper vs reproduction)
-# --------------------------------------------------------------------------
-SUMMARY_FIELDS = ("section", "quantity", "method", "bits", "paper", "reproduction", "unit", "paper_source", "note")
-
-
-def summary_rows(data, paper=None):
-    paper = paper or load_paper_digitized()
+def summary_rows(data):
+    """Key numbers of this reproduction (one value per row), all read from the source files."""
     rows = []
 
-    def add(section, quantity, method, bits, paper_value, ours, unit, source, note=""):
-        def fmt(v):
-            if isinstance(v, float):
-                return "" if not np.isfinite(v) else f"{v:.4g}"
-            return "" if v is None else str(v)
+    def add(section, quantity, method, bits, value, unit, note=""):
+        if isinstance(value, float):
+            value = "" if not np.isfinite(value) else f"{value:.4g}"
         rows.append({"section": section, "quantity": quantity, "method": method, "bits": bits,
-                     "paper": fmt(paper_value), "reproduction": fmt(ours), "unit": unit,
-                     "paper_source": source, "note": note})
+                     "value": "" if value is None else str(value), "unit": unit, "note": note})
 
-    def pval(figure, method, metric, x):
-        s = paper_series(paper, figure, method, metric)
-        if s is None:
-            return None
-        for xi, v, a in zip(s["x"], s["values"], s["approximate"]):
-            if xi == x:
-                return ("~" if a else "") + f"{v:g}"
-        return None
+    def seeds(method, bits):
+        hit = data.sweep("bit_sweep", method, "psnr_db")
+        n = hit.n[np.isclose(hit.x, bits)]
+        return f"mean over seeds (n = {int(n[0])}), vs ground truth" if n.size else ""
 
-    pm = {"psnr_db": "psnr_db", "ssim": "ssim", "nrmse": "rms_error"}
-    units = {"psnr_db": "dB", "ssim": "", "nrmse": "paper: RMS error / ours: NRMSE"}
+    units = {"psnr_db": "dB", "ssim": "", "nrmse": ""}
     for metric in ("psnr_db", "ssim", "nrmse"):
         for method in METHODS:
-            add("bit_sweep_8bit", metric, method, 8, pval("Fig. 2", method, pm[metric], 8),
-                data.value("bit_sweep", method, metric, 8), units[metric], "Fig. 2 (digitised)",
-                "no paper counterpart" if method == "ml_masked" else "")
-        ref = paper["figures"]["Fig. 2"]["reference_lines"]["single_16bit"][pm[metric]]
-        add("bit_sweep_16bit_reference", metric, "single", 16, f"{ref:g}", data.value("bit_sweep", "single", metric, 16),
-            units[metric], "Fig. 2 gray dashed line (digitised)")
-    single16 = {m: data.value("bit_sweep", "single", m, 16) for m in ("psnr_db", "ssim", "nrmse")}
+            add("bit_sweep_8bit", metric, method, 8, data.value("bit_sweep", method, metric, 8), units[metric],
+                seeds(method, 8))
+        add("bit_sweep_16bit_reference", metric, "single", 16, data.value("bit_sweep", "single", metric, 16),
+            units[metric], seeds("single", 16))
+    single16 = {m: data.value("bit_sweep", "single", m, 16) for m in ("psnr_db", "ssim")}
     for method in ("lrfc", "ml_eq14_15", "ml_masked"):
-        ours = data.value("bit_sweep", method, "psnr_db", 8) - single16["psnr_db"]
-        p8 = pval("Fig. 2", method, "psnr_db", 8)
-        pgap = None if p8 is None else float(p8.lstrip("~")) - 37.2
-        add("ml8_vs_single16", "psnr_db_8bit_minus_single_16bit", method, "8 vs 16",
-            None if pgap is None else f"{pgap:+.1f}", f"{ours:+.2f}", "dB", "Fig. 2 (digitised)",
-            "claim '8-bit HDR >= 16-bit single' holds if >= 0")
-        ours_ssim = data.value("bit_sweep", method, "ssim", 8) - single16["ssim"]
-        ps8 = pval("Fig. 2", method, "ssim", 8)
-        add("ml8_vs_single16", "ssim_8bit_minus_single_16bit", method, "8 vs 16",
-            None if ps8 is None else f"{float(ps8.lstrip('~')) - 0.95:+.3f}", f"{ours_ssim:+.3f}", "",
-            "Fig. 2 (digitised)", "holds if >= 0")
-    rep = paper.get("reported_resolution", {})
+        psnr = data.value("bit_sweep", method, "psnr_db", 8) - single16["psnr_db"]
+        add("hdr8_vs_single16", "psnr_db_8bit_minus_single_16bit", method, "8 vs 16", f"{psnr:+.2f}", "dB",
+            "bit-sweep means; >= 0 means the 8-bit result matches or exceeds the 16-bit single exposure")
+        ssim = data.value("bit_sweep", method, "ssim", 8) - single16["ssim"]
+        add("hdr8_vs_single16", "ssim_8bit_minus_single_16bit", method, "8 vs 16", f"{ssim:+.3f}", "",
+            "bit-sweep means; >= 0 means the 8-bit result matches or exceeds the 16-bit single exposure")
     for which, bits in (("usaf_8bit", 8), ("usaf_16bit", 16)):
         runs = data.usaf(which)
-        pr = rep.get(f"{bits}bit", {})
         for method in METHODS:
             label = f"{method}@{bits}"
             if not runs.has(label):
                 continue
             s = data.summary_run(which, label)
-            p = pr.get(method, {})
             floor = frc_is_floor(runs, label)
-            add(f"usaf_{bits}bit", "frc_resolution_um", method, bits, p.get("frc_resolution_um"),
+            add(f"usaf_{bits}bit", "frc_resolution_um", method, bits,
                 "no resolution (FRC floor)" if floor else s.get("frc_resolution_um"), "um",
-                "paper text / Fig. 6-7 (experiment)",
-                "ours: FRC vs ground truth" + ("; reached Nyquist (pixel-limited)" if s.get("frc_reached_nyquist") else ""))
+                "FRC vs ground truth" + ("; reached Nyquist (pixel-limited)" if s.get("frc_reached_nyquist") else ""))
             lim = s.get("usaf_limit") or {}
-            ours_el = f"{lim['label']} ({lim['line_width_um']:.3f} um)" if lim.get("label") else "none"
-            pel = f"{p['usaf_element']} ({p['usaf_line_width_um']} um)" if p.get("usaf_element") else None
-            add(f"usaf_{bits}bit", "smallest_resolved_element", method, bits, pel, ours_el, "G-E (line width)",
-                "paper text / Fig. 6-7 (experiment)", "ours: resolved with all coarser elements, both orientations")
-            for key, q in (("psnr_db", "psnr_db"), ("ssim", "ssim"), ("nrmse", "nrmse")):
-                add(f"usaf_{bits}bit", q, method, bits, None, s.get(key), units[key], "", "USAF, vs ground truth")
+            element = f"{lim['label']} ({lim['line_width_um']:.3f} um)" if lim.get("label") else "none"
+            add(f"usaf_{bits}bit", "smallest_resolved_element", method, bits, element, "G-E (line width)",
+                "resolved with all coarser elements, both orientations")
+            for metric in ("psnr_db", "ssim", "nrmse"):
+                add(f"usaf_{bits}bit", metric, method, bits, s.get(metric), units[metric], "USAF, vs ground truth")
         truth = data.resolution[which]["truth"]["limit"]
-        add(f"usaf_{bits}bit", "smallest_resolved_element", "truth", bits, None,
-            f"{truth['label']} ({truth['line_width_um']:.3f} um)", "G-E (line width)", "",
+        add(f"usaf_{bits}bit", "smallest_resolved_element", "truth", bits,
+            f"{truth['label']} ({truth['line_width_um']:.3f} um)", "G-E (line width)",
             "sampling limit of the pixel-sampled ground truth")
     labels8 = [lab for lab in ("single@8", "lrfc@8", "ml_eq14_15@8", "ml_masked@8") if data.usaf8.has(lab)]
     times = convergence_times(data.usaf8, labels8)
-    ct = rep.get("convergence_time_s", {})
     last = int(data.usaf8.arrays["history_iteration"].max())
     for label in labels8:
-        method = _run_method(label)
         c = times.get(label)
         total = float(np.nanmax(data.usaf8.run("history_wallclock_s", label)))
-        note = (f"ours: plateau entry at iteration {c['iteration']} of {last}" if c else
-                "ours: object error never drops by >= 0.1 (log10) - no convergence time") +                f"; total mPIE {total:.1f} s; rule: {CONVERGENCE_RULE}"
-        add("convergence_8bit", "convergence_time_s", method, 8, ct.get(method), c["time_s"] if c else None,
-            "s", "Fig. 6(f) (experiment)" if method in ct else "", note)
+        note = ((f"plateau entry at iteration {c['iteration']} of {last}" if c else
+                 "object error never drops by >= 0.1 (log10) - no convergence time")
+                + f"; total mPIE {total:.1f} s; rule: {CONVERGENCE_RULE}")
+        add("convergence_8bit", "convergence_time_s", _run_method(label), 8, c["time_s"] if c else None, "s", note)
     return rows
 
 
-def write_summary_csv(data, path, paper=None):
-    rows = summary_rows(data, paper)
+def write_summary_csv(data, path):
+    rows = summary_rows(data)
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as stream:
@@ -1849,26 +1737,21 @@ PLOTS = {
 }
 
 
-def generate_figures(source, output, dpi=300, paper_json=None):
+def generate_figures(source, output, dpi=300):
     """Render all paper-style figures (PNG + SVG) and ``figures_manifest.json``."""
     if dpi < 50:
         raise ValueError("DPI must be at least 50")
     data = load_paper_style_data(source)
-    paper = load_paper_digitized(paper_json)
     output = Path(output).resolve()
     output.mkdir(parents=True, exist_ok=True)
     with plt.rc_context(STYLE):
         for name in FIGURES:
-            if name == "paper_vs_reproduction":
-                plot_paper_vs_reproduction(data, output, dpi, paper)
-            else:
-                PLOTS[name](data, output, dpi)
+            PLOTS[name](data, output, dpi)
     meta = data.meta
     manifest = {
         "generator": "mlhdr_ptycho/paper_style_figures.py",
         "source_dir": _display(data.source),
         "source_files": {name: {"path": _display(p), "sha256": _sha256(p)} for name, p in sorted(data.files.items())},
-        "paper_digitized": {"path": _display(paper["_path"]), "sha256": _sha256(paper["_path"])},
         "source_meta": {
             "profile": meta.get("profile"), "created": meta.get("created"), "command": meta.get("command"),
             "profile_settings": meta.get("profile_settings"), "seeds": meta.get("seeds"),
@@ -1885,7 +1768,7 @@ def generate_figures(source, output, dpi=300, paper_json=None):
             "methods": {m: {"label": LABEL[m], "color": METHOD_STYLE[m]["color"], "marker": METHOD_STYLE[m]["marker"]}
                         for m in METHODS},
             "statistics": "Sweep points = mean over successful seeds; error bars = sample SD (only when n > 1)",
-            "numbers": "All plotted values are read from the source CSV/NPZ/JSON files or the digitised paper JSON; "
+            "numbers": "All plotted values are read from the source CSV/NPZ/JSON files; "
                        "nothing is estimated from rendered images",
             "frc": "reconstruction vs ground truth, van Heel half-bit threshold (engine definition)",
             "usaf_limit": "smallest resolved element from resolution_summary.json (usaf_limit)",

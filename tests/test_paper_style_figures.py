@@ -16,7 +16,6 @@ import numpy as np
 from mlhdr_ptycho import paper_style_figures as psf
 
 
-ROOT = Path(__file__).resolve().parents[1]
 DX = 0.5
 METHODS = psf.METHODS
 BITS = (2, 8, 16)
@@ -311,8 +310,12 @@ class PaperStyleFigureTests(unittest.TestCase):
 
     # ------------------------------------------------------------ end to end
     def test_generate_figures_writes_every_figure_and_manifest(self):
+        self.assertEqual(psf.FIGURES, ("fig2_bit_depth", "fig3_noise", "fig5_diffraction", "fig6_usaf_8bit",
+                                       "fig7_usaf_16bit"))
         manifest = psf.generate_figures(self.source, self.out, dpi=50)
         self.assertEqual(set(manifest["figures"]), set(psf.FIGURES))
+        self.assertEqual(sorted(p.name for p in self.out.iterdir()),
+                         sorted(["figures_manifest.json"] + [f"{n}.{e}" for n in psf.FIGURES for e in ("png", "svg")]))
         for name in psf.FIGURES:
             for ext in ("png", "svg"):
                 path = self.out / f"{name}.{ext}"
@@ -322,7 +325,8 @@ class PaperStyleFigureTests(unittest.TestCase):
         self.assertEqual(set(on_disk["source_files"]), set(psf.REQUIRED_FILES) | {"DATA_CONTRACT.md"})
         csv_hash = hashlib.sha256((self.source / "bit_sweep.csv").read_bytes()).hexdigest()
         self.assertEqual(on_disk["source_files"]["bit_sweep.csv"]["sha256"], csv_hash)
-        self.assertIn("paper_digitized", on_disk)
+        self.assertFalse([key for key in on_disk if "paper" in key.lower()])
+        self.assertNotRegex(json.dumps(on_disk).lower(), "digiti")
 
     def test_missing_optional_diffraction_metric_still_renders_every_figure(self):
         # The loader accepts the required reconstruction metrics without this
@@ -350,25 +354,27 @@ class PaperStyleFigureTests(unittest.TestCase):
         self.assertAlmostEqual(psf.findings(self.data)["ml_diff_nrmse_8"], 0.11)
         self.assertIn("8-bit diffraction NRMSE 0.11", psf._fig2_findings(self.data))
 
-    def test_paper_digitized_json_is_consistent(self):
-        paper = psf.load_paper_digitized(ROOT / "docs/paper_style/paper_digitized.json")
-        self.assertEqual(len(paper["series"]), 18)
-        for s in paper["series"]:
-            self.assertIn(s["figure"], ("Fig. 2", "Fig. 3"))
-            self.assertEqual(s["x"], list(range(2, 21, 2)) if s["figure"] == "Fig. 2" else list(range(6, 55, 6)))
-            self.assertTrue(all(isinstance(a, bool) for a in s["approximate"]))
-        ml = psf.paper_series(paper, "Fig. 2", "ml_eq14_15", "psnr_db")
-        self.assertEqual(ml["values"][ml["x"].index(8)], 40.7)
-
-    def test_summary_rows_pair_paper_and_reproduction(self):
-        rows = psf.summary_rows(self.data)
-        row = next(r for r in rows if r["section"] == "bit_sweep_8bit" and r["quantity"] == "psnr_db"
+    def test_summary_table_holds_only_reproduction_values(self):
+        path = self.out / "summary.csv"
+        rows = psf.write_summary_csv(self.data, path)
+        with path.open(newline="", encoding="utf-8") as stream:
+            reader = csv.DictReader(stream)
+            self.assertEqual(tuple(reader.fieldnames), psf.SUMMARY_FIELDS)
+            written = list(reader)
+        self.assertFalse([field for field in psf.SUMMARY_FIELDS if "paper" in field])
+        self.assertEqual(len(written), len(rows))
+        for row in written:
+            self.assertNotRegex(" ".join(row.values()).lower(), "paper|digiti")
+        row = next(r for r in written if r["section"] == "bit_sweep_8bit" and r["quantity"] == "psnr_db"
                    and r["method"] == "ml_eq14_15")
-        self.assertEqual(row["paper"], "40.7")
-        self.assertAlmostEqual(float(row["reproduction"]), self.data.value("bit_sweep", "ml_eq14_15", "psnr_db", 8), places=2)
-        masked = next(r for r in rows if r["section"] == "usaf_8bit" and r["quantity"] == "smallest_resolved_element"
+        self.assertAlmostEqual(float(row["value"]), self.data.value("bit_sweep", "ml_eq14_15", "psnr_db", 8), places=2)
+        gap = next(r for r in written if r["section"] == "hdr8_vs_single16" and r["method"] == "lrfc"
+                   and r["quantity"] == "psnr_db_8bit_minus_single_16bit")
+        self.assertAlmostEqual(float(gap["value"]), self.data.value("bit_sweep", "lrfc", "psnr_db", 8)
+                               - self.data.value("bit_sweep", "single", "psnr_db", 16), places=2)
+        masked = next(r for r in written if r["section"] == "usaf_8bit" and r["quantity"] == "smallest_resolved_element"
                       and r["method"] == "ml_masked")
-        self.assertTrue(masked["reproduction"].startswith("9-1"))
+        self.assertTrue(masked["value"].startswith("9-1"))
 
 
 if __name__ == "__main__":

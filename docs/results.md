@@ -32,7 +32,7 @@ The saved baseline is used for post-reconstruction evaluation, not to initialize
 
 One global flux factor sets the brightest scan frame's total detected photon rate to 10⁹/s while preserving relative energies across scan positions. Quantum efficiency is assumed to be 1. The paper does not provide enough information to determine this mapping uniquely.
 
-The fixed baseline uses 441 scan positions, 32×32 detector frames, and 80 iterations, whereas the paper's simulation uses 400 positions, 256×256 detector frames, and 250 iterations. Parameter sources are in the [experiment configuration](../experiments/paper_baseline_comparison.json); runtime information and input hashes are in the [experiment manifest](experiment_manifest.json).
+The fixed baseline uses 441 scan positions, 32×32 detector frames, and 80 iterations; these reconstruction settings are this project's own choices and differ from the paper's simulation. Parameter sources are in the [experiment configuration](../experiments/paper_baseline_comparison.json); runtime information and input hashes are in the [experiment manifest](experiment_manifest.json).
 
 ## Original paper equations and additional control
 
@@ -158,7 +158,7 @@ Complete local validation depends on unavailable original data and binary output
 
 This section is independent of the fixed-baseline experiment above. It uses saved **full simulations with known ground truth** from `scripts/run_paper_style_simulation.py`. Figures follow paper Figs. 2, 3, 5, 6, and 7, and all metrics—PSNR, SSIM, NRMSE, FRC, and resolvable USAF elements—are referenced to **simulation ground truth**. Existing CSV/NPZ/JSON files were organized and replotted without rerunning simulations. Paper Figs. 6 and 7 show **real experiments**; the corresponding results here are simulations.
 
-This is an adapted simulation designed around the paper's figure layouts. The paper reports a 1024×1024 object, 256×256 probe and detector, 20×20 scan positions, approximately 40 px steps with 10% random perturbation, 50 mm propagation distance, and 250 iterations. This project retains 20×20 positions and 250 iterations, using a 226×226 object, 64×64 probe window and virtual detector (32 px probe diameter), and 8 px steps with 10% perturbation. It adopts the paper's experimental wavelength of 632.8 nm and distance of 13.9 mm. The paper does not fully specify simulation exposure timing, numerical read noise, and several implementation details; camera read noise, dark current, noise-dB definitions, and simulation exposure scheduling use explicit project assumptions. Geometry, camera models, and evaluation are not identical, so absolute values cannot be interpreted as a point-for-point reproduction of the paper's experiment.
+This is an adapted simulation designed around the paper's figure layouts. This project's own geometry choices (a 226×226 object, a 64×64 probe window and virtual detector with a 32 px probe diameter, and 8 px steps with 10% random perturbation) differ from the paper's simulation; it uses 20×20 scan positions and 250 iterations. It adopts the paper's experimental wavelength of 632.8 nm and distance of 13.9 mm. The paper does not fully specify simulation exposure timing, numerical read noise, and several implementation details; camera read noise, dark current, noise-dB definitions, and simulation exposure scheduling use explicit project assumptions. Geometry, camera models, and evaluation are not identical, so absolute values cannot be interpreted as a point-for-point reproduction of the paper's experiment.
 
 All figures use the same encoding for four methods:
 
@@ -175,7 +175,7 @@ Regenerate from existing full results:
 python scripts/plot_paper_style_figures.py --source outputs/paper_style/full --output docs/figures/paper_style --summary-csv docs/paper_style/summary.csv --copy-data-to docs/paper_style/data
 ```
 
-Provenance and hashes are in [figures_manifest.json](figures/paper_style/figures_manifest.json), key values in [summary.md](paper_style/summary.md) / [summary.csv](paper_style/summary.csv), and CSV/JSON input copies in [paper_style/data/](paper_style/data/). Paper curves come from manually digitized [paper_digitized.json](paper_style/paper_digitized.json).
+Provenance and hashes are in [figures_manifest.json](figures/paper_style/figures_manifest.json), key values in [summary.md](paper_style/summary.md) / [summary.csv](paper_style/summary.csv), and CSV/JSON input copies in [paper_style/data/](paper_style/data/). The figures and tables compare this project's four methods with each other; they contain no values taken from the paper.
 
 Saved full data contain 120 bit-depth records and 108 noise records, all with status `ok`, using seeds 0, 1, and 2. Sweep curves show three-run means ± sample standard deviations. USAF images, line profiles, FRC, and convergence plots use single-run arrays from seed 0. These runs are counted separately from the 81 fixed-baseline reconstructions above.
 
@@ -183,9 +183,9 @@ Saved full data contain 120 bit-depth records and 108 noise records, all with st
 
 ![PSNR, SSIM, and amplitude NRMSE versus bit depth, with 8-bit reconstructions](figures/paper_style/fig2_bit_depth.png)
 
-[Download vector SVG](figures/paper_style/fig2_bit_depth.svg). The cameraman object uses 5 e⁻ read noise and 2–20-bit depths. Panels (a)–(c) show means ± sample standard deviations. A gray vertical line marks 8 bit; A–D indicate the 8-bit results in (d). Gray dashed lines show this project's 16-bit single-exposure values. This project defines amplitude error as NRMSE; the paper does not explicitly define its RMS error, so the two cannot be treated as numerically equivalent.
+[Download vector SVG](figures/paper_style/fig2_bit_depth.svg). The cameraman object uses 5 e⁻ read noise and 2–20-bit depths. Panels (a)–(c) show means ± sample standard deviations. A gray vertical line marks 8 bit; A–D indicate the 8-bit results in (d). Gray dashed lines show this project's 16-bit single-exposure values. Amplitude error is this project's object-amplitude NRMSE (the paper does not define its RMS error).
 
-At 8 bit, mean PSNR for single exposure, LRFC-HDR, original paper equations, and the saturation-masking extension is **20.56, 27.88, 16.65, and 27.82 dB**; mean SSIM is **0.4747, 0.8214, 0.5355, and 0.8222**. The 16-bit single-exposure reference is **32.31 dB / 0.9152**. This project does not reproduce the result that 8-bit ML-HDR matches or exceeds 16-bit single exposure; LRFC and the extension are also below that reference.
+At 8 bit, mean PSNR for single exposure, LRFC-HDR, original paper equations, and the saturation-masking extension is **20.56, 27.88, 16.65, and 27.82 dB**; mean SSIM is **0.4747, 0.8214, 0.5355, and 0.8222**. The 16-bit single-exposure reference is **32.31 dB / 0.9152**. None of the 8-bit methods reaches this reference: relative to it, the original equations differ by **−15.66 dB** and LRFC and the extension by **−4.43 and −4.49 dB** in PSNR.
 
 The original equations retain saturated observations, giving mean 8-bit diffraction NRMSE of approximately **0.8201**, far above LRFC's **0.00339** and the extension's **0.00375**. Increasing ADC bit depth cannot recover bright-region counts lost to full-well saturation. Original-equation object NRMSE is approximately 0.18–0.23 in this sweep. Rankings differ by metric; higher SSIM does not necessarily imply lower NRMSE.
 
@@ -195,9 +195,9 @@ The original equations retain saturated observations, giving mean 8-bit diffract
 
 [Download vector SVG](figures/paper_style/fig3_noise.svg). The paper does not define its noise level in dB. This project defines SNR_dB = 20·log₁₀(full_well / σ_read), with full well 2.5×10⁶ e⁻. Thus, 6 dB and 54 dB correspond to σ_read ≈ 1.25×10⁶ e⁻ and ≈ 5.0×10³ e⁻, respectively. As in the paper, single exposure uses 16 bit and the three HDR methods use 8 bit.
 
-Under this definition, higher x-axis dB means lower read noise. Overall PSNR improves as noise decreases. At 54 dB, the means for LRFC, the extension, original equations, and 16-bit single exposure are **25.74, 20.37, 15.19, and 10.05 dB**, with SSIM **0.5870, 0.3366, 0.2055, and 0.0284**. The original equations do not reproduce the advantage over LRFC in paper Fig. 3.
+Under this definition, higher x-axis dB means lower read noise. Overall PSNR improves as noise decreases. At 54 dB, the means for LRFC, the extension, original equations, and 16-bit single exposure are **25.74, 20.37, 15.19, and 10.05 dB**, with SSIM **0.5870, 0.3366, 0.2055, and 0.0284**. The original equations have lower PSNR and higher NRMSE than LRFC at every noise setting.
 
-The extension is below LRFC at high dB, and its SSIM does not continue improving between 48 and 54 dB. Saturation masking does not guarantee improvement for every noise setting. The project's dB definition has no explicit correspondence to the paper's, so absolute performance cannot be compared at nominally equal x-axis values.
+The extension is below LRFC at high dB, and its SSIM does not continue improving between 48 and 54 dB. Saturation masking does not guarantee improvement for every noise setting.
 
 ### Figure 5 counterpart: multi-exposure diffraction images
 
@@ -211,11 +211,11 @@ For this displayed frame, saturation is **0%** at 0.5, 1, 5, and 10 ms, and **0.
 
 ![8-bit USAF reconstructions, zooms, convergence curves, and FRC](figures/paper_style/fig6_usaf_8bit.png)
 
-[Download vector SVG](figures/paper_style/fig6_usaf_8bit.svg). Panel (b) is simulation ground truth; the paper uses an optical microscope image at this position. Cyan dashed boxes mark the smallest element resolvable in both orientations along with every coarser element, read directly from `resolution_summary.json`. Panel (g) shows logarithmic object-amplitude NRMSE versus iteration. “Time” is the mPIE wall-clock time when error first enters the plateau region. Panel (h) uses **ground-truth-referenced FRC**, which is not directly equivalent to the paper's experimental evaluation. The paper does not provide enough implementation detail to confirm its FRC inputs.
+[Download vector SVG](figures/paper_style/fig6_usaf_8bit.svg). Panel (b) is simulation ground truth; the paper uses an optical microscope image at this position. Cyan dashed boxes mark the smallest element resolvable in both orientations along with every coarser element, read directly from `resolution_summary.json`. Panel (g) shows logarithmic object-amplitude NRMSE versus iteration. “Time” is the mPIE wall-clock time when error first enters the plateau region. Panel (h) uses **ground-truth-referenced FRC** (reconstruction against the known simulation ground truth).
 
 For seed 0, the ground-truth FRC half-period resolutions of 8-bit single exposure, LRFC, original equations, and the extension are **2.025, 1.125, 2.420, and 1.034 μm**. Their smallest continuously resolvable elements are **G7 E1, G8 E6, G7 E1, and G8 E6**. The 16-bit single-exposure reference is **0.799 μm / G9 E1**. FRC cutoff and stripe resolvability measure different properties and are not interchangeable.
 
-LRFC and the extension first meet the plateau rule at **0.572 s and 0.447 s**, both at iteration 5. Complete 250-iteration reconstruction takes approximately 27.6 s and 24.1 s, respectively. Single exposure and the original equations do not meet the required error-reduction threshold, so no plateau time is reported. The original-equation error curve oscillates across iterations. Plateau times depend on the project's criterion and local runtime; they are neither total algorithm runtimes nor directly comparable with the paper's 225 s / 360 s.
+LRFC and the extension first meet the plateau rule at **0.572 s and 0.447 s**, both at iteration 5. Complete 250-iteration reconstruction takes approximately 27.6 s and 24.1 s, respectively. Single exposure and the original equations do not meet the required error-reduction threshold, so no plateau time is reported. The original-equation error curve oscillates across iterations. Plateau times depend on the project's criterion and local runtime; they are not total algorithm runtimes.
 
 ### Figure 7 counterpart: 16-bit USAF and line profiles
 
@@ -225,17 +225,7 @@ LRFC and the extension first meet the plateau rule at **0.572 s and 0.447 s**, b
 
 For seed 0, both 16-bit LRFC and the extension reach **G9 E4 (0.691 μm line width)**. Their ground-truth FRC cutoff reaches Nyquist (**0.571 μm**), the simulation's sampling limit. The original equations give **G8 E2 / 1.388 μm**, and 16-bit single exposure gives **G9 E1 / 0.799 μm**. The pixel-sampled ground truth itself is continuously resolvable only through G9 E4, so 0.571 μm cannot be treated as verified real-instrument resolution.
 
-In G9 E1–E3 amplitude profiles, LRFC and the extension approach the geometrical ground-truth high/low levels, while single exposure has higher minima. The original equations show uneven stripe responses. These are aligned amplitudes, and their vertical-axis values cannot directly be treated as the paper's intensity contrast.
-
-### Overlay with digitized paper curves
-
-![Digitized paper curves overlaid with this project's curves](figures/paper_style/paper_vs_reproduction.png)
-
-[Download vector SVG](figures/paper_style/paper_vs_reproduction.svg). Thin lines with open markers are digitized values from paper Figs. 2 and 3, with approximate precision ±0.5 dB / ±0.01. Semi-transparent points indicate approximate readings from obscured or saturated curves. Thick lines with filled markers show this project. The saturation-masking extension has no corresponding paper curve.
-
-Single exposure and LRFC generally improve as bit depth increases, resembling the paper's trend. The original equations remain affected by saturation and do not reproduce the leading ranking in paper Figs. 2 and 3. The digitized paper PSNR difference between 8-bit ML-HDR and 16-bit single exposure is approximately **+3.5 dB**, compared with **−15.66 dB** here. The comparison is not reproduced under the current parameters and implementation, and the sources of all differences have not been identified.
-
-The paper's RMS definition is unspecified, while the project's NRMSE definition is documented. The error curves support comparison of shape and relative relationships only. Noise-axis definitions, object sampling, and camera assumptions also differ. Digitization uncertainty and approximate flags remain in the source JSON. The green extension has no paper counterpart.
+In G9 E1–E3 amplitude profiles, LRFC and the extension approach the geometrical ground-truth high/low levels, while single exposure has higher minima. The original equations show uneven stripe responses. These are aligned amplitudes, not intensities.
 
 ### Assumptions and limitations
 
@@ -243,7 +233,7 @@ The paper's RMS definition is unspecified, while the project's NRMSE definition 
 - Reconstruction uses this project's pure NumPy mPIE, without PtyLab installed, with `alpha_probe = 1.0`, Fraunhofer propagation, and integer-pixel scan positions.
 - All metrics use known ground truth after alignment by one global complex factor and subpixel translation. FRC compares reconstruction with ground truth using the van Heel half-bit threshold. Half-period resolution = pixel size / cutoff frequency. Nyquist cutoffs are limited by pixel size.
 - USAF resolvability requires a clear minimum in each of three stripe regions and a worst-case Michelson contrast ≥ 0.2. The reported smallest element must be resolvable in both orientations along with all coarser elements.
-- Noise-dB definitions, automatic single-exposure selection, and the convergence plateau rule are project definitions. Convergence times are local wall-clock times under multiprocessing and cannot be compared with the paper's 225 s / 360 s.
+- Noise-dB definitions, automatic single-exposure selection, and the convergence plateau rule are project definitions. Convergence times are local wall-clock times under multiprocessing.
 - Sweep curves show multiple-seed means ± sample standard deviations. Images, profiles, convergence, and FRC curves show one run with the first seed.
 
 ## Reference

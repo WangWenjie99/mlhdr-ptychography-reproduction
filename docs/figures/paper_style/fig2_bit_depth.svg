@@ -4114,7 +4114,7 @@ L 882 765.36
 " style="fill: none; stroke: #bbbbbb; stroke-width: 0.6; stroke-linecap: square"/>
   </g>
   <g id="text_84">
-   <text style="fill: #333333; font: 8.6px 'Times New Roman', 'DejaVu Serif', serif; text-anchor: start" x="10.8" y="857.920281" transform="rotate(-0 10.8 857.920281)">HDR and ML + mask reach NRMSE 0.053 / 0.053 vs 0.032 for the single exposure at 16 bit: the paper's '8-bit ML-HDR ≈ 16-bit single exposure' is NOT reproduced with our parameters.</text>
+   <text style="fill: #333333; font: 8.6px 'Times New Roman', 'DejaVu Serif', serif; text-anchor: start" x="10.8" y="857.920281" transform="rotate(-0 10.8 857.920281)">HDR and ML + mask reach NRMSE 0.053 / 0.053 vs 0.032 for the single exposure at 16 bit, so neither 8-bit HDR result reaches the 16-bit single exposure.</text>
   </g>
   <g id="text_85">
    <text style="fill: #333333; font: 8.6px 'Times New Roman', 'DejaVu Serif', serif; text-anchor: start" x="10.8" y="846.568281" transform="rotate(-0 10.8 846.568281)">Findings: the published ML-HDR Eq. 14–15 keeps saturated samples, so its fused diffraction centre is only 0.12× the noiseless rate (8-bit diffraction NRMSE 0.82) and its object NRMSE stays 0.18–0.23 at every bit depth. At 8 bit, LRFC-style</text>

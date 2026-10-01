@@ -12,7 +12,7 @@ Four sets of paper-style comparisons cover all exposure curves, all-method heatm
 
 ![Baseline, best single exposure, original paper equations, and additional saturation handling](docs/figures/low_noise_extension.png)
 
-A separate set of **paper-style simulation comparisons** follows the layouts of Figs. 2, 3, 5, 6, and 7: bit-depth sweeps, noise sweeps, multi-exposure diffraction images, and USAF resolution results, with digitized paper curves overlaid on this project's results. The saved simulations have known ground truth and include LRFC-HDR, 8/16-bit comparisons, and ground-truth-referenced FRC. The paper reports object and detector dimensions, scan settings, and iteration counts. This project retains 400 positions and 250 iterations, uses smaller images, a smaller detector, and a smaller scan step, and explicitly records camera and exposure assumptions not determined by the paper. See [paper-style simulation comparisons](docs/results.md#paper-style-simulation-comparisons) and [key numerical comparisons](docs/paper_style/summary.md).
+A separate set of **paper-style simulation comparisons** follows the layouts of Figs. 2, 3, 5, 6, and 7: bit-depth sweeps, noise sweeps, multi-exposure diffraction images, and USAF resolution results. These figures compare this project's four methods with each other and contain no values taken from the paper. The saved simulations have known ground truth and include LRFC-HDR, 8/16-bit comparisons, and ground-truth-referenced FRC. This project's own geometry choices (a 226×226 object, a 64×64 probe window and detector with a 32 px probe diameter, and 8 px scan steps with 10% perturbation) differ from the paper's simulation; it uses 400 scan positions (20×20) and 250 iterations. Camera and exposure assumptions not determined by the paper are recorded explicitly. See [paper-style simulation comparisons](docs/results.md#paper-style-simulation-comparisons) and [key values](docs/paper_style/summary.md).
 
 ## Repository contents
 
@@ -33,10 +33,10 @@ The historical fixed-baseline experiment's raw `diff.npy`, baseline archive, and
 | `mlhdr_ptycho/mpie.py` | Pure NumPy mPIE reconstruction for paper-style simulations |
 | `mlhdr_ptycho/resolution.py` | Alignment, PSNR/SSIM/NRMSE, ground-truth-referenced FRC, and USAF resolvability |
 | `scripts/run_paper_style_simulation.py` | Bit-depth, noise, diffraction, and 8/16-bit USAF simulations; output fields are documented in the generated `DATA_CONTRACT.md` |
-| `mlhdr_ptycho/paper_style_figures.py` | Paper-style data validation, six figure sets, provenance manifest, and key numerical tables |
+| `mlhdr_ptycho/paper_style_figures.py` | Paper-style data validation, five figure sets, provenance manifest, and key numerical tables |
 | `scripts/plot_paper_style_figures.py` | Paper-style PNG/SVG generation, `summary.csv`, and copies of small data files |
-| `docs/paper_style/` | Digitized paper values (`paper_digitized.json`), numerical comparisons, and simulation CSV/JSON inputs |
-| `outputs/paper_style/full/` | Saved full simulation with 250 iterations and three seeds; direct input for the six paper-style figure sets |
+| `docs/paper_style/` | Key-value tables of this project's results (`summary.md`, `summary.csv`) and simulation CSV/JSON inputs |
+| `outputs/paper_style/full/` | Saved full simulation with 250 iterations and three seeds; direct input for the five paper-style figure sets |
 | `outputs/paper_style/quick/` | Saved 20-iteration smoke run using the same data contract as full |
 | `requirements-simulation.txt` | Python 3.12 simulation and plotting environment, without PtyLab |
 | `docs/REPOSITORY_RESTORE.md` | New-device installation, data-integrity checks, figure regeneration, and further experiments |
@@ -76,7 +76,7 @@ Three-run means for the low-noise scenario:
 | `paper_ml_hdr`: paper Eqs. (14)–(15) | 14.44 dB | 0.0589 |
 | `saturation_mask_extension`: additional saturation handling | 28.52 dB | 0.8164 |
 
-These metrics measure agreement with the saved raw-data reconstruction baseline. The baseline is not object ground truth, so the metrics cannot establish reproduction of the paper's resolution improvement. Multi-exposure integration totals 666.5 ms per position; this is not a comparison at equal acquisition time or equal photon budget.
+These metrics measure agreement with the saved raw-data reconstruction baseline. The baseline is not object ground truth, so these metrics do not measure resolution. Multi-exposure integration totals 666.5 ms per position; this is not a comparison at equal acquisition time or equal photon budget.
 
 ## Regenerate paper-style comparisons directly
 
@@ -112,7 +112,7 @@ Outputs are written to the selected directory; the default is `outputs/paper_sty
 python scripts/plot_paper_style_figures.py --source outputs/paper_style/full --output docs/figures/paper_style --summary-csv docs/paper_style/summary.csv --copy-data-to docs/paper_style/data
 ```
 
-Outputs are six PNG (300 dpi) and SVG sets—`fig2_bit_depth`, `fig3_noise`, `fig5_diffraction`, `fig6_usaf_8bit`, `fig7_usaf_16bit`, and `paper_vs_reproduction`—plus `figures_manifest.json`, recording source-data and code SHA-256 hashes. Plotting reads only simulation outputs and [`paper_digitized.json`](docs/paper_style/paper_digitized.json), manually read from Figs. 2 and 3 with approximate precision of ±0.5 dB / ±0.01 and separately flagged approximate points. No values are inferred from PNG files. Method colors are fixed: black for single exposure, blue for LRFC-HDR, red for the original Eqs. (14)–(15), and green for this project's saturation-masking extension (**not part of the paper's algorithm**).
+Outputs are five PNG (300 dpi) and SVG sets—`fig2_bit_depth`, `fig3_noise`, `fig5_diffraction`, `fig6_usaf_8bit`, and `fig7_usaf_16bit`—plus `figures_manifest.json`, recording source-data and code SHA-256 hashes. Plotting reads only simulation outputs, and the figures and `summary.csv` contain only this project's results; no values are inferred from PNG files. Method colors are fixed: black for single exposure, blue for LRFC-HDR, red for the original Eqs. (14)–(15), and green for this project's saturation-masking extension (**not part of the paper's algorithm**).
 
 ## Environment installation
 
@@ -192,7 +192,7 @@ python -B scripts/validate_paper_results.py outputs/my_comparison
 
 The historical fixed-baseline experiment passed nine scientific tests and 532 result-audit checks. Its audit records are retained, but the raw binary outputs needed to rerun the complete historical audit are currently missing. Saved paper-style simulation data integrity is checked separately with `python scripts/verify_repository_data.py`.
 
-The current suite contains 47 tests: nine scientific tests, eight comparison-figure tests, 13 paper-style simulation tests, and 17 paper-style figure tests. Plotting tests use small synthetic data generated in temporary directories, including multiple seeds and failed runs, and do not depend on `outputs/`.
+The current suite contains 46 tests: nine scientific tests, eight comparison-figure tests, 13 paper-style simulation tests, and 16 paper-style figure tests. Plotting tests use small synthetic data generated in temporary directories, including multiple seeds and failed runs, and do not depend on `outputs/`.
 
 Camera measurements and fusion inputs can be reproduced exactly. With the currently installed reconstructor, numerical outputs may still differ at the bit level even with identical initialization and NumPy random sequences. See the [repeatability record](docs/solver_repeatability.json).
 
@@ -202,7 +202,7 @@ Camera measurements and fusion inputs can be reproduced exactly. With the curren
 - The chosen numerical values, mapping of `10⁹ photons/s` to the local data, quantum efficiency, and noise-sensitivity scenarios are explicitly documented. This is a controlled application of the paper's method to local data, rather than a point-for-point reproduction of every paper figure.
 - `paper_ml_hdr` retains the original equations' treatment of saturated counts. `saturation_mask_extension` separately excludes saturated observations as an additional control.
 - Summary amplitude images share a common scale and compensate only for one global amplitude factor. Individually exported amplitude and phase images have their own colorbars.
-- The fixed-baseline experiment does not include LRFC-HDR, 16-bit controls, or FRC resolution validation against a real object's ground truth. The paper-style simulations add known-ground-truth **simulation** comparisons for LRFC-HDR, 8/16-bit imaging, and FRC. This project's ground-truth-referenced FRC is not directly equivalent to the paper's experimental evaluation; resolution validation on real data remains incomplete.
+- The fixed-baseline experiment does not include LRFC-HDR, 16-bit controls, or FRC resolution validation against a real object's ground truth. The paper-style simulations add known-ground-truth **simulation** comparisons for LRFC-HDR, 8/16-bit imaging, and FRC. This project's FRC is referenced to the simulation ground truth; resolution validation on real data remains incomplete.
 
 ## Reference and licensing
 

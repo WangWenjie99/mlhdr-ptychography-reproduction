@@ -1,68 +1,68 @@
-section,quantity,method,bits,paper,reproduction,unit,paper_source,note
-bit_sweep_8bit,psnr_db,single,8,21.9,20.56,dB,Fig. 2 (digitised),
-bit_sweep_8bit,psnr_db,lrfc,8,33,27.88,dB,Fig. 2 (digitised),
-bit_sweep_8bit,psnr_db,ml_eq14_15,8,40.7,16.65,dB,Fig. 2 (digitised),
-bit_sweep_8bit,psnr_db,ml_masked,8,,27.82,dB,Fig. 2 (digitised),no paper counterpart
-bit_sweep_16bit_reference,psnr_db,single,16,37.2,32.31,dB,Fig. 2 gray dashed line (digitised),
-bit_sweep_8bit,ssim,single,8,0.53,0.4747,,Fig. 2 (digitised),
-bit_sweep_8bit,ssim,lrfc,8,0.92,0.8214,,Fig. 2 (digitised),
-bit_sweep_8bit,ssim,ml_eq14_15,8,0.975,0.5355,,Fig. 2 (digitised),
-bit_sweep_8bit,ssim,ml_masked,8,,0.8222,,Fig. 2 (digitised),no paper counterpart
-bit_sweep_16bit_reference,ssim,single,16,0.95,0.9152,,Fig. 2 gray dashed line (digitised),
-bit_sweep_8bit,nrmse,single,8,0.45,0.1228,paper: RMS error / ours: NRMSE,Fig. 2 (digitised),
-bit_sweep_8bit,nrmse,lrfc,8,0.1,0.05293,paper: RMS error / ours: NRMSE,Fig. 2 (digitised),
-bit_sweep_8bit,nrmse,ml_eq14_15,8,0.047,0.1928,paper: RMS error / ours: NRMSE,Fig. 2 (digitised),
-bit_sweep_8bit,nrmse,ml_masked,8,,0.0533,paper: RMS error / ours: NRMSE,Fig. 2 (digitised),no paper counterpart
-bit_sweep_16bit_reference,nrmse,single,16,0.05,0.03177,paper: RMS error / ours: NRMSE,Fig. 2 gray dashed line (digitised),
-ml8_vs_single16,psnr_db_8bit_minus_single_16bit,lrfc,8 vs 16,-4.2,-4.43,dB,Fig. 2 (digitised),claim '8-bit HDR >= 16-bit single' holds if >= 0
-ml8_vs_single16,ssim_8bit_minus_single_16bit,lrfc,8 vs 16,-0.030,-0.094,,Fig. 2 (digitised),holds if >= 0
-ml8_vs_single16,psnr_db_8bit_minus_single_16bit,ml_eq14_15,8 vs 16,+3.5,-15.66,dB,Fig. 2 (digitised),claim '8-bit HDR >= 16-bit single' holds if >= 0
-ml8_vs_single16,ssim_8bit_minus_single_16bit,ml_eq14_15,8 vs 16,+0.025,-0.380,,Fig. 2 (digitised),holds if >= 0
-ml8_vs_single16,psnr_db_8bit_minus_single_16bit,ml_masked,8 vs 16,,-4.49,dB,Fig. 2 (digitised),claim '8-bit HDR >= 16-bit single' holds if >= 0
-ml8_vs_single16,ssim_8bit_minus_single_16bit,ml_masked,8 vs 16,,-0.093,,Fig. 2 (digitised),holds if >= 0
-usaf_8bit,frc_resolution_um,single,8,2.71,2.025,um,paper text / Fig. 6-7 (experiment),ours: FRC vs ground truth
-usaf_8bit,smallest_resolved_element,single,8,7-5 (2.461 um),7-1 (3.906 um),G-E (line width),paper text / Fig. 6-7 (experiment),"ours: resolved with all coarser elements, both orientations"
-usaf_8bit,psnr_db,single,8,,10.5,dB,,"USAF, vs ground truth"
-usaf_8bit,ssim,single,8,,0.3578,,,"USAF, vs ground truth"
-usaf_8bit,nrmse,single,8,,0.29,paper: RMS error / ours: NRMSE,,"USAF, vs ground truth"
-usaf_8bit,frc_resolution_um,lrfc,8,0.98,1.125,um,paper text / Fig. 6-7 (experiment),ours: FRC vs ground truth
-usaf_8bit,smallest_resolved_element,lrfc,8,,8-6 (1.096 um),G-E (line width),paper text / Fig. 6-7 (experiment),"ours: resolved with all coarser elements, both orientations"
-usaf_8bit,psnr_db,lrfc,8,,17.37,dB,,"USAF, vs ground truth"
-usaf_8bit,ssim,lrfc,8,,0.7879,,,"USAF, vs ground truth"
-usaf_8bit,nrmse,lrfc,8,,0.1316,paper: RMS error / ours: NRMSE,,"USAF, vs ground truth"
-usaf_8bit,frc_resolution_um,ml_eq14_15,8,0.9,2.42,um,paper text / Fig. 6-7 (experiment),ours: FRC vs ground truth
-usaf_8bit,smallest_resolved_element,ml_eq14_15,8,9-2 (0.87 um),7-1 (3.906 um),G-E (line width),paper text / Fig. 6-7 (experiment),"ours: resolved with all coarser elements, both orientations"
-usaf_8bit,psnr_db,ml_eq14_15,8,,5.26,dB,,"USAF, vs ground truth"
-usaf_8bit,ssim,ml_eq14_15,8,,0.2871,,,"USAF, vs ground truth"
-usaf_8bit,nrmse,ml_eq14_15,8,,0.5303,paper: RMS error / ours: NRMSE,,"USAF, vs ground truth"
-usaf_8bit,frc_resolution_um,ml_masked,8,,1.034,um,paper text / Fig. 6-7 (experiment),ours: FRC vs ground truth
-usaf_8bit,smallest_resolved_element,ml_masked,8,,8-6 (1.096 um),G-E (line width),paper text / Fig. 6-7 (experiment),"ours: resolved with all coarser elements, both orientations"
-usaf_8bit,psnr_db,ml_masked,8,,16.84,dB,,"USAF, vs ground truth"
-usaf_8bit,ssim,ml_masked,8,,0.7854,,,"USAF, vs ground truth"
-usaf_8bit,nrmse,ml_masked,8,,0.1398,paper: RMS error / ours: NRMSE,,"USAF, vs ground truth"
-usaf_8bit,smallest_resolved_element,truth,8,,9-4 (0.691 um),G-E (line width),,sampling limit of the pixel-sampled ground truth
-usaf_16bit,frc_resolution_um,single,16,,0.7992,um,paper text / Fig. 6-7 (experiment),ours: FRC vs ground truth
-usaf_16bit,smallest_resolved_element,single,16,,9-1 (0.977 um),G-E (line width),paper text / Fig. 6-7 (experiment),"ours: resolved with all coarser elements, both orientations"
-usaf_16bit,psnr_db,single,16,,20.66,dB,,"USAF, vs ground truth"
-usaf_16bit,ssim,single,16,,0.8892,,,"USAF, vs ground truth"
-usaf_16bit,nrmse,single,16,,0.09011,paper: RMS error / ours: NRMSE,,"USAF, vs ground truth"
-usaf_16bit,frc_resolution_um,lrfc,16,0.7,0.5711,um,paper text / Fig. 6-7 (experiment),ours: FRC vs ground truth; reached Nyquist (pixel-limited)
-usaf_16bit,smallest_resolved_element,lrfc,16,,9-4 (0.691 um),G-E (line width),paper text / Fig. 6-7 (experiment),"ours: resolved with all coarser elements, both orientations"
-usaf_16bit,psnr_db,lrfc,16,,50.78,dB,,"USAF, vs ground truth"
-usaf_16bit,ssim,lrfc,16,,0.9988,,,"USAF, vs ground truth"
-usaf_16bit,nrmse,lrfc,16,,0.00281,paper: RMS error / ours: NRMSE,,"USAF, vs ground truth"
-usaf_16bit,frc_resolution_um,ml_eq14_15,16,0.61,1.388,um,paper text / Fig. 6-7 (experiment),ours: FRC vs ground truth
-usaf_16bit,smallest_resolved_element,ml_eq14_15,16,9-3 (0.775 um),8-2 (1.740 um),G-E (line width),paper text / Fig. 6-7 (experiment),"ours: resolved with all coarser elements, both orientations"
-usaf_16bit,psnr_db,ml_eq14_15,16,,10.86,dB,,"USAF, vs ground truth"
-usaf_16bit,ssim,ml_eq14_15,16,,0.5085,,,"USAF, vs ground truth"
-usaf_16bit,nrmse,ml_eq14_15,16,,0.2783,paper: RMS error / ours: NRMSE,,"USAF, vs ground truth"
-usaf_16bit,frc_resolution_um,ml_masked,16,,0.5711,um,paper text / Fig. 6-7 (experiment),ours: FRC vs ground truth; reached Nyquist (pixel-limited)
-usaf_16bit,smallest_resolved_element,ml_masked,16,,9-4 (0.691 um),G-E (line width),paper text / Fig. 6-7 (experiment),"ours: resolved with all coarser elements, both orientations"
-usaf_16bit,psnr_db,ml_masked,16,,51.47,dB,,"USAF, vs ground truth"
-usaf_16bit,ssim,ml_masked,16,,0.9988,,,"USAF, vs ground truth"
-usaf_16bit,nrmse,ml_masked,16,,0.002593,paper: RMS error / ours: NRMSE,,"USAF, vs ground truth"
-usaf_16bit,smallest_resolved_element,truth,16,,9-4 (0.691 um),G-E (line width),,sampling limit of the pixel-sampled ground truth
-convergence_8bit,convergence_time_s,single,8,,,s,,"ours: object error never drops by >= 0.1 (log10) - no convergence time; total mPIE 25.8 s; rule: first history sample whose log10 NRMSE is within max(0.02, 2 SD) of the median of the last 25 % of samples; no time when the error does not drop by >= 0.1 (log10)"
-convergence_8bit,convergence_time_s,lrfc,8,360,0.5721,s,Fig. 6(f) (experiment),"ours: plateau entry at iteration 5 of 250; total mPIE 27.6 s; rule: first history sample whose log10 NRMSE is within max(0.02, 2 SD) of the median of the last 25 % of samples; no time when the error does not drop by >= 0.1 (log10)"
-convergence_8bit,convergence_time_s,ml_eq14_15,8,225,,s,Fig. 6(f) (experiment),"ours: object error never drops by >= 0.1 (log10) - no convergence time; total mPIE 24.3 s; rule: first history sample whose log10 NRMSE is within max(0.02, 2 SD) of the median of the last 25 % of samples; no time when the error does not drop by >= 0.1 (log10)"
-convergence_8bit,convergence_time_s,ml_masked,8,,0.4469,s,,"ours: plateau entry at iteration 5 of 250; total mPIE 24.1 s; rule: first history sample whose log10 NRMSE is within max(0.02, 2 SD) of the median of the last 25 % of samples; no time when the error does not drop by >= 0.1 (log10)"
+section,quantity,method,bits,value,unit,note
+bit_sweep_8bit,psnr_db,single,8,20.56,dB,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_8bit,psnr_db,lrfc,8,27.88,dB,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_8bit,psnr_db,ml_eq14_15,8,16.65,dB,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_8bit,psnr_db,ml_masked,8,27.82,dB,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_16bit_reference,psnr_db,single,16,32.31,dB,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_8bit,ssim,single,8,0.4747,,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_8bit,ssim,lrfc,8,0.8214,,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_8bit,ssim,ml_eq14_15,8,0.5355,,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_8bit,ssim,ml_masked,8,0.8222,,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_16bit_reference,ssim,single,16,0.9152,,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_8bit,nrmse,single,8,0.1228,,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_8bit,nrmse,lrfc,8,0.05293,,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_8bit,nrmse,ml_eq14_15,8,0.1928,,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_8bit,nrmse,ml_masked,8,0.0533,,"mean over seeds (n = 3), vs ground truth"
+bit_sweep_16bit_reference,nrmse,single,16,0.03177,,"mean over seeds (n = 3), vs ground truth"
+hdr8_vs_single16,psnr_db_8bit_minus_single_16bit,lrfc,8 vs 16,-4.43,dB,bit-sweep means; >= 0 means the 8-bit result matches or exceeds the 16-bit single exposure
+hdr8_vs_single16,ssim_8bit_minus_single_16bit,lrfc,8 vs 16,-0.094,,bit-sweep means; >= 0 means the 8-bit result matches or exceeds the 16-bit single exposure
+hdr8_vs_single16,psnr_db_8bit_minus_single_16bit,ml_eq14_15,8 vs 16,-15.66,dB,bit-sweep means; >= 0 means the 8-bit result matches or exceeds the 16-bit single exposure
+hdr8_vs_single16,ssim_8bit_minus_single_16bit,ml_eq14_15,8 vs 16,-0.380,,bit-sweep means; >= 0 means the 8-bit result matches or exceeds the 16-bit single exposure
+hdr8_vs_single16,psnr_db_8bit_minus_single_16bit,ml_masked,8 vs 16,-4.49,dB,bit-sweep means; >= 0 means the 8-bit result matches or exceeds the 16-bit single exposure
+hdr8_vs_single16,ssim_8bit_minus_single_16bit,ml_masked,8 vs 16,-0.093,,bit-sweep means; >= 0 means the 8-bit result matches or exceeds the 16-bit single exposure
+usaf_8bit,frc_resolution_um,single,8,2.025,um,FRC vs ground truth
+usaf_8bit,smallest_resolved_element,single,8,7-1 (3.906 um),G-E (line width),"resolved with all coarser elements, both orientations"
+usaf_8bit,psnr_db,single,8,10.5,dB,"USAF, vs ground truth"
+usaf_8bit,ssim,single,8,0.3578,,"USAF, vs ground truth"
+usaf_8bit,nrmse,single,8,0.29,,"USAF, vs ground truth"
+usaf_8bit,frc_resolution_um,lrfc,8,1.125,um,FRC vs ground truth
+usaf_8bit,smallest_resolved_element,lrfc,8,8-6 (1.096 um),G-E (line width),"resolved with all coarser elements, both orientations"
+usaf_8bit,psnr_db,lrfc,8,17.37,dB,"USAF, vs ground truth"
+usaf_8bit,ssim,lrfc,8,0.7879,,"USAF, vs ground truth"
+usaf_8bit,nrmse,lrfc,8,0.1316,,"USAF, vs ground truth"
+usaf_8bit,frc_resolution_um,ml_eq14_15,8,2.42,um,FRC vs ground truth
+usaf_8bit,smallest_resolved_element,ml_eq14_15,8,7-1 (3.906 um),G-E (line width),"resolved with all coarser elements, both orientations"
+usaf_8bit,psnr_db,ml_eq14_15,8,5.26,dB,"USAF, vs ground truth"
+usaf_8bit,ssim,ml_eq14_15,8,0.2871,,"USAF, vs ground truth"
+usaf_8bit,nrmse,ml_eq14_15,8,0.5303,,"USAF, vs ground truth"
+usaf_8bit,frc_resolution_um,ml_masked,8,1.034,um,FRC vs ground truth
+usaf_8bit,smallest_resolved_element,ml_masked,8,8-6 (1.096 um),G-E (line width),"resolved with all coarser elements, both orientations"
+usaf_8bit,psnr_db,ml_masked,8,16.84,dB,"USAF, vs ground truth"
+usaf_8bit,ssim,ml_masked,8,0.7854,,"USAF, vs ground truth"
+usaf_8bit,nrmse,ml_masked,8,0.1398,,"USAF, vs ground truth"
+usaf_8bit,smallest_resolved_element,truth,8,9-4 (0.691 um),G-E (line width),sampling limit of the pixel-sampled ground truth
+usaf_16bit,frc_resolution_um,single,16,0.7992,um,FRC vs ground truth
+usaf_16bit,smallest_resolved_element,single,16,9-1 (0.977 um),G-E (line width),"resolved with all coarser elements, both orientations"
+usaf_16bit,psnr_db,single,16,20.66,dB,"USAF, vs ground truth"
+usaf_16bit,ssim,single,16,0.8892,,"USAF, vs ground truth"
+usaf_16bit,nrmse,single,16,0.09011,,"USAF, vs ground truth"
+usaf_16bit,frc_resolution_um,lrfc,16,0.5711,um,FRC vs ground truth; reached Nyquist (pixel-limited)
+usaf_16bit,smallest_resolved_element,lrfc,16,9-4 (0.691 um),G-E (line width),"resolved with all coarser elements, both orientations"
+usaf_16bit,psnr_db,lrfc,16,50.78,dB,"USAF, vs ground truth"
+usaf_16bit,ssim,lrfc,16,0.9988,,"USAF, vs ground truth"
+usaf_16bit,nrmse,lrfc,16,0.00281,,"USAF, vs ground truth"
+usaf_16bit,frc_resolution_um,ml_eq14_15,16,1.388,um,FRC vs ground truth
+usaf_16bit,smallest_resolved_element,ml_eq14_15,16,8-2 (1.740 um),G-E (line width),"resolved with all coarser elements, both orientations"
+usaf_16bit,psnr_db,ml_eq14_15,16,10.86,dB,"USAF, vs ground truth"
+usaf_16bit,ssim,ml_eq14_15,16,0.5085,,"USAF, vs ground truth"
+usaf_16bit,nrmse,ml_eq14_15,16,0.2783,,"USAF, vs ground truth"
+usaf_16bit,frc_resolution_um,ml_masked,16,0.5711,um,FRC vs ground truth; reached Nyquist (pixel-limited)
+usaf_16bit,smallest_resolved_element,ml_masked,16,9-4 (0.691 um),G-E (line width),"resolved with all coarser elements, both orientations"
+usaf_16bit,psnr_db,ml_masked,16,51.47,dB,"USAF, vs ground truth"
+usaf_16bit,ssim,ml_masked,16,0.9988,,"USAF, vs ground truth"
+usaf_16bit,nrmse,ml_masked,16,0.002593,,"USAF, vs ground truth"
+usaf_16bit,smallest_resolved_element,truth,16,9-4 (0.691 um),G-E (line width),sampling limit of the pixel-sampled ground truth
+convergence_8bit,convergence_time_s,single,8,,s,"object error never drops by >= 0.1 (log10) - no convergence time; total mPIE 25.8 s; rule: first history sample whose log10 NRMSE is within max(0.02, 2 SD) of the median of the last 25 % of samples; no time when the error does not drop by >= 0.1 (log10)"
+convergence_8bit,convergence_time_s,lrfc,8,0.5721,s,"plateau entry at iteration 5 of 250; total mPIE 27.6 s; rule: first history sample whose log10 NRMSE is within max(0.02, 2 SD) of the median of the last 25 % of samples; no time when the error does not drop by >= 0.1 (log10)"
+convergence_8bit,convergence_time_s,ml_eq14_15,8,,s,"object error never drops by >= 0.1 (log10) - no convergence time; total mPIE 24.3 s; rule: first history sample whose log10 NRMSE is within max(0.02, 2 SD) of the median of the last 25 % of samples; no time when the error does not drop by >= 0.1 (log10)"
+convergence_8bit,convergence_time_s,ml_masked,8,0.4469,s,"plateau entry at iteration 5 of 250; total mPIE 24.1 s; rule: first history sample whose log10 NRMSE is within max(0.02, 2 SD) of the median of the last 25 % of samples; no time when the error does not drop by >= 0.1 (log10)"

@@ -2,8 +2,8 @@
   "schema_version": 1,
   "description": "Complete preserved local scientific data, published figures and provenance for continuation from a Git clone. Paths are relative to the repository root; SHA-256 and sizes describe exact file bytes.",
   "snapshot_date": "2026-10-01",
-  "file_count": 60,
-  "total_bytes": 31001452,
+  "file_count": 57,
+  "total_bytes": 29266199,
   "missing_preexisting": [
     {
       "path": "diff.npy",
@@ -18,13 +18,11 @@
   ],
   "continuation_scope": [
     "Redraw historical comparison figures from preserved summary metrics.",
-    "Redraw all six paper-style figure groups from the complete full or quick simulation snapshots.",
+    "Redraw all five paper-style figure groups from the complete full or quick simulation snapshots.",
     "Continue paper-style simulations using saved configuration, seeds, known truths and generated scenes.",
     "The original historical diffraction experiment cannot be rerun from the current workspace because its input and baseline archive were already absent."
   ],
   "excluded_regenerable_local_files": [
-    "outputs/paper_style/figures_full_preview/",
-    "outputs/paper_style/figures_quick/",
     "tmp/",
     "__pycache__/",
     "virtual environments and dependency caches"
@@ -122,26 +120,26 @@
     },
     {
       "path": "docs/figures/paper_style/fig2_bit_depth.png",
-      "size_bytes": 1197399,
-      "sha256": "907302add67ec77e9d8b9f7d9ddbdcc75cdad97dbde07b421342183a5c714cda",
+      "size_bytes": 1191696,
+      "sha256": "4266f9e05b885d5a1e436ae722ec2afafd60622f35a2e0619bfce2420186a8a9",
       "role": "figure_image"
     },
     {
       "path": "docs/figures/paper_style/fig2_bit_depth.svg",
-      "size_bytes": 358323,
-      "sha256": "51aaab7e2314c52b6397ff4a345d8972eaec7db1bfa0a3b0dc85340497301c51",
+      "size_bytes": 358294,
+      "sha256": "5cb38484cdb7e11319a91a0e9f7dbe8a4d298f44f5dd29e1fbac9003809456de",
       "role": "figure_vector"
     },
     {
       "path": "docs/figures/paper_style/fig3_noise.png",
-      "size_bytes": 672017,
-      "sha256": "bee1fcb17d5d685295999fc1b596f72873255739067b24d4e611a4c38f1aa1c4",
+      "size_bytes": 666292,
+      "sha256": "98353a81a9c5e3089030c82d8223bf02af5756e191f777028da3e520d80b3a0f",
       "role": "figure_image"
     },
     {
       "path": "docs/figures/paper_style/fig3_noise.svg",
-      "size_bytes": 167393,
-      "sha256": "9f9c7678f7d1b1a48b4cc67d37582a4746e32607eacb1ea4bd4bc81567d2b2c3",
+      "size_bytes": 164602,
+      "sha256": "99164482bd57560234544c11d242b214892b8fb067ee837d51b15ef5c58a5bcc",
       "role": "figure_vector"
     },
     {
@@ -158,14 +156,14 @@
     },
     {
       "path": "docs/figures/paper_style/fig6_usaf_8bit.png",
-      "size_bytes": 1693523,
-      "sha256": "5600524f34732d7b1c2ed6250ebcd28041576841513eb145ad0ee5976e20d5a4",
+      "size_bytes": 1685551,
+      "sha256": "50f1495380c1916494f118cae0e4181290a92d1f762219c2b3c30d58203abb71",
       "role": "figure_image"
     },
     {
       "path": "docs/figures/paper_style/fig6_usaf_8bit.svg",
-      "size_bytes": 529451,
-      "sha256": "eba3cd3baa7526a736efc1debe282bbb699fe9ce42912ef11a21eb2ff4588cae",
+      "size_bytes": 529286,
+      "sha256": "59bbae917583c6463fe964b1a6b2fe71e010a1627845cdbca43def6df8b5a57d",
       "role": "figure_vector"
     },
     {
@@ -182,21 +180,9 @@
     },
     {
       "path": "docs/figures/paper_style/figures_manifest.json",
-      "size_bytes": 7613,
-      "sha256": "18e9da6bc2e639815570ddad8b8306da15874c9d8227fa00f0c2c4afbcbe19b0",
+      "size_bytes": 6974,
+      "sha256": "cbe9e8fc70f94cd21feaa839ff72412d81e90a14d67c41c8531bee9b4375577d",
       "role": "figure_provenance"
-    },
-    {
-      "path": "docs/figures/paper_style/paper_vs_reproduction.png",
-      "size_bytes": 1369124,
-      "sha256": "6d3aa341f9450a107ec293a471f2c7d30eb4b9a76f3c186bd4696fe767f13b06",
-      "role": "figure_image"
-    },
-    {
-      "path": "docs/figures/paper_style/paper_vs_reproduction.svg",
-      "size_bytes": 327288,
-      "sha256": "6275bd043ff9dd1cb5789425921b27ac7135b103bad73fd87e687f3a9f9846f7",
-      "role": "figure_vector"
     },
     {
       "path": "docs/figures/read_noise_025adu_extension.png",
@@ -247,16 +233,10 @@
       "role": "simulation_metrics_documentation_copy"
     },
     {
-      "path": "docs/paper_style/paper_digitized.json",
-      "size_bytes": 14931,
-      "sha256": "f3f34ef3b00798d08725d0430c616360b9b813a185be9176fa3fcb77a1810fbc",
-      "role": "digitized_paper_curves"
-    },
-    {
       "path": "docs/paper_style/summary.csv",
-      "size_bytes": 7821,
-      "sha256": "313d6db31209007b9adec9138c060fa49794f9a68cd069d64ab9c409583a3a89",
-      "role": "paper_comparison_summary"
+      "size_bytes": 6935,
+      "sha256": "eeab0adf053b502bdcf64abad33867d41b83f6e82567363c5bc6035495d22e3c",
+      "role": "reproduction_key_values_summary"
     },
     {
       "path": "docs/solver_repeatability.json",

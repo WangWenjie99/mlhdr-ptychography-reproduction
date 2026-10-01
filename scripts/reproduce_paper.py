@@ -201,8 +201,7 @@ def report(output, manifest, summary, baseline_check):
                   f"compared with **{number(best['baseline_ssim_mean'])}** for that single exposure.",
                   "The strict formula " + ("outperforms the best single exposure on this metric."
                                if strict['baseline_ssim_mean'] > best['baseline_ssim_mean']
-                               else "does not outperform the best single exposure on this metric, "
-                               "so this experiment does not reproduce the paper's reported advantages in full."),
+                               else "does not outperform the best single exposure on this metric."),
                   f"The separate saturation-mask extension has an SSIM of **{number(extension['baseline_ssim_mean'])}**. "
                   "Its gains cannot be attributed to the paper's original formula."]
     lines += ["", f"![Strict paper formula and all single exposures]({main_profile}/comparison_amplitude.png)",
@@ -260,7 +259,7 @@ def report(output, manifest, summary, baseline_check):
               "overhead; each single exposure uses its corresponding time. Acquisition time and photon budgets "
               "are unequal, so any gains cannot be interpreted as improved acquisition efficiency.",
               "- All exposure results and failure statuses are retained. LRFC-HDR, a 16-bit control, and FRC "
-              "against the true object are not included, so this work does not reproduce all experiments in the paper.",
+              "against the true object are not included.",
               "", "## Baseline recalculation check", "",
               f"Recalculation in the current environment using the saved settings gives amplitude "
               f"NRMSE={number(baseline_check['baseline_nrmse'],6)} and "

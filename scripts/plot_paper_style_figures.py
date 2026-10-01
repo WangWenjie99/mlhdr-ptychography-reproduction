@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Render figures imitating Liu et al. 2024 (Figs. 2, 3, 5, 6, 7) from paper-style simulation data.
 
-Reads only the files of ``scripts/run_paper_style_simulation.py`` (DATA_CONTRACT.md)
-and ``docs/paper_style/paper_digitized.json``; nothing is estimated from images.
+Reads only the files of ``scripts/run_paper_style_simulation.py`` (DATA_CONTRACT.md);
+nothing is estimated from images.
 """
 from __future__ import annotations
 
@@ -14,8 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from mlhdr_ptycho.paper_style_figures import (  # noqa: E402
-    DataContractError, copy_small_data, generate_figures, load_paper_digitized,
-    load_paper_style_data, write_summary_csv,
+    DataContractError, copy_small_data, generate_figures, load_paper_style_data, write_summary_csv,
 )
 
 
@@ -26,19 +25,17 @@ def main(argv=None):
     parser.add_argument("--output", type=Path, default=ROOT / "docs/figures/paper_style",
                         help="Figure directory (PNG + SVG + figures_manifest.json)")
     parser.add_argument("--dpi", type=int, default=300, help="PNG resolution (default 300); SVG stays vector")
-    parser.add_argument("--paper-json", type=Path, default=None,
-                        help="Digitised paper values (default: docs/paper_style/paper_digitized.json)")
     parser.add_argument("--summary-csv", type=Path, default=None,
-                        help="Also write the paper-vs-reproduction key-number table to this CSV")
+                        help="Also write the key-number table of this reproduction to this CSV")
     parser.add_argument("--copy-data-to", type=Path, default=None,
                         help="Also copy the source CSV and JSON files (no NPZ) into this directory")
     args = parser.parse_args(argv)
     try:
-        manifest = generate_figures(args.source, args.output, args.dpi, args.paper_json)
+        manifest = generate_figures(args.source, args.output, args.dpi)
         if args.summary_csv or args.copy_data_to:
             data = load_paper_style_data(args.source)
             if args.summary_csv:
-                rows = write_summary_csv(data, args.summary_csv, load_paper_digitized(args.paper_json))
+                rows = write_summary_csv(data, args.summary_csv)
                 print(f"Summary: {args.summary_csv} ({len(rows)} rows)")
             if args.copy_data_to:
                 for path in copy_small_data(data, args.copy_data_to):

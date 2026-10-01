@@ -1,6 +1,6 @@
 # Restore and continue on another device
 
-The saved paper-style simulation data are tracked in Git together with the code. After cloning or pulling the repository, you can view results, regenerate all ten comparison figure sets, read reconstruction arrays for further analysis, or run simulations in a new directory. No separate transfer of these simulation files from the original device is required.
+The saved paper-style simulation data are tracked in Git together with the code. After cloning or pulling the repository, you can view results, regenerate all nine comparison figure sets, read reconstruction arrays for further analysis, or run simulations in a new directory. No separate transfer of these simulation files from the original device is required.
 
 ## 1. Get the repository and install the environment
 
@@ -34,7 +34,7 @@ This file pins NumPy 1.26.4, SciPy 1.14.1, Matplotlib 3.8.4, and scikit-image 0.
 python scripts/verify_repository_data.py
 ```
 
-The verifier reads [REPOSITORY_DATA.json](REPOSITORY_DATA.json) and checks the sizes and SHA-256 hashes of all 60 listed files. The manifest covers saved simulation data, plotting inputs, and published figures; the reference paper PDF is excluded. Verification does not launch reconstruction or repeat the 250-iteration runs. Verify these files before continuing analysis. If a check fails, first check whether the repository was fully pulled and whether any saved files were modified.
+The verifier reads [REPOSITORY_DATA.json](REPOSITORY_DATA.json) and checks the sizes and SHA-256 hashes of all 57 listed files. The manifest covers saved simulation data, plotting inputs, and published figures; the reference paper PDF is excluded. Verification does not launch reconstruction or repeat the 250-iteration runs. Verify these files before continuing analysis. If a check fails, first check whether the repository was fully pulled and whether any saved files were modified.
 
 Both `outputs/paper_style/full/` and `outputs/paper_style/quick/` contain these nine files:
 
@@ -52,7 +52,7 @@ Both `outputs/paper_style/full/` and `outputs/paper_style/quick/` contain these 
 
 The full profile uses 250 iterations and camera seeds 0/1/2. Its bit-depth and noise CSV files contain 120 and 108 rows, respectively, with an empty failure list. Images, profiles, and representative reconstruction arrays use the first seed. All sweep runs are retained as metric tables, but complete object arrays are not saved for every sweep run. The quick profile is a small 20-iteration configuration for checking the workflow; scientific conclusions use full.
 
-`docs/paper_style/data/` contains convenient copies of the CSV/JSON files. Complete figure regeneration also requires the NPZ files above; use `outputs/paper_style/full/` directly. `docs/paper_style/paper_digitized.json` contains digitized curves from Figs. 2 and 3 and flags approximate points. The reference paper is linked by [DOI: 10.1109/TIM.2024.3363788](https://doi.org/10.1109/TIM.2024.3363788); the PDF is not distributed with the repository and is not needed to regenerate the saved figures.
+`docs/paper_style/data/` contains convenient copies of the CSV/JSON files. Complete figure regeneration also requires the NPZ files above; use `outputs/paper_style/full/` directly. The reference paper is linked by [DOI: 10.1109/TIM.2024.3363788](https://doi.org/10.1109/TIM.2024.3363788); the PDF is not distributed with the repository and is not needed to regenerate the saved figures.
 
 ## 3. Regenerate existing figures directly
 
@@ -62,7 +62,7 @@ The four statistical figure sets for the historical fixed-baseline experiment re
 python scripts/plot_paper_comparisons.py --source docs --output outputs/restored_paper_comparisons
 ```
 
-The six paper-style simulation figure sets read the complete full data and digitized paper curves:
+The five paper-style simulation figure sets read only the complete full data:
 
 ```bash
 python scripts/plot_paper_style_figures.py --source outputs/paper_style/full --output outputs/paper_style/figures_restored --summary-csv outputs/paper_style/figures_restored/summary.csv
